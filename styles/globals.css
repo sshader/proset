@@ -109,3 +109,11 @@ input[type='submit']:disabled,
 button:disabled {
   background-color: rgb(122, 160, 248);
 }
+
+.selected {
+  border: blue 2px solid;
+}
+
+.taken {
+  border: red 2px solid;
+}
