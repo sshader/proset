@@ -13,8 +13,10 @@ import type { ApiFromModules } from "convex/api";
 import type * as dealCards from "../dealCards";
 import type * as getGameInfo from "../getGameInfo";
 import type * as joinGame from "../joinGame";
+import type * as maybeClearSelectSet from "../maybeClearSelectSet";
 import type * as selectCard from "../selectCard";
 import type * as startGame from "../startGame";
+import type * as startSelectSet from "../startSelectSet";
 import type * as unselectCard from "../unselectCard";
 
 /**
@@ -30,7 +32,9 @@ export type API = ApiFromModules<{
   dealCards: typeof dealCards;
   getGameInfo: typeof getGameInfo;
   joinGame: typeof joinGame;
+  maybeClearSelectSet: typeof maybeClearSelectSet;
   selectCard: typeof selectCard;
   startGame: typeof startGame;
+  startSelectSet: typeof startSelectSet;
   unselectCard: typeof unselectCard;
 }>;

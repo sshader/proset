@@ -3,6 +3,8 @@ import { defineSchema, defineTable, s } from 'convex/schema'
 export default defineSchema({
   Game: defineTable({
     name: s.string(),
+    selectingPlayer: s.union(s.null(), s.id('Player')),
+    selectionStartTime: s.union(s.null(), s.number()),
   }),
 
   Player: defineTable({

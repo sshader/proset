@@ -10,6 +10,19 @@ export default function App() {
   const [gameName, setGameName] = useState('')
   const [currentGame, setCurrentGame] = useState<Id<'Game'> | null>(null)
   const [currentPlayer, setCurrentPlayer] = useState<Id<'Player'> | null>(null)
+  const [warnings, setWarnings] = useState<Record<string, string>>({})
+
+  const addWarning = (warning: string, expirationMs: number = 10000) => {
+    const warningId = crypto.randomUUID()
+    setWarnings({
+      ...warnings,
+      warningId: warning,
+    })
+    setTimeout(() => {
+      delete warnings[warningId]
+      setWarnings(warnings)
+    }, expirationMs)
+  }
 
   const startGame = useMutation('startGame')
   const joinGame = useMutation('joinGame')
@@ -26,16 +39,27 @@ export default function App() {
   }
 
   return currentGame === null || currentPlayer === null ? (
-    <form onSubmit={handleStartGame}>
-      <input
-        value={gameName}
-        onChange={(event) => setGameName(event.target.value)}
-        placeholder="Start a new game or join an existing one"
-      />
-      <input type="submit" value="Send" disabled={!gameName} />
-    </form>
+    <div>
+      <h1>Create a new game or join an existing one</h1>
+      <form onSubmit={handleStartGame}>
+        <input
+          value={gameName}
+          onChange={(event) => setGameName(event.target.value)}
+          placeholder="Game name"
+        />
+        <input type="submit" value="Join" disabled={!gameName} />
+      </form>
+      <div>{Object.values(warnings)}</div>
+    </div>
   ) : (
-    <GameBoundary gameId={currentGame} playerId={currentPlayer}></GameBoundary>
+    <div>
+      <GameBoundary
+        gameId={currentGame}
+        playerId={currentPlayer}
+        addWarning={addWarning}
+      ></GameBoundary>
+      <div>{Object.values(warnings)}</div>
+    </div>
   )
 }
 
@@ -71,6 +95,7 @@ function isProset(cards: Document<'PlayingCard'>[]) {
 const GameBoundary = (props: {
   gameId: Id<'Game'>
   playerId: Id<'Player'>
+  addWarning: (warning: string, expirationMs?: number) => void
 }) => {
   const gameInfo = useQuery('getGameInfo', props.gameId, props.playerId)
 
@@ -92,6 +117,7 @@ const GameBoundary = (props: {
         game={gameInfo.game}
         player={gameInfo.player}
         cards={results}
+        addWarning={props.addWarning}
       ></Game>
     )
   }
@@ -101,27 +127,64 @@ const Game = (props: {
   game: Document<'Game'>
   player: Document<'Player'>
   cards: Document<'PlayingCard'>[]
+  addWarning: (warning: string, expirationMs?: number) => void
 }) => {
   console.log(props)
   const { game, player, cards } = props
+  const [selectionTimeout, setSelectionTimeout] = useState<number | null>(null)
 
   console.log('#### proset', findProset(cards))
+  console.log('#### selectionState', selectionTimeout)
 
   const selectCard = useMutation('selectCard')
   const unselectCard = useMutation('unselectCard')
 
-  const onClick = (card: Document<'PlayingCard'>) => {
+  const onClick = async (card: Document<'PlayingCard'>) => {
+    if (!game.selectingPlayer?.equals(player._id)) {
+      return
+    }
     if (card.selectedBy === null) {
-      return selectCard(card._id, props.player._id)
+      const selectionResult = await selectCard(card._id, props.player._id)
+      if (selectionResult === 'FoundProset' && selectionTimeout) {
+        clearTimeout(selectionTimeout)
+      }
     } else if (card.selectedBy.equals(props.player._id)) {
       unselectCard(card._id, props.player._id)
     }
   }
 
+  const startSelectSet = useMutation('startSelectSet')
+  const clearSelectSet = useMutation('maybeClearSelectSet')
+
+  setInterval(() => {
+    clearSelectSet(game._id)
+  }, 10 * 1000)
+
+  const handleStartSelectSet = async () => {
+    const selectResponse = await startSelectSet(game._id, player._id)
+    if (selectResponse !== null) {
+      props.addWarning(selectResponse.reason)
+      return
+    }
+    console.log('Setting timeout')
+    const timeout = window.setTimeout(() => {
+      props.addWarning('Took too long!')
+      clearSelectSet(game._id)
+    }, 20 * 1000)
+  }
+
   return (
     <React.Fragment>
-      <div>Game {game.name}</div>
+      <div>
+        Game {game.name}, Selecting {game.selectingPlayer?.id ?? 'None'}
+      </div>
       <div>Player {player._id.id}</div>
+      <button
+        onClick={handleStartSelectSet}
+        disabled={game.selectingPlayer !== null}
+      >
+        Set!
+      </button>
       <div className="Game-cards">
         {cards.map((card) => {
           const selectionState =
