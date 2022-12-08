@@ -110,10 +110,35 @@ button:disabled {
   background-color: rgb(122, 160, 248);
 }
 
-.selected {
-  border: blue 2px solid;
+.Game-cards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.taken {
-  border: red 2px solid;
+.Card--selected {
+  filter: drop-shadow(0 0 10px blue);
+}
+
+.Card--taken {
+  filter: drop-shadow(0 0 10px red);
+}
+
+.Card--unselected {
+  border: 2px solid black;
+}
+
+.Card {
+  border-radius: 1em;
+  margin: 2em;
+  background-color: white;
+}
+
+.Card-dot {
+  border-radius: 50%;
+  border: 10px solid white;
+  height: 2em;
+  width: 2em;
+  /* border: 1px black solid; */
 }

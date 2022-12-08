@@ -122,28 +122,32 @@ const Game = (props: {
     <React.Fragment>
       <div>Game {game.name}</div>
       <div>Player {player._id.id}</div>
-      <ul>
+      <div className="Game-cards">
         {cards.map((card) => {
-          const className =
+          const selectionState =
             card.selectedBy === null
               ? 'unselected'
               : card.selectedBy.equals(player._id)
               ? 'selected'
               : 'taken'
           return (
-            <li key={card._id.toString()}>
-              <Card className={className} card={card} onClick={onClick} />
-            </li>
+            <div key={card._id.toString()}>
+              <Card
+                selectionState={selectionState}
+                card={card}
+                onClick={onClick}
+              />
+            </div>
           )
         })}
-      </ul>
+      </div>
     </React.Fragment>
   )
 }
 
 const Card = (props: {
   card: Document<'PlayingCard'>
-  className: string
+  selectionState: 'selected' | 'unselected' | 'taken'
   onClick: (card: Document<'PlayingCard'>) => Promise<any>
 }) => {
   const { card } = props
@@ -151,22 +155,52 @@ const Card = (props: {
     <div>
       Rank {card.rank}
       <table
-        className={props.className}
+        className={`Card Card--${props.selectionState}`}
         onClick={async () => {
           console.log(await props.onClick(card))
         }}
       >
         <tr>
-          <td>{card.red ? 'R' : '_'}</td>
-          <td>{card.orange ? 'O' : '_'}</td>
+          <td
+            className="Card-dot"
+            style={{
+              backgroundColor: card.red ? 'red' : 'inherit',
+            }}
+          ></td>
+          <td
+            className="Card-dot"
+            style={{
+              backgroundColor: card.orange ? 'orange' : 'inherit',
+            }}
+          ></td>
         </tr>
         <tr>
-          <td>{card.yellow ? 'Y' : '_'}</td>
-          <td>{card.green ? 'G' : '_'}</td>
+          <td
+            className="Card-dot"
+            style={{
+              backgroundColor: card.yellow ? '#f5e653' : 'inherit',
+            }}
+          ></td>
+          <td
+            className="Card-dot"
+            style={{
+              backgroundColor: card.green ? 'green' : 'inherit',
+            }}
+          ></td>
         </tr>
         <tr>
-          <td>{card.blue ? 'B' : '_'}</td>
-          <td>{card.purple ? 'P' : '_'}</td>
+          <td
+            className="Card-dot"
+            style={{
+              backgroundColor: card.blue ? 'blue' : 'inherit',
+            }}
+          ></td>
+          <td
+            className="Card-dot"
+            style={{
+              backgroundColor: card.purple ? 'purple' : 'inherit',
+            }}
+          ></td>
         </tr>
       </table>
     </div>
