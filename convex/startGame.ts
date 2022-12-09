@@ -24,7 +24,10 @@ export default mutation(async ({ db }, name: string) => {
     isSystemPlayer: true,
   })
 
-  const cardNumbers = [...Array(63).keys()]
+  const cardNumbers = []
+  for (let i = 1; i <= 63; i += 1) {
+    cardNumbers.push(i)
+  }
   shuffleArray(cardNumbers)
 
   cardNumbers.forEach((cardNumber, cardIndex) => {
