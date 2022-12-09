@@ -110,11 +110,16 @@ button:disabled {
   background-color: rgb(122, 160, 248);
 }
 
-.Game-cards {
+.CardContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+.CardContainer--available,
+.CardContainer--waiting {
+  cursor: not-allowed;
 }
 
 .Card--selected {
@@ -122,7 +127,7 @@ button:disabled {
 }
 
 .Card--taken {
-  filter: drop-shadow(0 0 10px red);
+  filter: drop-shadow(0 0 10px grey);
 }
 
 .Card--unselected {
@@ -140,5 +145,15 @@ button:disabled {
   border: 10px solid white;
   height: 2em;
   width: 2em;
-  /* border: 1px black solid; */
+}
+
+.Card-dot--mini {
+  border-radius: 50%;
+  border: 10px solid white;
+  height: 1em;
+  width: 1em;
+}
+
+.Card-row {
+  display: flex;
 }

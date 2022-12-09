@@ -5,6 +5,9 @@ import {
   usePaginatedQuery,
   useQuery,
 } from '../convex/_generated/react'
+import Timer from './timer'
+import Card from './card'
+import Game from './game'
 
 export default function App() {
   const [gameName, setGameName] = useState('')
@@ -97,7 +100,7 @@ const GameBoundary = (props: {
   playerId: Id<'Player'>
   addWarning: (warning: string, expirationMs?: number) => void
 }) => {
-  const gameInfo = useQuery('getGameInfo', props.gameId, props.playerId)
+  const gameInfo = useQuery('getGameInfo', props.gameId)
 
   const { results, status, loadMore } = usePaginatedQuery(
     'dealCards',
@@ -114,158 +117,10 @@ const GameBoundary = (props: {
     }
     return (
       <Game
-        game={gameInfo.game}
-        player={gameInfo.player}
+        gameInfo={gameInfo}
         cards={results}
         addWarning={props.addWarning}
       ></Game>
     )
   }
-}
-
-const Game = (props: {
-  game: Document<'Game'>
-  player: Document<'Player'>
-  cards: Document<'PlayingCard'>[]
-  addWarning: (warning: string, expirationMs?: number) => void
-}) => {
-  console.log(props)
-  const { game, player, cards } = props
-  const [selectionTimeout, setSelectionTimeout] = useState<number | null>(null)
-
-  console.log('#### proset', findProset(cards))
-  console.log('#### selectionState', selectionTimeout)
-
-  const selectCard = useMutation('selectCard')
-  const unselectCard = useMutation('unselectCard')
-
-  const onClick = async (card: Document<'PlayingCard'>) => {
-    if (!game.selectingPlayer?.equals(player._id)) {
-      return
-    }
-    if (card.selectedBy === null) {
-      const selectionResult = await selectCard(card._id, props.player._id)
-      if (selectionResult === 'FoundProset' && selectionTimeout) {
-        clearTimeout(selectionTimeout)
-      }
-    } else if (card.selectedBy.equals(props.player._id)) {
-      unselectCard(card._id, props.player._id)
-    }
-  }
-
-  const startSelectSet = useMutation('startSelectSet')
-  const clearSelectSet = useMutation('maybeClearSelectSet')
-
-  setInterval(() => {
-    clearSelectSet(game._id)
-  }, 10 * 1000)
-
-  const handleStartSelectSet = async () => {
-    const selectResponse = await startSelectSet(game._id, player._id)
-    if (selectResponse !== null) {
-      props.addWarning(selectResponse.reason)
-      return
-    }
-    console.log('Setting timeout')
-    const timeout = window.setTimeout(() => {
-      props.addWarning('Took too long!')
-      clearSelectSet(game._id)
-    }, 20 * 1000)
-  }
-
-  return (
-    <React.Fragment>
-      <div>
-        Game {game.name}, Selecting {game.selectingPlayer?.id ?? 'None'}
-      </div>
-      <div>Player {player._id.id}</div>
-      <button
-        onClick={handleStartSelectSet}
-        disabled={game.selectingPlayer !== null}
-      >
-        Set!
-      </button>
-      <div className="Game-cards">
-        {cards.map((card) => {
-          const selectionState =
-            card.selectedBy === null
-              ? 'unselected'
-              : card.selectedBy.equals(player._id)
-              ? 'selected'
-              : 'taken'
-          return (
-            <div key={card._id.toString()}>
-              <Card
-                selectionState={selectionState}
-                card={card}
-                onClick={onClick}
-              />
-            </div>
-          )
-        })}
-      </div>
-    </React.Fragment>
-  )
-}
-
-const Card = (props: {
-  card: Document<'PlayingCard'>
-  selectionState: 'selected' | 'unselected' | 'taken'
-  onClick: (card: Document<'PlayingCard'>) => Promise<any>
-}) => {
-  const { card } = props
-  return (
-    <div>
-      Rank {card.rank}
-      <table
-        className={`Card Card--${props.selectionState}`}
-        onClick={async () => {
-          console.log(await props.onClick(card))
-        }}
-      >
-        <tr>
-          <td
-            className="Card-dot"
-            style={{
-              backgroundColor: card.red ? 'red' : 'inherit',
-            }}
-          ></td>
-          <td
-            className="Card-dot"
-            style={{
-              backgroundColor: card.orange ? 'orange' : 'inherit',
-            }}
-          ></td>
-        </tr>
-        <tr>
-          <td
-            className="Card-dot"
-            style={{
-              backgroundColor: card.yellow ? '#f5e653' : 'inherit',
-            }}
-          ></td>
-          <td
-            className="Card-dot"
-            style={{
-              backgroundColor: card.green ? 'green' : 'inherit',
-            }}
-          ></td>
-        </tr>
-        <tr>
-          <td
-            className="Card-dot"
-            style={{
-              backgroundColor: card.blue ? 'blue' : 'inherit',
-            }}
-          ></td>
-          <td
-            className="Card-dot"
-            style={{
-              backgroundColor: card.purple ? 'purple' : 'inherit',
-            }}
-          ></td>
-        </tr>
-      </table>
-    </div>
-  )
 }

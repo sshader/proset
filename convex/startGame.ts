@@ -15,7 +15,16 @@ export default mutation(async ({ db }, name: string) => {
     selectionStartTime: null,
   })
 
-  const cardNumbers = [...Array(64).keys()]
+  db.insert('Player', {
+    name: 'System Player',
+    game: gameId,
+    tokenIdentifier: '',
+    score: 0,
+    color: 'grey',
+    isSystemPlayer: true,
+  })
+
+  const cardNumbers = [...Array(63).keys()]
   shuffleArray(cardNumbers)
 
   cardNumbers.forEach((cardNumber, cardIndex) => {

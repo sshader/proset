@@ -8,6 +8,10 @@ export default mutation(async ({ db }, gameId: Id<'Game'>) => {
   }
   if (Date.now() - game.selectionStartTime! > 20 * 1000) {
     clearSelectSet(db, game._id)
+    const player = await db.get(game.selectingPlayer)
+    db.patch(player!._id, {
+      score: player!.score - 1,
+    })
   }
 })
 

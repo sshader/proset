@@ -9,16 +9,22 @@ export default defineSchema({
 
   Player: defineTable({
     game: s.id('Game'),
-  }),
-
-  // Card: defineTable({
-  //   red: s.boolean(),
-  //   orange: s.boolean(),
-  //   yellow: s.boolean(),
-  //   green: s.boolean(),
-  //   blue: s.boolean(),
-  //   purple: s.boolean(),
-  // }),
+    tokenIdentifier: s.string(),
+    name: s.union(s.string(), s.null()),
+    score: s.number(),
+    color: s.union(
+      s.literal('red'),
+      s.literal('orange'),
+      s.literal('yellow'),
+      s.literal('green'),
+      s.literal('blue'),
+      s.literal('purple'),
+      s.literal('grey')
+    ),
+    isSystemPlayer: s.boolean(),
+  })
+    .index('ByGameAndToken', ['game', 'tokenIdentifier'])
+    .index('ByGameAndSystemPlayer', ['game', 'isSystemPlayer']),
 
   PlayingCard: defineTable({
     red: s.boolean(),
@@ -37,33 +43,14 @@ export default defineSchema({
 
   Proset: defineTable({
     player: s.id('Player'),
-  }),
+  }).index('ByPlayer', ['player']),
 })
 
-/**
- * # Proset
-Game
-	cards
-
-Player
-	game: Game | null
-
-
-Card
-	red
-	orange
-	…
-
-	game
-	proset: null | Proset 
-
-Proset
-	cards
-	player
-
-
-Frictions:
-* needed to disable typechecking
-* don’t need convex dev and npm run dev
-* can’t pipe type check disable to the dev client portion
- */
+export const PLAYER_COLORS = [
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'blue',
+  'purple',
+] as const

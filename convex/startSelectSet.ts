@@ -1,19 +1,19 @@
+import { getPlayer } from './getPlayer'
 import { Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
-export default mutation(
-  async ({ db }, gameId: Id<'Game'>, playerId: Id<'Player'>) => {
-    const game = (await db.get(gameId))!
-    if (game.selectingPlayer !== null) {
-      return {
-        reason: 'OtherPlayerAlreadySelecting',
-        selectedBy: game.selectingPlayer,
-      }
+export default mutation(async ({ db, auth }, gameId: Id<'Game'>) => {
+  const game = (await db.get(gameId))!
+  const player = await getPlayer(db, auth, gameId)
+  if (game.selectingPlayer !== null) {
+    return {
+      reason: 'OtherPlayerAlreadySelecting',
+      selectedBy: game.selectingPlayer,
     }
-    db.patch(game._id, {
-      selectingPlayer: playerId,
-      selectionStartTime: Date.now(),
-    })
-    return null
   }
-)
+  db.patch(game._id, {
+    selectingPlayer: player._id,
+    selectionStartTime: Date.now(),
+  })
+  return null
+})
