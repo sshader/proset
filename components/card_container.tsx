@@ -1,25 +1,36 @@
-import React from 'react'
 import { Document } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
+import { GameInfo } from '../types/game_info'
 import PlayingCard from './playing_card'
 
 const CardContainer = (props: {
-  game: Document<'Game'>
-  player: Document<'Player'>
+  gameInfo: GameInfo
   cards: Document<'PlayingCard'>[]
   onProsetFound: () => void
 }) => {
-  const { game, player, cards } = props
+  console.log(props.gameInfo)
+  const { gameInfo, cards } = props
 
   const selectCard = useMutation('selectCard')
   const unselectCard = useMutation('unselectCard')
 
+  const selectingPlayerId = gameInfo.game.selectingPlayer
+
   const gameSelectionState =
-    game.selectingPlayer === null
+    selectingPlayerId === null
       ? 'available'
-      : game.selectingPlayer.equals(player._id)
+      : selectingPlayerId.equals(gameInfo.currentPlayer._id)
       ? 'selecting'
       : 'waiting'
+
+  const selectionColor =
+    selectingPlayerId === null
+      ? null
+      : selectingPlayerId.equals(gameInfo.currentPlayer._id)
+      ? gameInfo.currentPlayer.color
+      : gameInfo.otherPlayers.find((p) => p._id.equals(selectingPlayerId))
+          ?.color ?? 'grey'
+  console.log(selectionColor, selectingPlayerId)
 
   const onClick = async (card: Document<'PlayingCard'>) => {
     if (card.selectedBy === null) {
@@ -27,7 +38,7 @@ const CardContainer = (props: {
       if (selectionResult === 'FoundProset') {
         props.onProsetFound()
       }
-    } else if (card.selectedBy.equals(props.player._id)) {
+    } else {
       unselectCard(card._id)
     }
   }
@@ -48,16 +59,10 @@ const CardContainer = (props: {
       className={`CardContainer CardContainer--${gameSelectionState}`}
     >
       {cards.map((card) => {
-        const selectionState =
-          card.selectedBy === null
-            ? 'unselected'
-            : card.selectedBy.equals(player._id)
-            ? 'selected'
-            : 'taken'
         return (
           <div key={card._id.toString()}>
             <PlayingCard
-              selectionState={selectionState}
+              selectionColor={card.selectedBy ? selectionColor : null}
               card={card}
               size="regular"
               onClick={gameSelectionState === 'selecting' ? onClick : () => {}}

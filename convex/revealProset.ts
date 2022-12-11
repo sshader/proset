@@ -1,9 +1,14 @@
 import { getSystemPlayer } from './getPlayer'
-import { Id, Document } from './_generated/dataModel'
+import { Document, Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
 export default mutation(async ({ db }, gameId: Id<'Game'>) => {
   const player = await getSystemPlayer(db, gameId)
+
+  await db.patch(gameId, {
+    selectingPlayer: player._id,
+    selectionStartTime: Date.now(),
+  })
 
   const cards = await db
     .query('PlayingCard')
@@ -12,11 +17,13 @@ export default mutation(async ({ db }, gameId: Id<'Game'>) => {
     )
     .take(7)
   const prosetCards = findProset(cards)
-  prosetCards!.forEach((card) => {
-    db.patch(card._id, {
-      selectedBy: player._id,
+  await Promise.all(
+    prosetCards!.map((card) => {
+      return db.patch(card._id, {
+        selectedBy: player._id,
+      })
     })
-  })
+  )
   return prosetCards!.map((card) => card._id)
 })
 

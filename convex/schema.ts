@@ -5,6 +5,7 @@ export default defineSchema({
     name: s.string(),
     selectingPlayer: s.union(s.null(), s.id('Player')),
     selectionStartTime: s.union(s.null(), s.number()),
+    inProgress: s.boolean(),
   }),
 
   Player: defineTable({
@@ -51,12 +52,3 @@ export default defineSchema({
     player: s.union(s.id('Player'), s.null()),
   }).index('ByGameAndCreationTime', ['game']),
 })
-
-export const PLAYER_COLORS = [
-  'red',
-  'orange',
-  'yellow',
-  'green',
-  'blue',
-  'purple',
-] as const

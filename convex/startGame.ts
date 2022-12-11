@@ -5,6 +5,7 @@ export default mutation(async ({ db }, name: string) => {
     name,
     selectingPlayer: null,
     selectionStartTime: null,
+    inProgress: true,
   })
 
   db.insert('Player', {

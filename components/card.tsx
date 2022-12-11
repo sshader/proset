@@ -1,13 +1,8 @@
-import React, { FormEvent, useEffect, useState } from 'react'
-import { Document, Id } from '../convex/_generated/dataModel'
-import {
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from '../convex/_generated/react'
-import Timer from './timer'
-
-const Card = (props: {
+const Card = ({
+  card,
+  selectionColor = null,
+  size = 'regular',
+}: {
   card: {
     red: boolean
     orange: boolean
@@ -16,12 +11,12 @@ const Card = (props: {
     blue: boolean
     purple: boolean
   }
-  selectionState: 'selected' | 'unselected' | 'taken'
+  selectionColor?: string | null
   size: 'regular' | 'mini'
 }) => {
-  const { card } = props
+  const dropShadowClass = selectionColor ? `Dropshadow--${selectionColor}` : ''
   return (
-    <div className={`Card Card--${props.selectionState} Card--${props.size}`}>
+    <div className={`Card Card--${size} ${dropShadowClass}`}>
       <div className="Card-row">
         <div className="Card-dotContainer">
           <div

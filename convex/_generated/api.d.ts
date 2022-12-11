@@ -12,6 +12,7 @@
 import type { ApiFromModules } from "convex/api";
 import type * as dealCards from "../dealCards";
 import type * as discardRevealedProset from "../discardRevealedProset";
+import type * as endGame from "../endGame";
 import type * as getGameInfo from "../getGameInfo";
 import type * as getPlayer from "../getPlayer";
 import type * as getRecentMessages from "../getRecentMessages";
@@ -39,6 +40,7 @@ import type * as unselectCard from "../unselectCard";
 export type API = ApiFromModules<{
   dealCards: typeof dealCards;
   discardRevealedProset: typeof discardRevealedProset;
+  endGame: typeof endGame;
   getGameInfo: typeof getGameInfo;
   getPlayer: typeof getPlayer;
   getRecentMessages: typeof getRecentMessages;

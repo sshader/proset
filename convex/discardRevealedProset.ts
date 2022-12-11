@@ -1,5 +1,5 @@
 import { getSystemPlayer } from './getPlayer'
-import { Id, Document } from './_generated/dataModel'
+import { Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
 export default mutation(
@@ -9,10 +9,16 @@ export default mutation(
     const proset = await db.insert('Proset', {
       player: player._id,
     })
-    cardIds.forEach((cardId) => {
-      db.patch(cardId, {
-        proset,
-      })
+    db.patch(gameId, {
+      selectingPlayer: null,
+      selectionStartTime: null,
     })
+    await Promise.all(
+      cardIds.map((cardId) => {
+        db.patch(cardId, {
+          proset,
+        })
+      })
+    )
   }
 )

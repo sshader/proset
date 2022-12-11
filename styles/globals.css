@@ -41,6 +41,7 @@ h1 {
 }
 
 ul {
+  background-color: white;
   margin: 8px;
   border-radius: 8px;
   border: solid 1px lightgray;
@@ -54,6 +55,7 @@ ul:empty {
 li {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   padding: 8px 16px 8px 16px;
   border-bottom: solid 1px lightgray;
   font-size: 16px;
@@ -61,21 +63,6 @@ li {
 
 li:last-child {
   border: 0;
-}
-
-li span:nth-child(1) {
-  font-weight: bold;
-  margin-right: 4px;
-  white-space: nowrap;
-}
-li span:nth-child(2) {
-  margin-right: 4px;
-  word-break: break-word;
-}
-li span:nth-child(3) {
-  color: #6c757d;
-  margin-left: auto;
-  white-space: nowrap;
 }
 
 form {
@@ -112,6 +99,21 @@ button:disabled {
   background-color: rgb(122, 160, 248);
 }
 
+:root {
+  --red: red;
+  --light-red: lightpink;
+  --orange: orange;
+  --light-orange: #ffd580;
+  --yellow: #f5e653;
+  --light-yellow: lightyellow;
+  --green: green;
+  --light-green: lightgreen;
+  --blue: blue;
+  --light-blue: lightblue;
+  --purple: purple;
+  --light-purple: plum;
+}
+
 .CardContainer {
   display: flex;
   flex-direction: row;
@@ -124,4 +126,120 @@ button:disabled {
 .CardContainer--available,
 .CardContainer--waiting {
   cursor: not-allowed;
+}
+
+.Placeholder {
+  animation: skeleton-loading 1s linear infinite alternate;
+  padding: 8px 16px 8px 16px;
+  margin: 8px;
+  border-radius: 8px;
+}
+
+.Placeholder-row {
+  height: 2em;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: #eeeeee;
+  }
+  100% {
+    background-color: #cccccc;
+  }
+}
+
+.PlayerInfo {
+  flex: 1 1 auto;
+  min-width: 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.PlayerInfo-section {
+  border-radius: 5px;
+  border: 2px solid;
+  margin: 5px;
+  padding: 5px;
+}
+
+.PlayerInfo-prosets {
+  max-height: 200px;
+  overflow: auto;
+  flex: 1 1 auto;
+  min-width: 1px;
+}
+
+:hover.Fill--red {
+  background-color: var(--light-red);
+}
+
+.Border--red {
+  border-color: var(--red);
+}
+
+.Dropshadow--red {
+  filter: drop-shadow(0 0 10px var(--red));
+}
+
+:hover.Fill--orange {
+  background-color: var(--light-orange);
+}
+
+.Border--orange {
+  border-color: var(--orange);
+}
+
+.Dropshadow--orange {
+  filter: drop-shadow(0 0 10px var(--orange));
+}
+
+:hover.Fill--yellow {
+  background-color: var(--light-yellow);
+}
+
+.Border--yellow {
+  border-color: var(--yellow);
+}
+
+.Dropshadow--yellow {
+  filter: drop-shadow(0 0 10px var(--yellow));
+}
+
+:hover.Fill--green {
+  background-color: var(--light-green);
+}
+
+.Border--green {
+  border-color: var(--green);
+}
+
+.Dropshadow--green {
+  filter: drop-shadow(0 0 10px var(--green));
+}
+
+:hover.Fill--blue {
+  background-color: var(--light-blue);
+}
+
+.Border--blue {
+  border-color: var(--blue);
+}
+
+.Dropshadow--blue {
+  filter: drop-shadow(0 0 10px var(--blue));
+}
+
+:hover.Fill--purple {
+  background-color: var(--light-purple);
+}
+
+.Border--purple {
+  border-color: var(--purple);
+}
+
+.Dropshadow--purple {
+  filter: drop-shadow(0 0 10px var(--purple));
+}
+.Dropshadow--grey {
+  filter: drop-shadow(0 0 10px black);
 }

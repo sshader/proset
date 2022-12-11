@@ -1,5 +1,5 @@
+import { Document } from '../_generated/dataModel'
 import { DatabaseReader, query } from '../_generated/server'
-import { Document, Id } from '../_generated/dataModel'
 
 export default query(async ({ db, auth }) => {
   const identity = await auth.getUserIdentity()
@@ -11,7 +11,10 @@ export default query(async ({ db, auth }) => {
 })
 
 const getAllGames = async (db: DatabaseReader) => {
-  const games = await db.query('Game').take(10)
+  const games = await db
+    .query('Game')
+    .filter((q) => q.eq(q.field('inProgress'), true))
+    .take(10)
   return await getGamesInfo(db, games)
 }
 
@@ -41,5 +44,8 @@ const getGamesForUser = async (db: DatabaseReader, tokenIdentifier: string) => {
       return (await db.get(player.game))!
     })
   )
-  return await getGamesInfo(db, games)
+  return await getGamesInfo(
+    db,
+    games.filter((game) => game.inProgress)
+  )
 }

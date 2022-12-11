@@ -11,7 +11,6 @@ import {
 
 const GameBoundary = () => {
   const router = useRouter()
-  console.log('##### router', router)
   const gameIdStr: string | undefined = router.query.gameId as
     | string
     | undefined
@@ -47,6 +46,8 @@ const InnerGameBoundary = (props: { gameId: Id<'Game'> }) => {
     },
     gameId
   )
+  const endGame = useMutation('endGame')
+  const router = useRouter()
   if (
     latestKnownGameInfo === undefined ||
     (results.length === 0 && status !== 'Exhausted')
@@ -59,7 +60,18 @@ const InnerGameBoundary = (props: { gameId: Id<'Game'> }) => {
     return (
       <React.Fragment>
         <Game gameInfo={latestKnownGameInfo} cards={results}></Game>
-        {status === 'Exhausted' ? <div>Out of cards!</div> : null}
+        {status === 'Exhausted' ? (
+          <div style={{ justifyContent: 'center', display: 'flex' }}>
+            <button
+              onClick={async () => {
+                await endGame(gameId)
+                router.push('/')
+              }}
+            >
+              Out of cards! -- End Game
+            </button>
+          </div>
+        ) : null}
         <MessageViewer gameId={gameId}></MessageViewer>
       </React.Fragment>
     )

@@ -1,14 +1,11 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import { ConvexProviderWithAuth0 } from 'convex/react-auth0'
+import { useAuth0 } from '@auth0/auth0-react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
+import { ConvexProviderWithAuth0 } from 'convex/react-auth0'
+import type { AppProps } from 'next/app'
+import Card from '../components/card'
 import convexConfig from '../convex.json'
 import clientConfig from '../convex/_generated/clientConfig'
-import { useAuth0 } from '@auth0/auth0-react'
-import GamePicker from '../components/game_picker'
-import React from 'react'
-import { useQuery } from '../convex/_generated/react'
-import Card from '../components/card'
+import '../styles/globals.css'
 
 const convex = new ConvexReactClient(clientConfig)
 const authInfo = convexConfig.authInfo[0]
@@ -63,7 +60,8 @@ const Instructions = () => {
             purple: true,
           }}
           size="mini"
-          selectionState="unselected"
+          selectionColor={null}
+          // selectionState="unselected"
         />
         <Card
           card={{
@@ -75,7 +73,7 @@ const Instructions = () => {
             purple: false,
           }}
           size="mini"
-          selectionState="selected"
+          selectionColor="green"
         />
         <Card
           card={{
@@ -87,7 +85,7 @@ const Instructions = () => {
             purple: true,
           }}
           size="mini"
-          selectionState="selected"
+          selectionColor="green"
         />
         <Card
           card={{
@@ -99,7 +97,7 @@ const Instructions = () => {
             purple: false,
           }}
           size="mini"
-          selectionState="selected"
+          selectionColor="green"
         />
         <Card
           card={{
@@ -111,7 +109,7 @@ const Instructions = () => {
             purple: true,
           }}
           size="mini"
-          selectionState="unselected"
+          selectionColor={null}
         />
         <Card
           card={{
@@ -123,7 +121,7 @@ const Instructions = () => {
             purple: false,
           }}
           size="mini"
-          selectionState="selected"
+          selectionColor="green"
         />
         <Card
           card={{
@@ -135,7 +133,7 @@ const Instructions = () => {
             purple: true,
           }}
           size="mini"
-          selectionState="selected"
+          selectionColor="green"
         />
       </div>
       <p>

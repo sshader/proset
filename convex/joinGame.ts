@@ -1,12 +1,12 @@
-import { Id } from './_generated/dataModel'
-import { mutation } from './_generated/server'
 import {
-  uniqueNamesGenerator,
-  Config,
   adjectives,
   animals,
+  Config,
+  uniqueNamesGenerator,
 } from 'unique-names-generator'
-import { PLAYER_COLORS } from './schema'
+import { PLAYER_COLORS } from '../types/player_colors'
+import { Id } from './_generated/dataModel'
+import { mutation } from './_generated/server'
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],

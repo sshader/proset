@@ -6,10 +6,6 @@
   filter: drop-shadow(0 0 10px grey);
 }
 
-.Card--unselected {
-  border: 2px solid black;
-}
-
 .Card--mini {
   width: 60px;
   height: 90px;
@@ -27,6 +23,7 @@
   background-color: white;
   display: flex;
   flex-direction: column;
+  border: 2px solid black;
 }
 
 .Card-row {

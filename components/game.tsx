@@ -1,20 +1,64 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Document, Id } from '../convex/_generated/dataModel'
-import {
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from '../convex/_generated/react'
-import Timer from './timer'
+import { useMutation } from '../convex/_generated/react'
+import { GameInfo } from '../types/game_info'
 import Card from './card'
 import CardContainer from './card_container'
+import { PlayerInfo } from './PlayerInfo'
+import Timer from './timer'
 
-type GameInfo = {
-  game: Document<'Game'>
-  currentPlayer: Document<'Player'>
-  otherPlayers: Document<'Player'>[]
-  playerToProsets: Record<string, Document<'PlayingCard'>[][]>
+function GameInfo(props: { gameInfo: GameInfo }) {
+  const otherPlayers =
+    props.gameInfo.otherPlayers.length === 0 ? (
+      <div style={{ margin: 10 }}>Other Players: None</div>
+    ) : (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
+        <div style={{ margin: 10, display: 'flex', alignItems: 'start' }}>
+          Other Players:
+        </div>
+        {props.gameInfo.otherPlayers.map((otherPlayer) => {
+          return (
+            <PlayerInfo
+              player={otherPlayer}
+              prosets={
+                props.gameInfo.playerToProsets[`id_${otherPlayer._id.id}`]
+              }
+            ></PlayerInfo>
+          )
+        })}
+      </div>
+    )
+
+  return (
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
+        <div style={{ margin: 10 }}>Proset</div>
+        <div style={{ margin: 10 }}>Game {props.gameInfo.game.name}</div>
+        <div style={{ margin: 10, display: 'flex' }}>You:&nbsp;</div>
+        <PlayerInfo
+          player={props.gameInfo.currentPlayer}
+          prosets={
+            props.gameInfo.playerToProsets[
+              `id_${props.gameInfo.currentPlayer._id.id}`
+            ]
+          }
+        />
+      </div>
+      {otherPlayers}
+    </div>
+  )
 }
+
 const Game = (props: {
   gameInfo: GameInfo
   cards: Document<'PlayingCard'>[]
@@ -64,21 +108,25 @@ const Game = (props: {
       return
     }
     const timeout = window.setTimeout(() => {
-      sendMessage('Took too long!')
+      sendMessage('🐌 Too slow! Deducting a point.')
       clearSelectSet(game._id)
     }, 20 * 1000)
     setSelectionTimeout(timeout)
   }
 
-  const selectSetButton =
-    game.selectingPlayer === null ? (
-      <button onClick={handleStartSelectSet}>I found a Proset!</button>
-    ) : (
-      <Timer totalSeconds={20}></Timer>
-    )
+  const selectSetButton = game.selectingPlayer?.equals(currentPlayer._id) ? (
+    <Timer totalSeconds={20}></Timer>
+  ) : (
+    <button
+      onClick={handleStartSelectSet}
+      disabled={game.selectingPlayer !== null}
+    >
+      I found a Proset!
+    </button>
+  )
 
   const handleRevealProset = async () => {
-    sendMessage(`Player ${currentPlayer.name} is revealing a set`, false)
+    sendMessage(`👀 Player ${currentPlayer.name} is revealing a set`, false)
     const revealedProset = await revealProset(game._id)
     setTimeout(() => {
       discardRevealedProset(game._id, revealedProset)
@@ -86,7 +134,7 @@ const Game = (props: {
   }
 
   const onProsetFound = () => {
-    sendMessage('You found a Proset!')
+    sendMessage('🎉 You found a Proset!')
     sendMessage(`Player ${currentPlayer.name} found a Proset!`, false)
     if (selectionTimeout) {
       clearTimeout(selectionTimeout)
@@ -95,49 +143,25 @@ const Game = (props: {
 
   return (
     <React.Fragment>
-      <div style={{ textAlign: 'center' }}>
-        <h1>Proset</h1>
-        <div>Game {game.name}</div>
-        <div>
-          Player {currentPlayer.name}, Score {currentPlayer.score}
-        </div>
-        <div>
-          Other Players:
-          <ul>
-            {gameInfo.otherPlayers.map((otherPlayer) => {
-              return (
-                <li>
-                  <PlayerInfo
-                    player={otherPlayer}
-                    prosets={
-                      gameInfo.playerToProsets[`id_${otherPlayer._id.id}`]
-                    }
-                  ></PlayerInfo>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
+      <GameInfo gameInfo={gameInfo}></GameInfo>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+        }}
+      >
+        {selectSetButton}
+        <button
+          onClick={handleRevealProset}
+          disabled={game.selectingPlayer !== null}
         >
-          {selectSetButton}
-          <button
-            onClick={handleRevealProset}
-            disabled={game.selectingPlayer !== null}
-          >
-            Reveal Proset
-          </button>
-        </div>
+          Reveal Proset
+        </button>
       </div>
+
       <CardContainer
-        game={game}
-        player={currentPlayer}
+        gameInfo={gameInfo}
         cards={cards}
         onProsetFound={onProsetFound}
       ></CardContainer>
@@ -145,36 +169,11 @@ const Game = (props: {
   )
 }
 
-const PlayerInfo = (props: {
-  player: Document<'Player'>
-  prosets: Document<'PlayingCard'>[][]
-}) => {
-  const [showProsets, setShowProsets] = useState(false)
-  const { player, prosets } = props
-  const prosetViews = prosets.map((cards) => {
-    return <Proset key={cards[0]._id.id} cards={cards}></Proset>
-  })
-
-  return (
-    <div
-      style={{ display: 'flex', flexDirection: 'row' }}
-      onClick={() => {
-        setShowProsets(!showProsets)
-      }}
-    >
-      <span>
-        {player.name}, Score {player.score}
-      </span>
-      {showProsets ? <div>{prosetViews}</div> : null}
-    </div>
-  )
-}
-
-const Proset = (props: { cards: Document<'PlayingCard'>[] }) => {
+export const Proset = (props: { cards: Document<'PlayingCard'>[] }) => {
   return (
     <div style={{ display: 'flex' }}>
       {props.cards.map((card) => {
-        return <Card card={card} size="mini" selectionState="unselected"></Card>
+        return <Card card={card} size="mini"></Card>
       })}
     </div>
   )
