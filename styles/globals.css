@@ -1,3 +1,5 @@
+@import './card.css';
+
 /* reset */
 * {
   margin: 0;
@@ -115,45 +117,11 @@ button:disabled {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  max-width: 700px;
+  margin: auto;
 }
 
 .CardContainer--available,
 .CardContainer--waiting {
   cursor: not-allowed;
-}
-
-.Card--selected {
-  filter: drop-shadow(0 0 10px blue);
-}
-
-.Card--taken {
-  filter: drop-shadow(0 0 10px grey);
-}
-
-.Card--unselected {
-  border: 2px solid black;
-}
-
-.Card {
-  border-radius: 1em;
-  margin: 2em;
-  background-color: white;
-}
-
-.Card-dot {
-  border-radius: 50%;
-  border: 10px solid white;
-  height: 2em;
-  width: 2em;
-}
-
-.Card-dot--mini {
-  border-radius: 50%;
-  border: 10px solid white;
-  height: 1em;
-  width: 1em;
-}
-
-.Card-row {
-  display: flex;
 }

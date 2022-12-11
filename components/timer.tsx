@@ -11,7 +11,7 @@ const Timer = (props: { totalSeconds: number }) => {
 
   return (
     <button style={{ backgroundColor: 'grey' }}>
-      {seconds < 10 ? `:0${seconds}` : `:${seconds}`}
+      ⏰ {seconds < 10 ? `:0${seconds}` : `:${seconds}`}
     </button>
   )
 }

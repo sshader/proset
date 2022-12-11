@@ -7,7 +7,7 @@ export default query(async ({ db, auth }, gameId: Id<'Game'>) => {
   const currentPlayer = await getPlayer(db, auth, gameId)
   const allPlayers = await db
     .query('Player')
-    .withIndex('ByGameAndToken', (q) => q.eq('game', gameId))
+    .withIndex('ByGame', (q) => q.eq('game', gameId))
     .filter((q) => q.eq(q.field('isSystemPlayer'), false))
     .collect()
   const playerToProsets: Record<string, Document<'PlayingCard'>[][]> = {}

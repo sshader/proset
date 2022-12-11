@@ -1,14 +1,10 @@
+import { getSystemPlayer } from './getPlayer'
 import { Id, Document } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
 export default mutation(
   async ({ db }, gameId: Id<'Game'>, cardIds: Id<'PlayingCard'>[]) => {
-    const player = await db
-      .query('Player')
-      .withIndex('ByGameAndSystemPlayer', (q) =>
-        q.eq('game', gameId).eq('isSystemPlayer', true)
-      )
-      .unique()
+    const player = await getSystemPlayer(db, gameId)
 
     const proset = await db.insert('Proset', {
       player: player._id,

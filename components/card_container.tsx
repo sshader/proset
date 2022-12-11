@@ -1,12 +1,7 @@
-import React, { FormEvent, useEffect, useState } from 'react'
-import { Document, Id } from '../convex/_generated/dataModel'
-import {
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from '../convex/_generated/react'
-import Timer from './timer'
-import Card from './card'
+import React from 'react'
+import { Document } from '../convex/_generated/dataModel'
+import { useMutation } from '../convex/_generated/react'
+import PlayingCard from './playing_card'
 
 const CardContainer = (props: {
   game: Document<'Game'>
@@ -61,9 +56,10 @@ const CardContainer = (props: {
             : 'taken'
         return (
           <div key={card._id.toString()}>
-            <Card
+            <PlayingCard
               selectionState={selectionState}
               card={card}
+              size="regular"
               onClick={gameSelectionState === 'selecting' ? onClick : () => {}}
             />
           </div>

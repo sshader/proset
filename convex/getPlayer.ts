@@ -13,12 +13,22 @@ export const getPlayer = async (
   }
   const player = await db
     .query('Player')
-    .withIndex('ByGameAndToken', (q) =>
-      q.eq('game', gameId).eq('tokenIdentifier', identity.tokenIdentifier)
-    )
+    .withIndex('ByGame', (q) => q.eq('game', gameId))
+    .filter((q) => q.eq(q.field('tokenIdentifier'), identity.tokenIdentifier))
     .first()
   if (player === null) {
     throw new Error('Could not find player matching auth and game')
   }
   return player
+}
+
+export const getSystemPlayer = async (
+  db: DatabaseReader,
+  gameId: Id<'Game'>
+) => {
+  return await db
+    .query('Player')
+    .withIndex('ByGame', (q) => q.eq('game', gameId))
+    .filter((q) => q.eq(q.field('isSystemPlayer'), true))
+    .unique()
 }

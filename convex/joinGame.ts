@@ -17,13 +17,12 @@ const customConfig: Config = {
 export default mutation(async ({ db, auth }, gameId: Id<'Game'>) => {
   const identity = await auth.getUserIdentity()
   if (!identity) {
-    throw new Error('Called storeUser without authentication present')
+    throw new Error('Could not find identity')
   }
   const player = await db
     .query('Player')
-    .withIndex('ByGameAndToken', (q) =>
-      q.eq('game', gameId).eq('tokenIdentifier', identity.tokenIdentifier)
-    )
+    .withIndex('ByGame', (q) => q.eq('game', gameId))
+    .filter((q) => q.eq(q.field('tokenIdentifier'), identity.tokenIdentifier))
     .first()
   if (player) {
     return player._id

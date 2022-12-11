@@ -5,14 +5,13 @@ import {
   usePaginatedQuery,
   useQuery,
 } from '../convex/_generated/react'
-import Timer from './timer'
-import Card from './card'
-import Game from './game'
+import Game from '../components/game'
+import GamePicker from '../components/game_picker'
+import { useRouter } from 'next/router'
 
 export default function App() {
   const [gameName, setGameName] = useState('')
   const [currentGame, setCurrentGame] = useState<Id<'Game'> | null>(null)
-  const [currentPlayer, setCurrentPlayer] = useState<Id<'Player'> | null>(null)
   const [warnings, setWarnings] = useState<Record<string, string>>({})
 
   const addWarning = (warning: string, expirationMs: number = 10000) => {
@@ -30,6 +29,8 @@ export default function App() {
   const startGame = useMutation('startGame')
   const joinGame = useMutation('joinGame')
 
+  const router = useRouter()
+
   async function handleStartGame(event: FormEvent) {
     event.preventDefault()
     setGameName('')
@@ -38,10 +39,16 @@ export default function App() {
       console.log('Joining existing game')
     }
     setCurrentGame(gameId)
-    setCurrentPlayer(await joinGame(gameId))
+    await joinGame(gameId)
+    router.push({
+      pathname: '/game/[gameId]',
+      query: {
+        gameId: gameId.id,
+      },
+    })
   }
 
-  return currentGame === null || currentPlayer === null ? (
+  return currentGame === null ? (
     <div>
       <h1>Create a new game or join an existing one</h1>
       <form onSubmit={handleStartGame}>
@@ -53,74 +60,12 @@ export default function App() {
         <input type="submit" value="Join" disabled={!gameName} />
       </form>
       <div>{Object.values(warnings)}</div>
+      <GamePicker></GamePicker>
     </div>
   ) : (
     <div>
-      <GameBoundary
-        gameId={currentGame}
-        playerId={currentPlayer}
-        addWarning={addWarning}
-      ></GameBoundary>
+      <div>Navigating</div>
       <div>{Object.values(warnings)}</div>
     </div>
   )
-}
-
-function findProset(cards: Document<'PlayingCard'>[]) {
-  for (let i = 1; i <= 128; i += 1) {
-    const selection = []
-    for (let cardIndex = 0; cardIndex < cards.length; cardIndex += 1) {
-      if ((i >> cardIndex) % 2 === 1) {
-        selection.push(cards[cardIndex])
-      }
-    }
-    if (isProset(selection)) {
-      return selection.map((c) => c.rank)
-    }
-  }
-}
-
-function isProset(cards: Document<'PlayingCard'>[]) {
-  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
-  return colors.every((color) => {
-    return cards.reduce(
-      (isEven: boolean, currentCard: Document<'PlayingCard'>) => {
-        if (currentCard[color]) {
-          isEven = !isEven
-        }
-        return isEven
-      },
-      true
-    )
-  })
-}
-
-const GameBoundary = (props: {
-  gameId: Id<'Game'>
-  playerId: Id<'Player'>
-  addWarning: (warning: string, expirationMs?: number) => void
-}) => {
-  const gameInfo = useQuery('getGameInfo', props.gameId)
-
-  const { results, status, loadMore } = usePaginatedQuery(
-    'dealCards',
-    {
-      initialNumItems: 7,
-    },
-    props.gameId
-  )
-  if (gameInfo === undefined || status === 'LoadingMore') {
-    return <div>Loading</div>
-  } else {
-    if (results.length < 7 && status === 'CanLoadMore') {
-      loadMore(7 - results.length)
-    }
-    return (
-      <Game
-        gameInfo={gameInfo}
-        cards={results}
-        addWarning={props.addWarning}
-      ></Game>
-    )
-  }
 }

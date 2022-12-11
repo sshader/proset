@@ -6,12 +6,12 @@ export default query(
   async (
     { db },
     opts: PaginationOptions,
-    game: Id<'Game'>
+    gameId: Id<'Game'>
   ): Promise<PaginationResult<Document<'PlayingCard'>>> => {
     return await db
       .query('PlayingCard')
       .withIndex('ByGameAndProsetAndRank', (q) =>
-        q.eq('game', game).eq('proset', null)
+        q.eq('game', gameId).eq('proset', null)
       )
       .paginate(opts)
   }

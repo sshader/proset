@@ -23,8 +23,8 @@ export default defineSchema({
     ),
     isSystemPlayer: s.boolean(),
   })
-    .index('ByGameAndToken', ['game', 'tokenIdentifier'])
-    .index('ByGameAndSystemPlayer', ['game', 'isSystemPlayer']),
+    .index('ByGame', ['game', 'tokenIdentifier'])
+    .index('ByToken', ['tokenIdentifier']),
 
   PlayingCard: defineTable({
     red: s.boolean(),
@@ -44,6 +44,12 @@ export default defineSchema({
   Proset: defineTable({
     player: s.id('Player'),
   }).index('ByPlayer', ['player']),
+
+  Message: defineTable({
+    content: s.string(),
+    game: s.id('Game'),
+    player: s.union(s.id('Player'), s.null()),
+  }).index('ByGameAndCreationTime', ['game']),
 })
 
 export const PLAYER_COLORS = [

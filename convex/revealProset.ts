@@ -1,13 +1,9 @@
+import { getSystemPlayer } from './getPlayer'
 import { Id, Document } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
 export default mutation(async ({ db }, gameId: Id<'Game'>) => {
-  const player = await db
-    .query('Player')
-    .withIndex('ByGameAndSystemPlayer', (q) =>
-      q.eq('game', gameId).eq('isSystemPlayer', true)
-    )
-    .unique()
+  const player = await getSystemPlayer(db, gameId)
 
   const cards = await db
     .query('PlayingCard')

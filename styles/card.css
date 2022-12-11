@@ -1,0 +1,49 @@
+.Card--selected {
+  filter: drop-shadow(0 0 10px blue);
+}
+
+.Card--taken {
+  filter: drop-shadow(0 0 10px grey);
+}
+
+.Card--unselected {
+  border: 2px solid black;
+}
+
+.Card--mini {
+  width: 60px;
+  height: 90px;
+}
+
+.Card--regular {
+  width: 100px;
+  height: 150px;
+}
+
+.Card {
+  flex: 0 0 auto;
+  border-radius: 1em;
+  margin: 2em;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.Card-row {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 1px;
+}
+
+.Card-dotContainer {
+  border-radius: 50%;
+  padding: 7%;
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.Card-dot {
+  border-radius: 50%;
+  min-height: 0.5em;
+  flex: 1 1 auto;
+}

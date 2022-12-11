@@ -31,7 +31,6 @@ export default mutation(async ({ db }, name: string) => {
   shuffleArray(cardNumbers)
 
   cardNumbers.forEach((cardNumber, cardIndex) => {
-    cardNumber += 1
     db.insert('PlayingCard', {
       game: gameId,
       rank: cardIndex,
