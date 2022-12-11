@@ -14,18 +14,6 @@ export default function App() {
   const [currentGame, setCurrentGame] = useState<Id<'Game'> | null>(null)
   const [warnings, setWarnings] = useState<Record<string, string>>({})
 
-  const addWarning = (warning: string, expirationMs: number = 10000) => {
-    const warningId = crypto.randomUUID()
-    setWarnings({
-      ...warnings,
-      warningId: warning,
-    })
-    setTimeout(() => {
-      delete warnings[warningId]
-      setWarnings(warnings)
-    }, expirationMs)
-  }
-
   const startGame = useMutation('startGame')
   const joinGame = useMutation('joinGame')
 
@@ -50,7 +38,8 @@ export default function App() {
 
   return currentGame === null ? (
     <div>
-      <h1>Create a new game or join an existing one</h1>
+      <GamePicker></GamePicker>
+      <h1>Create a new game</h1>
       <form onSubmit={handleStartGame}>
         <input
           value={gameName}
@@ -59,13 +48,8 @@ export default function App() {
         />
         <input type="submit" value="Join" disabled={!gameName} />
       </form>
-      <div>{Object.values(warnings)}</div>
-      <GamePicker></GamePicker>
     </div>
   ) : (
-    <div>
-      <div>Navigating</div>
-      <div>{Object.values(warnings)}</div>
-    </div>
+    <div>Navigating...</div>
   )
 }

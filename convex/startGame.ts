@@ -1,14 +1,6 @@
 import { mutation } from './_generated/server'
 
 export default mutation(async ({ db }, name: string) => {
-  const existingGame = await db
-    .query('Game')
-    .filter((q) => q.eq(q.field('name'), name))
-    .first()
-  if (existingGame !== null) {
-    return { state: 'ExistingGame', gameId: existingGame._id }
-  }
-
   const gameId = await db.insert('Game', {
     name,
     selectingPlayer: null,
