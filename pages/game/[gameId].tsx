@@ -3,11 +3,37 @@ import React, { useState } from 'react'
 import Game from '../../components/game'
 import MessageViewer from '../../components/message_viewer'
 import { Id } from '../../convex/_generated/dataModel'
-import { usePaginatedQuery, useQuery } from '../../convex/_generated/react'
+import {
+  useMutation,
+  usePaginatedQuery,
+  useQuery,
+} from '../../convex/_generated/react'
 
-const GameBoundary = (props: {}) => {
+const GameBoundary = () => {
   const router = useRouter()
-  const gameId = new Id('Game', router.query.gameId as string)
+  console.log('##### router', router)
+  const gameIdStr: string | undefined = router.query.gameId as
+    | string
+    | undefined
+  const joinGame = useMutation('joinGame')
+  const [ready, setReady] = useState(false)
+  if (gameIdStr === undefined) {
+    return <div>Loading...</div>
+  }
+  const gameId = new Id('Game', gameIdStr)
+
+  joinGame(gameId).then(() => {
+    setReady(true)
+  })
+  if (ready) {
+    return <InnerGameBoundary gameId={gameId}></InnerGameBoundary>
+  } else {
+    return <div>Loading...</div>
+  }
+}
+
+const InnerGameBoundary = (props: { gameId: Id<'Game'> }) => {
+  const gameId = props.gameId
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
   const gameInfo = useQuery('getGameInfo', gameId)
   if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {

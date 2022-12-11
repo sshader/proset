@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 export default function App() {
   const [gameName, setGameName] = useState('')
   const [currentGame, setCurrentGame] = useState<Id<'Game'> | null>(null)
-  const [warnings, setWarnings] = useState<Record<string, string>>({})
 
   const startGame = useMutation('startGame')
   const joinGame = useMutation('joinGame')
