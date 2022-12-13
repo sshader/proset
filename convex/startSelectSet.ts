@@ -11,7 +11,7 @@ export default mutation(async ({ db, auth }, gameId: Id<'Game'>) => {
       selectedBy: game.selectingPlayer,
     }
   }
-  db.patch(game._id, {
+  await db.patch(game._id, {
     selectingPlayer: player._id,
     selectionStartTime: Date.now(),
   })

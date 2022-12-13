@@ -4,5 +4,5 @@ export const PLAYER_COLORS = [
   'yellow',
   'green',
   'blue',
-  'purple',
+  'purple'
 ] as const

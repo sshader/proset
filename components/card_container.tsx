@@ -3,14 +3,15 @@ import { useMutation } from '../convex/_generated/react'
 import { GameInfo } from '../types/game_info'
 import PlayingCard from './playing_card'
 
-const CardContainer = (props: {
+const CardContainer = ({
+  gameInfo,
+  cards,
+  onProsetFound,
+}: {
   gameInfo: GameInfo
-  cards: Document<'PlayingCard'>[]
+  cards: Array<Document<'PlayingCard'>>
   onProsetFound: () => void
 }) => {
-  console.log(props.gameInfo)
-  const { gameInfo, cards } = props
-
   const selectCard = useMutation('selectCard')
   const unselectCard = useMutation('unselectCard')
 
@@ -36,10 +37,10 @@ const CardContainer = (props: {
     if (card.selectedBy === null) {
       const selectionResult = await selectCard(card._id)
       if (selectionResult === 'FoundProset') {
-        props.onProsetFound()
+        onProsetFound()
       }
     } else {
-      unselectCard(card._id)
+      await unselectCard(card._id)
     }
   }
 
@@ -62,9 +63,10 @@ const CardContainer = (props: {
         return (
           <div key={card._id.toString()}>
             <PlayingCard
-              selectionColor={card.selectedBy ? selectionColor : null}
+              selectionColor={card.selectedBy != null ? selectionColor : null}
               card={card}
               size="regular"
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onClick={gameSelectionState === 'selecting' ? onClick : () => {}}
             />
           </div>

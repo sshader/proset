@@ -5,7 +5,7 @@ export default defineSchema({
     name: s.string(),
     selectingPlayer: s.union(s.null(), s.id('Player')),
     selectionStartTime: s.union(s.null(), s.number()),
-    inProgress: s.boolean(),
+    inProgress: s.boolean()
   }),
 
   Player: defineTable({
@@ -22,7 +22,7 @@ export default defineSchema({
       s.literal('purple'),
       s.literal('grey')
     ),
-    isSystemPlayer: s.boolean(),
+    isSystemPlayer: s.boolean()
   })
     .index('ByGame', ['game', 'tokenIdentifier'])
     .index('ByToken', ['tokenIdentifier']),
@@ -37,18 +37,18 @@ export default defineSchema({
     game: s.id('Game'),
     rank: s.number(),
     proset: s.union(s.null(), s.id('Proset')),
-    selectedBy: s.union(s.null(), s.id('Player')),
+    selectedBy: s.union(s.null(), s.id('Player'))
   })
     .index('ByGameAndProsetAndRank', ['game', 'proset', 'rank'])
     .index('ByGameAndProsetAndSelectedBy', ['game', 'proset', 'selectedBy']),
 
   Proset: defineTable({
-    player: s.id('Player'),
+    player: s.id('Player')
   }).index('ByPlayer', ['player']),
 
   Message: defineTable({
     content: s.string(),
     game: s.id('Game'),
-    player: s.union(s.id('Player'), s.null()),
-  }).index('ByGameAndCreationTime', ['game']),
+    player: s.union(s.id('Player'), s.null())
+  }).index('ByGameAndCreationTime', ['game'])
 })

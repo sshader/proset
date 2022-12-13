@@ -1,21 +1,21 @@
 import { Document } from '../convex/_generated/dataModel'
 import Card from './card'
 
-const PlayingCard = (props: {
+const PlayingCard = ({
+  card,
+  selectionColor,
+  size,
+  onClick,
+}: {
   card: Document<'PlayingCard'>
   selectionColor: string | null
   size: 'regular' | 'mini'
   onClick: (card: Document<'PlayingCard'>) => void
 }) => {
-  const { card } = props
-  console.log('selectionColor', props.selectionColor)
+  console.log('selectionColor', selectionColor)
   return (
-    <div onClick={() => props.onClick(card)}>
-      <Card
-        card={card}
-        selectionColor={props.selectionColor}
-        size={props.size}
-      ></Card>
+    <div onClick={() => onClick(card)}>
+      <Card card={card} selectionColor={selectionColor} size={size}></Card>
     </div>
   )
 }

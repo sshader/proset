@@ -21,9 +21,13 @@ const GameBoundary = () => {
   }
   const gameId = new Id('Game', gameIdStr)
 
-  joinGame(gameId).then(() => {
-    setReady(true)
-  })
+  joinGame(gameId)
+    .then(() => {
+      setReady(true)
+    })
+    .catch((e) => {
+      throw e
+    })
   if (ready) {
     return <InnerGameBoundary gameId={gameId}></InnerGameBoundary>
   } else {
@@ -31,8 +35,7 @@ const GameBoundary = () => {
   }
 }
 
-const InnerGameBoundary = (props: { gameId: Id<'Game'> }) => {
-  const gameId = props.gameId
+const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
   const gameInfo = useQuery('getGameInfo', gameId)
   if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {
@@ -65,7 +68,7 @@ const InnerGameBoundary = (props: { gameId: Id<'Game'> }) => {
             <button
               onClick={async () => {
                 await endGame(gameId)
-                router.push('/')
+                await router.push('/')
               }}
             >
               Out of cards! -- End Game

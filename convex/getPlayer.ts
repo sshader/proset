@@ -8,7 +8,7 @@ export const getPlayer = async (
   gameId: Id<'Game'>
 ) => {
   const identity = await auth.getUserIdentity()
-  if (!identity) {
+  if (identity == null) {
     throw new Error('Called storeUser without authentication present')
   }
   const player = await db

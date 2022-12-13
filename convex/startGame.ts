@@ -8,7 +8,7 @@ export default mutation(async ({ db }, name: string) => {
     inProgress: true,
   })
 
-  db.insert('Player', {
+  await db.insert('Player', {
     name: 'System Player',
     game: gameId,
     tokenIdentifier: '',
@@ -23,29 +23,31 @@ export default mutation(async ({ db }, name: string) => {
   }
   shuffleArray(cardNumbers)
 
-  cardNumbers.forEach((cardNumber, cardIndex) => {
-    db.insert('PlayingCard', {
-      game: gameId,
-      rank: cardIndex,
-      proset: null,
-      red: cardNumber % 2 === 1,
-      orange: (cardNumber >> 1) % 2 === 1,
-      yellow: (cardNumber >> 2) % 2 === 1,
-      green: (cardNumber >> 3) % 2 === 1,
-      blue: (cardNumber >> 4) % 2 === 1,
-      purple: (cardNumber >> 5) % 2 === 1,
-      selectedBy: null,
+  await Promise.all(
+    cardNumbers.map((cardNumber, cardIndex) => {
+      return db.insert('PlayingCard', {
+        game: gameId,
+        rank: cardIndex,
+        proset: null,
+        red: cardNumber % 2 === 1,
+        orange: (cardNumber >> 1) % 2 === 1,
+        yellow: (cardNumber >> 2) % 2 === 1,
+        green: (cardNumber >> 3) % 2 === 1,
+        blue: (cardNumber >> 4) % 2 === 1,
+        purple: (cardNumber >> 5) % 2 === 1,
+        selectedBy: null,
+      })
     })
-  })
+  )
 
   return { state: 'NewGame', gameId }
 })
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */
-function shuffleArray(array: Array<any>) {
-  for (var i = array.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1))
-    var temp = array[i]
+function shuffleArray(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = array[i]
     array[i] = array[j]
     array[j] = temp
   }

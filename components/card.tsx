@@ -1,7 +1,7 @@
 const Card = ({
   card,
   selectionColor = null,
-  size = 'regular',
+  size = 'regular'
 }: {
   card: {
     red: boolean
@@ -22,7 +22,7 @@ const Card = ({
           <div
             className="Card-dot"
             style={{
-              backgroundColor: card.red ? 'red' : 'inherit',
+              backgroundColor: card.red ? 'red' : 'inherit'
             }}
           ></div>
         </div>
@@ -30,25 +30,7 @@ const Card = ({
           <div
             className="Card-dot"
             style={{
-              backgroundColor: card.orange ? 'orange' : 'inherit',
-            }}
-          ></div>
-        </div>
-      </div>
-      <div className="Card-row">
-        <div className="Card-dotContainer">
-          <div
-            className="Card-dot"
-            style={{
-              backgroundColor: card.yellow ? '#f5e653' : 'inherit',
-            }}
-          ></div>
-        </div>
-        <div className="Card-dotContainer">
-          <div
-            className="Card-dot"
-            style={{
-              backgroundColor: card.green ? 'green' : 'inherit',
+              backgroundColor: card.orange ? 'orange' : 'inherit'
             }}
           ></div>
         </div>
@@ -58,7 +40,7 @@ const Card = ({
           <div
             className="Card-dot"
             style={{
-              backgroundColor: card.blue ? 'blue' : 'inherit',
+              backgroundColor: card.yellow ? '#f5e653' : 'inherit'
             }}
           ></div>
         </div>
@@ -66,7 +48,25 @@ const Card = ({
           <div
             className="Card-dot"
             style={{
-              backgroundColor: card.purple ? 'purple' : 'inherit',
+              backgroundColor: card.green ? 'green' : 'inherit'
+            }}
+          ></div>
+        </div>
+      </div>
+      <div className="Card-row">
+        <div className="Card-dotContainer">
+          <div
+            className="Card-dot"
+            style={{
+              backgroundColor: card.blue ? 'blue' : 'inherit'
+            }}
+          ></div>
+        </div>
+        <div className="Card-dotContainer">
+          <div
+            className="Card-dot"
+            style={{
+              backgroundColor: card.purple ? 'purple' : 'inherit'
             }}
           ></div>
         </div>

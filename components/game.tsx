@@ -7,9 +7,9 @@ import CardContainer from './card_container'
 import { PlayerInfo } from './PlayerInfo'
 import Timer from './timer'
 
-function GameInfo(props: { gameInfo: GameInfo }) {
+function GameInfo({ gameInfo }: { gameInfo: GameInfo }) {
   const otherPlayers =
-    props.gameInfo.otherPlayers.length === 0 ? (
+    gameInfo.otherPlayers.length === 0 ? (
       <div style={{ margin: 10 }}>Other Players: None</div>
     ) : (
       <div
@@ -21,13 +21,11 @@ function GameInfo(props: { gameInfo: GameInfo }) {
         <div style={{ margin: 10, display: 'flex', alignItems: 'start' }}>
           Other Players:
         </div>
-        {props.gameInfo.otherPlayers.map((otherPlayer) => {
+        {gameInfo.otherPlayers.map((otherPlayer) => {
           return (
             <PlayerInfo
               player={otherPlayer}
-              prosets={
-                props.gameInfo.playerToProsets[`id_${otherPlayer._id.id}`]
-              }
+              prosets={gameInfo.playerToProsets[`id_${otherPlayer._id.id}`]}
             ></PlayerInfo>
           )
         })}
@@ -43,14 +41,12 @@ function GameInfo(props: { gameInfo: GameInfo }) {
         }}
       >
         <div style={{ margin: 10 }}>Proset</div>
-        <div style={{ margin: 10 }}>Game {props.gameInfo.game.name}</div>
+        <div style={{ margin: 10 }}>Game {gameInfo.game.name}</div>
         <div style={{ margin: 10, display: 'flex' }}>You:&nbsp;</div>
         <PlayerInfo
-          player={props.gameInfo.currentPlayer}
+          player={gameInfo.currentPlayer}
           prosets={
-            props.gameInfo.playerToProsets[
-              `id_${props.gameInfo.currentPlayer._id.id}`
-            ]
+            gameInfo.playerToProsets[`id_${gameInfo.currentPlayer._id.id}`]
           }
         />
       </div>
@@ -61,7 +57,7 @@ function GameInfo(props: { gameInfo: GameInfo }) {
 
 const Game = (props: {
   gameInfo: GameInfo
-  cards: Document<'PlayingCard'>[]
+  cards: Array<Document<'PlayingCard'>>
 }) => {
   const { gameInfo, cards } = props
   const { game, currentPlayer } = gameInfo
@@ -88,28 +84,28 @@ const Game = (props: {
       )
     }
   )
-  const sendMessage = (content: string, isPrivate = true) => {
-    addMessage(game._id, content, isPrivate)
+  const sendMessage = async (content: string, isPrivate = true) => {
+    await addMessage(game._id, content, isPrivate)
   }
 
   const revealProset = useMutation('revealProset')
   const discardRevealedProset = useMutation('discardRevealedProset')
 
-  setInterval(() => {
+  setInterval(async () => {
     if (game.selectingPlayer !== null) {
-      clearSelectSet(game._id)
+      await clearSelectSet(game._id)
     }
   }, 10 * 1000)
 
   const handleStartSelectSet = async () => {
     const selectResponse = await startSelectSet(game._id)
     if (selectResponse !== null) {
-      sendMessage(selectResponse.reason)
+      await sendMessage(selectResponse.reason)
       return
     }
-    const timeout = window.setTimeout(() => {
-      sendMessage('🐌 Too slow! Deducting a point.')
-      clearSelectSet(game._id)
+    const timeout = window.setTimeout(async () => {
+      await sendMessage('🐌 Too slow! Deducting a point.')
+      await clearSelectSet(game._id)
     }, 20 * 1000)
     setSelectionTimeout(timeout)
   }
@@ -126,16 +122,19 @@ const Game = (props: {
   )
 
   const handleRevealProset = async () => {
-    sendMessage(`👀 Player ${currentPlayer.name} is revealing a set`, false)
+    await sendMessage(
+      `👀 Player ${currentPlayer.name} is revealing a set`,
+      false
+    )
     const revealedProset = await revealProset(game._id)
-    setTimeout(() => {
-      discardRevealedProset(game._id, revealedProset)
+    setTimeout(async () => {
+      await discardRevealedProset(game._id, revealedProset)
     }, 5 * 1000)
   }
 
-  const onProsetFound = () => {
-    sendMessage('🎉 You found a Proset!')
-    sendMessage(`Player ${currentPlayer.name} found a Proset!`, false)
+  const onProsetFound = async () => {
+    await sendMessage('🎉 You found a Proset!')
+    await sendMessage(`Player ${currentPlayer.name} found a Proset!`, false)
     if (selectionTimeout) {
       clearTimeout(selectionTimeout)
     }
@@ -169,10 +168,14 @@ const Game = (props: {
   )
 }
 
-export const Proset = (props: { cards: Document<'PlayingCard'>[] }) => {
+export const Proset = ({
+  cards,
+}: {
+  cards: Array<Document<'PlayingCard'>>
+}) => {
   return (
     <div style={{ display: 'flex' }}>
-      {props.cards.map((card) => {
+      {cards.map((card) => {
         return <Card card={card} size="mini"></Card>
       })}
     </div>

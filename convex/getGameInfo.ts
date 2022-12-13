@@ -10,7 +10,7 @@ export default query(async ({ db, auth }, gameId: Id<'Game'>) => {
     .withIndex('ByGame', (q) => q.eq('game', gameId))
     .filter((q) => q.eq(q.field('isSystemPlayer'), false))
     .collect()
-  const playerToProsets: Record<string, Document<'PlayingCard'>[][]> = {}
+  const playerToProsets: Record<string, Array<Array<Document<'PlayingCard'>>>> = {}
   for (const player of allPlayers) {
     playerToProsets[`id_${player._id.id}`] = await getProsets(
       db,
@@ -28,14 +28,14 @@ const getProsets = async (
   db: DatabaseReader,
   playerId: Id<'Player'>,
   gameId: Id<'Game'>
-): Promise<Document<'PlayingCard'>[][]> => {
+): Promise<Array<Array<Document<'PlayingCard'>>>> => {
   const prosets = await db
     .query('Proset')
     .withIndex('ByPlayer', (q) => q.eq('player', playerId))
     .collect()
-  return Promise.all(
-    prosets.map((proset) => {
-      return db
+  return await Promise.all(
+    prosets.map(async (proset) => {
+      return await db
         .query('PlayingCard')
         .withIndex('ByGameAndProsetAndRank', (q) =>
           q.eq('game', gameId).eq('proset', proset._id)

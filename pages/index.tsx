@@ -1,15 +1,10 @@
-import React, { FormEvent, useEffect, useState } from 'react'
-import { Document, Id } from '../convex/_generated/dataModel'
-import {
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from '../convex/_generated/react'
-import Game from '../components/game'
-import GamePicker from '../components/game_picker'
 import { useRouter } from 'next/router'
+import { FormEvent, ReactElement, useState } from 'react'
+import GamePicker from '../components/game_picker'
+import { Id } from '../convex/_generated/dataModel'
+import { useMutation } from '../convex/_generated/react'
 
-export default function App() {
+export default async function App(): Promise<ReactElement> {
   const [gameName, setGameName] = useState('')
   const [currentGame, setCurrentGame] = useState<Id<'Game'> | null>(null)
 
@@ -18,7 +13,7 @@ export default function App() {
 
   const router = useRouter()
 
-  async function handleStartGame(event: FormEvent) {
+  async function handleStartGame(event: FormEvent): void {
     event.preventDefault()
     setGameName('')
     const { state, gameId } = await startGame(gameName)
@@ -26,16 +21,20 @@ export default function App() {
       console.log('Joining existing game')
     }
     setCurrentGame(gameId)
-    await joinGame(gameId)
-    router.push({
-      pathname: '/game/[gameId]',
-      query: {
-        gameId: gameId.id,
-      },
-    })
   }
 
-  return currentGame === null ? (
+  if (currentGame !== null) {
+    await joinGame(currentGame)
+    await router.push({
+      pathname: '/game/[gameId]',
+      query: {
+        gameId: currentGame.id,
+      },
+    })
+    return <div>Navigating...</div>
+  }
+
+  return (
     <div>
       <GamePicker></GamePicker>
       <h1>Create a new game</h1>
@@ -45,10 +44,8 @@ export default function App() {
           onChange={(event) => setGameName(event.target.value)}
           placeholder="Game name"
         />
-        <input type="submit" value="Join" disabled={!gameName} />
+        <input type="submit" value="Join" disabled={gameName.length > 0} />
       </form>
     </div>
-  ) : (
-    <div>Navigating...</div>
   )
 }

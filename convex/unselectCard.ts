@@ -9,6 +9,6 @@ export default mutation(async ({ db, auth }, cardId: Id<'PlayingCard'>) => {
     return { reason: 'Not selected by player', selectedBy: card.selectedBy }
   }
   await db.patch(card._id, {
-    selectedBy: null,
+    selectedBy: null
   })
 })

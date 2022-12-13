@@ -9,7 +9,7 @@ export default mutation(async ({ db, auth }, cardId: Id<'PlayingCard'>) => {
     return { reason: 'AlreadySelected', selectedBy: card.selectedBy }
   }
   const player = await getPlayer(db, auth, card.game)
-  db.patch(card._id, {
+  await db.patch(card._id, {
     selectedBy: player._id,
   })
 
@@ -27,20 +27,22 @@ export default mutation(async ({ db, auth }, cardId: Id<'PlayingCard'>) => {
     const prosetId = await db.insert('Proset', {
       player: player._id,
     })
-    currentlySelected.forEach((selectedCard) => {
-      db.patch(selectedCard._id, {
-        proset: prosetId,
+    await Promise.all(
+      currentlySelected.map((selectedCard) => {
+        return db.patch(selectedCard._id, {
+          proset: prosetId,
+        })
       })
-    })
-    clearSelectSet(db, card.game)
-    db.patch(player._id, {
+    )
+    await clearSelectSet(db, card.game)
+    await db.patch(player._id, {
       score: player.score + 1,
     })
     return 'FoundProset'
   }
 })
 
-function isProset(cards: Document<'PlayingCard'>[]) {
+function isProset(cards: Array<Document<'PlayingCard'>>) {
   const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
   return colors.every((color) => {
     return cards.reduce(

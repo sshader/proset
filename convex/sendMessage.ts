@@ -7,13 +7,13 @@ export default mutation(
     { db, auth },
     gameId: Id<'Game'>,
     content: string,
-    isPrivate: boolean = false
+    isPrivate = false
   ) => {
     const player = await getPlayer(db, auth, gameId)
     return await db.insert('Message', {
       game: gameId,
       player: isPrivate ? player._id : null,
-      content,
+      content
     })
   }
 )
