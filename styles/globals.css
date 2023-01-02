@@ -120,7 +120,8 @@ button:disabled {
   flex-wrap: wrap;
   justify-content: center;
   max-width: 700px;
-  margin: auto;
+  margin: 2em auto;
+  gap: 2em;
 }
 
 .CardContainer--available,
@@ -155,6 +156,10 @@ button:disabled {
   flex-direction: column;
 }
 
+.PlayerInfo--current {
+  font-weight: 700;
+}
+
 .PlayerInfo-section {
   border-radius: 5px;
   border: 2px solid;
@@ -167,6 +172,9 @@ button:disabled {
   overflow: auto;
   flex: 1 1 auto;
   min-width: 1px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 :hover.Fill--red {
@@ -178,7 +186,7 @@ button:disabled {
 }
 
 .Dropshadow--red {
-  filter: drop-shadow(0 0 10px var(--red));
+  box-shadow: 0px 0px 10px 10px var(--red);
 }
 
 :hover.Fill--orange {
@@ -190,7 +198,7 @@ button:disabled {
 }
 
 .Dropshadow--orange {
-  filter: drop-shadow(0 0 10px var(--orange));
+  box-shadow: 0px 0px 10px 10px var(--orange);
 }
 
 :hover.Fill--yellow {
@@ -202,7 +210,7 @@ button:disabled {
 }
 
 .Dropshadow--yellow {
-  filter: drop-shadow(0 0 10px var(--yellow));
+  box-shadow: 0px 0px 10px 10px var(--yellow);
 }
 
 :hover.Fill--green {
@@ -214,7 +222,7 @@ button:disabled {
 }
 
 .Dropshadow--green {
-  filter: drop-shadow(0 0 10px var(--green));
+  box-shadow: 0px 0px 10px 10px var(--green);
 }
 
 :hover.Fill--blue {
@@ -226,7 +234,7 @@ button:disabled {
 }
 
 .Dropshadow--blue {
-  filter: drop-shadow(0 0 10px var(--blue));
+  box-shadow: 0px 0px 10px 10px var(--blue);
 }
 
 :hover.Fill--purple {
@@ -238,8 +246,45 @@ button:disabled {
 }
 
 .Dropshadow--purple {
-  filter: drop-shadow(0 0 10px var(--purple));
+  box-shadow: 0px 0px 10px 10px var(--purple);
 }
 .Dropshadow--grey {
-  filter: drop-shadow(0 0 10px black);
+  box-shadow: 0px 0px 10px 10px black;
+}
+
+.Sidebar {
+  max-width: 25%;
+  height: 100%;
+  border-right: 2px solid black;
+  display: flex;
+  justify-content: space-between;
+  background-color: lightgrey;
+}
+
+.Sidebar-content {
+  width: 100%;
+  height: 100%;
+  min-height: 1px;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+
+.GameDetails {
+  width: 100%;
+}
+
+.Game {
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+  overflow: auto;
+  height: 100vh;
+  justify-content: center;
+}
+
+.Container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: auto;
 }

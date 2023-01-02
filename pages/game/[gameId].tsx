@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
-import Game from '../../components/game'
-import MessageViewer from '../../components/message_viewer'
+import { useState } from 'react'
+import Game from '../../components/Game'
+import GameDetails from '../../components/GameDetails'
+import Sidebar from '../../components/Sidebar'
 import { Id } from '../../convex/_generated/dataModel'
 import {
   useMutation,
@@ -49,34 +50,34 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
     },
     gameId
   )
-  const endGame = useMutation('endGame')
-  const router = useRouter()
   if (
     latestKnownGameInfo === undefined ||
     (results.length === 0 && status !== 'Exhausted')
   ) {
     return <div>Loading</div>
+  } else if (results.length === 0 && status === 'Exhausted') {
+    return (
+      <div
+        className="Container"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <div>Game complete! 👏 Summary</div>
+        <GameDetails gameInfo={latestKnownGameInfo} showProsets={true} />
+      </div>
+    )
   } else {
     if (results.length < 7 && status === 'CanLoadMore') {
       loadMore(7 - results.length)
     }
     return (
-      <React.Fragment>
-        <Game gameInfo={latestKnownGameInfo} cards={results}></Game>
-        {status === 'Exhausted' ? (
-          <div style={{ justifyContent: 'center', display: 'flex' }}>
-            <button
-              onClick={async () => {
-                await endGame(gameId)
-                await router.push('/')
-              }}
-            >
-              Out of cards! -- End Game
-            </button>
-          </div>
-        ) : null}
-        <MessageViewer gameId={gameId}></MessageViewer>
-      </React.Fragment>
+      <div className="Container">
+        <Sidebar gameInfo={latestKnownGameInfo} />
+        <Game gameInfo={latestKnownGameInfo} cards={{ results, status }} />
+      </div>
     )
   }
 }

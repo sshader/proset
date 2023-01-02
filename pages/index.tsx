@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
-import GamePicker from '../components/game_picker'
+import GamePicker from '../components/GamePicker'
 import { useMutation } from '../convex/_generated/react'
 
 export default function App() {
@@ -35,7 +35,7 @@ export default function App() {
           onChange={(event) => setGameName(event.target.value)}
           placeholder="Game name"
         />
-        <input type="submit" value="Join" disabled={gameName.length > 0} />
+        <input type="submit" value="Join" disabled={gameName.length === 0} />
       </form>
     </div>
   )

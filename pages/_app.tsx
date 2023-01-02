@@ -2,7 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithAuth0 } from 'convex/react-auth0'
 import type { AppProps } from 'next/app'
-import Card from '../components/card'
+import Card from '../components/Card'
 import convexConfig from '../convex.json'
 import clientConfig from '../convex/_generated/clientConfig'
 import '../styles/globals.css'
@@ -10,7 +10,7 @@ import '../styles/globals.css'
 const convex = new ConvexReactClient(clientConfig)
 const authInfo = convexConfig.authInfo[0]
 
-export function Login () {
+export function Login() {
   const { isLoading, loginWithRedirect } = useAuth0()
   if (isLoading) {
     return <button className="btn btn-primary">Loading...</button>
@@ -47,7 +47,9 @@ const Instructions = () => {
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'wrap',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          gap: 15,
+          margin: 15,
         }}
       >
         <Card
@@ -57,11 +59,10 @@ const Instructions = () => {
             yellow: true,
             green: false,
             blue: true,
-            purple: true
+            purple: true,
           }}
           size="mini"
           selectionColor={null}
-          // selectionState="unselected"
         />
         <Card
           card={{
@@ -70,7 +71,7 @@ const Instructions = () => {
             yellow: false,
             green: false,
             blue: false,
-            purple: false
+            purple: false,
           }}
           size="mini"
           selectionColor="green"
@@ -82,7 +83,7 @@ const Instructions = () => {
             yellow: false,
             green: false,
             blue: false,
-            purple: true
+            purple: true,
           }}
           size="mini"
           selectionColor="green"
@@ -94,7 +95,7 @@ const Instructions = () => {
             yellow: false,
             green: true,
             blue: true,
-            purple: false
+            purple: false,
           }}
           size="mini"
           selectionColor="green"
@@ -106,7 +107,7 @@ const Instructions = () => {
             yellow: true,
             green: true,
             blue: true,
-            purple: true
+            purple: true,
           }}
           size="mini"
           selectionColor={null}
@@ -118,7 +119,7 @@ const Instructions = () => {
             yellow: false,
             green: true,
             blue: true,
-            purple: false
+            purple: false,
           }}
           size="mini"
           selectionColor="green"
@@ -130,7 +131,7 @@ const Instructions = () => {
             yellow: false,
             green: false,
             blue: false,
-            purple: true
+            purple: true,
           }}
           size="mini"
           selectionColor="green"
@@ -149,7 +150,7 @@ const Instructions = () => {
   )
 }
 
-function MyApp ({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ConvexProviderWithAuth0
       client={convex}

@@ -1,43 +1,47 @@
 import { useState } from 'react'
 import { Document } from '../convex/_generated/dataModel'
-import { Proset } from './game'
+import { Proset } from './Game'
 
-export const PlayerInfo = (props: {
+export const PlayerInfo = ({
+  isCurrentPlayer,
+  player,
+  prosets,
+  initialShowProsets = false,
+}: {
+  isCurrentPlayer: boolean
   player: Document<'Player'>
   prosets: Array<Array<Document<'PlayingCard'>>>
+  initialShowProsets?: boolean
 }) => {
-  const [showProsets, setShowProsets] = useState(false)
-  const { player, prosets } = props
+  const [showProsets, setShowProsets] = useState(initialShowProsets)
   const prosetViews =
-    prosets.length == 0
-      ? (
+    prosets.length == 0 ? (
       <div>No prosets yet!</div>
-        )
-      : (
-          prosets.map((cards) => {
-            return <Proset key={cards[0]._id.id} cards={cards}></Proset>
-          })
-        )
+    ) : (
+      prosets.map((cards) => {
+        return <Proset key={cards[0]._id.id} cards={cards}></Proset>
+      })
+    )
 
   return (
-    <div className={'PlayerInfo'}>
+    <div
+      className={`PlayerInfo ${isCurrentPlayer ? 'PlayerInfo--current' : ''}`}
+    >
       <span
         className={`PlayerInfo-section Fill--${player.color} Border--${player.color}`}
         onClick={() => {
           setShowProsets(!showProsets)
         }}
       >
-        {player.name}, Score {player.score}
+        {isCurrentPlayer ? '(You)' : ''} {player.name}, Score {player.score}
       </span>
-      {showProsets
-        ? (
+      {showProsets ? (
         <div
           className={`PlayerInfo-section PlayerInfo-prosets Border--${player.color}`}
         >
           {prosetViews}
         </div>
-          )
-        : null}
+      ) : null}
     </div>
   )
 }

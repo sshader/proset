@@ -1,25 +1,17 @@
-.Card--selected {
-  filter: drop-shadow(0 0 10px blue);
-}
-
-.Card--taken {
-  filter: drop-shadow(0 0 10px grey);
-}
-
 .Card--mini {
-  width: 60px;
-  height: 90px;
+  width: 3em;
+  height: 4.5em;
+  border-radius: 0.5em;
 }
 
 .Card--regular {
-  width: 100px;
-  height: 150px;
+  width: 6em;
+  height: 9em;
+  border-radius: 1em;
 }
 
 .Card {
   flex: 0 0 auto;
-  border-radius: 1em;
-  margin: 2em;
   background-color: white;
   display: flex;
   flex-direction: column;

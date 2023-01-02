@@ -5,7 +5,7 @@ const MessageViewer = ({ gameId }: { gameId: Id<'Game'> }) => {
   const messages = useQuery('getRecentMessages', gameId)
   if (messages != null) {
     return (
-      <ul style={{ position: 'fixed', bottom: 0, right: 0 }}>
+      <ul style={{ maxHeight: 200, overflowY: 'scroll' }}>
         {messages.map((message) => (
           <li style={{ color: message.player === null ? 'black' : 'blue' }}>
             {message.content}
