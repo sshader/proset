@@ -1,6 +1,6 @@
-import { DatabaseReader, query } from './_generated/server'
-import { Document, Id } from './_generated/dataModel'
 import { getPlayer } from './getPlayer'
+import { Document, Id } from './_generated/dataModel'
+import { DatabaseReader, query } from './_generated/server'
 
 export default query(async ({ db, auth }, gameId: Id<'Game'>) => {
   const game = (await db.get(gameId))!
@@ -10,13 +10,10 @@ export default query(async ({ db, auth }, gameId: Id<'Game'>) => {
     .withIndex('ByGame', (q) => q.eq('game', gameId))
     .filter((q) => q.eq(q.field('isSystemPlayer'), false))
     .collect()
-  const playerToProsets: Record<string, Array<Array<Document<'PlayingCard'>>>> = {}
+  const playerToProsets: Map<string, Document<'PlayingCard'>[][]> = new Map()
   for (const player of allPlayers) {
-    playerToProsets[`id_${player._id.id}`] = await getProsets(
-      db,
-      player._id,
-      gameId
-    )
+    const prosets = await getProsets(db, player._id, gameId)
+    playerToProsets.set(player._id.id, prosets)
   }
   const otherPlayers = allPlayers.filter(
     (p) => !p._id.equals(currentPlayer._id)

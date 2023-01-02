@@ -25,7 +25,7 @@ function GameInfo({ gameInfo }: { gameInfo: GameInfo }) {
           return (
             <PlayerInfo
               player={otherPlayer}
-              prosets={gameInfo.playerToProsets[`id_${otherPlayer._id.id}`]}
+              prosets={gameInfo.playerToProsets.get(otherPlayer._id.id) ?? [[]]}
             ></PlayerInfo>
           )
         })}
@@ -46,7 +46,7 @@ function GameInfo({ gameInfo }: { gameInfo: GameInfo }) {
         <PlayerInfo
           player={gameInfo.currentPlayer}
           prosets={
-            gameInfo.playerToProsets[`id_${gameInfo.currentPlayer._id.id}`]
+            gameInfo.playerToProsets.get(gameInfo.currentPlayer._id.id) ?? [[]]
           }
         />
       </div>

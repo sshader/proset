@@ -1,34 +1,25 @@
 import { useRouter } from 'next/router'
-import { FormEvent, ReactElement, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import GamePicker from '../components/game_picker'
-import { Id } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 
-export default async function App(): Promise<ReactElement> {
+export default function App() {
   const [gameName, setGameName] = useState('')
-  const [currentGame, setCurrentGame] = useState<Id<'Game'> | null>(null)
 
   const startGame = useMutation('startGame')
   const joinGame = useMutation('joinGame')
 
   const router = useRouter()
 
-  async function handleStartGame(event: FormEvent): void {
+  async function handleStartGame(event: FormEvent) {
     event.preventDefault()
     setGameName('')
-    const { state, gameId } = await startGame(gameName)
-    if (state === 'ExistingGame') {
-      console.log('Joining existing game')
-    }
-    setCurrentGame(gameId)
-  }
-
-  if (currentGame !== null) {
-    await joinGame(currentGame)
+    const { gameId } = await startGame(gameName)
+    await joinGame(gameId)
     await router.push({
       pathname: '/game/[gameId]',
       query: {
-        gameId: currentGame.id,
+        gameId: gameId.id,
       },
     })
     return <div>Navigating...</div>

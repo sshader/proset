@@ -5,7 +5,7 @@
     "build": "tsc && next build",
     "init": "convex init",
     "dev:server": "convex dev",
-    "dev:client": "next dev",
+    "dev:client": "tsc && next dev",
     "dev:init": "convex dev --once",
     "start": "next start"
   },

@@ -31,7 +31,6 @@ const CardContainer = ({
       ? gameInfo.currentPlayer.color
       : gameInfo.otherPlayers.find((p) => p._id.equals(selectingPlayerId))
           ?.color ?? 'grey'
-  console.log(selectionColor, selectingPlayerId)
 
   const onClick = async (card: Document<'PlayingCard'>) => {
     if (card.selectedBy === null) {
