@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Document } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 import { useSendMessage } from '../optimistic_updates/add_message'
@@ -27,11 +27,14 @@ const Game = (props: {
   const revealProset = useMutation('revealProset')
   const discardRevealedProset = useMutation('discardRevealedProset')
 
-  setInterval(async () => {
-    if (game.selectingPlayer !== null) {
-      await clearSelectSet(game._id)
-    }
-  }, 10 * 1000)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (game.selectingPlayer !== null) {
+        await clearSelectSet(game._id)
+      }
+    }, 10 * 1000)
+    return () => clearInterval(interval)
+  })
 
   const handleStartSelectSet = async () => {
     const selectResponse = await startSelectSet(game._id)
