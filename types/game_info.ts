@@ -1,7 +1,7 @@
-import { Document } from '../convex/_generated/dataModel'
+import { Doc } from '../convex/_generated/dataModel'
 export interface GameInfo {
-  game: Document<'Game'>
-  currentPlayer: Document<'Player'>
-  otherPlayers: Document<'Player'>[]
-  playerToProsets: Map<string, Document<'PlayingCard'>[][]>
+  game: Doc<'Game'>
+  currentPlayer: Doc<'Player'>
+  otherPlayers: Doc<'Player'>[]
+  playerToProsets: Map<string, Doc<'PlayingCard'>[][]>
 }

@@ -21,7 +21,10 @@ export function Login() {
         <h1 className="text-center">Proset</h1>
         <div className="text-center">
           <span>
-            <button className="btn btn-primary" onClick={loginWithRedirect}>
+            <button
+              className="btn btn-primary"
+              onClick={void loginWithRedirect}
+            >
               Log in
             </button>
           </span>

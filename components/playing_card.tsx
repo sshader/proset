@@ -1,4 +1,4 @@
-import { Document } from '../convex/_generated/dataModel'
+import { Doc } from '../convex/_generated/dataModel'
 import Card from './Card'
 
 const PlayingCard = ({
@@ -7,10 +7,10 @@ const PlayingCard = ({
   size,
   onClick,
 }: {
-  card: Document<'PlayingCard'>
+  card: Doc<'PlayingCard'>
   selectionColor: string | null
   size: 'regular' | 'mini'
-  onClick: (card: Document<'PlayingCard'>) => void
+  onClick: (card: Doc<'PlayingCard'>) => void
 }) => {
   return (
     <div onClick={() => onClick(card)}>

@@ -1,4 +1,4 @@
-import { Document } from '../convex/_generated/dataModel'
+import { Doc } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 import { GameInfo } from '../types/game_info'
 import PlayingCard from './playing_card'
@@ -9,7 +9,7 @@ const CardContainer = ({
   onProsetFound,
 }: {
   gameInfo: GameInfo
-  cards: Array<Document<'PlayingCard'>>
+  cards: Array<Doc<'PlayingCard'>>
   onProsetFound: () => void
 }) => {
   const selectCard = useMutation('selectCard')
@@ -32,7 +32,7 @@ const CardContainer = ({
       : gameInfo.otherPlayers.find((p) => p._id.equals(selectingPlayerId))
           ?.color ?? 'grey'
 
-  const onClick = async (card: Document<'PlayingCard'>) => {
+  const onClick = async (card: Doc<'PlayingCard'>) => {
     if (card.selectedBy === null) {
       const selectionResult = await selectCard(card._id)
       if (selectionResult === 'FoundProset') {

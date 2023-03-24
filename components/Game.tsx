@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Document } from '../convex/_generated/dataModel'
+import { Doc } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 import { useSendMessage } from '../optimistic_updates/add_message'
 import { GameInfo } from '../types/game_info'
@@ -11,7 +11,7 @@ import Timer from './Timer'
 const Game = (props: {
   gameInfo: GameInfo
   cards: {
-    results: Array<Document<'PlayingCard'>>
+    results: Array<Doc<'PlayingCard'>>
     status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore'
   }
 }) => {
@@ -107,11 +107,7 @@ const Game = (props: {
   )
 }
 
-export const Proset = ({
-  cards,
-}: {
-  cards: Array<Document<'PlayingCard'>>
-}) => {
+export const Proset = ({ cards }: { cards: Array<Doc<'PlayingCard'>> }) => {
   return (
     <div style={{ display: 'flex', gap: 10 }}>
       {cards.map((card) => {

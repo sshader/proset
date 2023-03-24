@@ -1,6 +1,6 @@
 import { getPlayer } from './getPlayer'
 import { clearSelectSet } from './maybeClearSelectSet'
-import { Document, Id } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
 export default mutation(async ({ db, auth }, cardId: Id<'PlayingCard'>) => {
@@ -42,17 +42,14 @@ export default mutation(async ({ db, auth }, cardId: Id<'PlayingCard'>) => {
   }
 })
 
-function isProset(cards: Array<Document<'PlayingCard'>>) {
+function isProset(cards: Array<Doc<'PlayingCard'>>) {
   const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
   return colors.every((color) => {
-    return cards.reduce(
-      (isEven: boolean, currentCard: Document<'PlayingCard'>) => {
-        if (currentCard[color]) {
-          isEven = !isEven
-        }
-        return isEven
-      },
-      true
-    )
+    return cards.reduce((isEven: boolean, currentCard: Doc<'PlayingCard'>) => {
+      if (currentCard[color]) {
+        isEven = !isEven
+      }
+      return isEven
+    }, true)
   })
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Document } from '../convex/_generated/dataModel'
+import { Doc } from '../convex/_generated/dataModel'
 import { Proset } from './Game'
 
 export const PlayerInfo = ({
@@ -9,8 +9,8 @@ export const PlayerInfo = ({
   initialShowProsets = false,
 }: {
   isCurrentPlayer: boolean
-  player: Document<'Player'>
-  prosets: Array<Array<Document<'PlayingCard'>>>
+  player: Doc<'Player'>
+  prosets: Array<Array<Doc<'PlayingCard'>>>
   initialShowProsets?: boolean
 }) => {
   const [showProsets, setShowProsets] = useState(initialShowProsets)

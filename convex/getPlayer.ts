@@ -1,5 +1,5 @@
 import { Auth } from 'convex/server'
-import { Document, Id } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 import { DatabaseReader } from './_generated/server'
 
 export const getPlayer = async (
@@ -25,7 +25,7 @@ export const getPlayer = async (
 export const getSystemPlayer = async (
   db: DatabaseReader,
   gameId: Id<'Game'>
-): Promise<Document<'Player'>> => {
+): Promise<Doc<'Player'>> => {
   const player = await db
     .query('Player')
     .withIndex('ByGame', (q) => q.eq('game', gameId))

@@ -1,4 +1,4 @@
-import { Document } from '../_generated/dataModel'
+import { Doc } from '../_generated/dataModel'
 import { DatabaseReader, query } from '../_generated/server'
 
 export default query(async ({ db, auth }) => {
@@ -18,10 +18,7 @@ const getAllGames = async (db: DatabaseReader) => {
   return await getGamesInfo(db, games)
 }
 
-const getGamesInfo = async (
-  db: DatabaseReader,
-  games: Array<Document<'Game'>>
-) => {
+const getGamesInfo = async (db: DatabaseReader, games: Array<Doc<'Game'>>) => {
   return await Promise.all(
     games.map(async (game) => {
       const players = await db

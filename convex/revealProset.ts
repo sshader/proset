@@ -1,5 +1,5 @@
 import { getSystemPlayer } from './getPlayer'
-import { Document, Id } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
 export default mutation(async ({ db, scheduler }, gameId: Id<'Game'>) => {
@@ -28,7 +28,7 @@ export default mutation(async ({ db, scheduler }, gameId: Id<'Game'>) => {
   return prosetCards!.map((card) => card._id)
 })
 
-function findProset(cards: Array<Document<'PlayingCard'>>) {
+function findProset(cards: Array<Doc<'PlayingCard'>>) {
   for (let i = 1; i <= 128; i += 1) {
     const selection = []
     for (let cardIndex = 0; cardIndex < cards.length; cardIndex += 1) {
@@ -42,17 +42,14 @@ function findProset(cards: Array<Document<'PlayingCard'>>) {
   }
 }
 
-function isProset(cards: Array<Document<'PlayingCard'>>) {
+function isProset(cards: Array<Doc<'PlayingCard'>>) {
   const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
   return colors.every((color) => {
-    return cards.reduce(
-      (isEven: boolean, currentCard: Document<'PlayingCard'>) => {
-        if (currentCard[color]) {
-          isEven = !isEven
-        }
-        return isEven
-      },
-      true
-    )
+    return cards.reduce((isEven: boolean, currentCard: Doc<'PlayingCard'>) => {
+      if (currentCard[color]) {
+        isEven = !isEven
+      }
+      return isEven
+    }, true)
   })
 }
