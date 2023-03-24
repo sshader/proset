@@ -16,13 +16,11 @@ const GamePicker = () => {
   return (
     <React.Fragment>
       <h1>Your ongoing games:</h1>
-      {onGoingGames === undefined
-        ? (
-            renderLoading()
-          )
-        : (
+      {onGoingGames === undefined ? (
+        renderLoading()
+      ) : (
         <ul>
-          {onGoingGames.map((game) => {
+          {onGoingGames.map((game: any) => {
             return (
               <li
                 style={{ display: 'flex', justifyContent: 'space-between' }}
@@ -42,7 +40,7 @@ const GamePicker = () => {
             )
           })}
         </ul>
-          )}
+      )}
     </React.Fragment>
   )
 }

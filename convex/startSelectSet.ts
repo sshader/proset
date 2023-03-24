@@ -2,7 +2,7 @@ import { getPlayer } from './getPlayer'
 import { Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
-export default mutation(async ({ db, auth }, gameId: Id<'Game'>) => {
+export default mutation(async ({ db, auth, scheduler }, gameId: Id<'Game'>) => {
   const game = (await db.get(gameId))!
   const player = await getPlayer(db, auth, gameId)
   if (game.selectingPlayer !== null) {
@@ -15,5 +15,6 @@ export default mutation(async ({ db, auth }, gameId: Id<'Game'>) => {
     selectingPlayer: player._id,
     selectionStartTime: Date.now(),
   })
+  scheduler.runAfter(20 * 1000, 'maybeClearSelectSet', gameId)
   return null
 })

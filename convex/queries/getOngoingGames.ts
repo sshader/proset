@@ -18,7 +18,10 @@ const getAllGames = async (db: DatabaseReader) => {
   return await getGamesInfo(db, games)
 }
 
-const getGamesInfo = async (db: DatabaseReader, games: Array<Document<'Game'>>) => {
+const getGamesInfo = async (
+  db: DatabaseReader,
+  games: Array<Document<'Game'>>
+) => {
   return await Promise.all(
     games.map(async (game) => {
       const players = await db
@@ -28,7 +31,7 @@ const getGamesInfo = async (db: DatabaseReader, games: Array<Document<'Game'>>) 
       return {
         ...game,
         // subtract off system player
-        numPlayers: players.length - 1
+        numPlayers: players.length - 1,
       }
     })
   )

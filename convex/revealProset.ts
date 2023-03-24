@@ -2,12 +2,12 @@ import { getSystemPlayer } from './getPlayer'
 import { Document, Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
-export default mutation(async ({ db }, gameId: Id<'Game'>) => {
+export default mutation(async ({ db, scheduler }, gameId: Id<'Game'>) => {
   const player = await getSystemPlayer(db, gameId)
 
   await db.patch(gameId, {
     selectingPlayer: player._id,
-    selectionStartTime: Date.now()
+    selectionStartTime: Date.now(),
   })
 
   const cards = await db
@@ -20,14 +20,15 @@ export default mutation(async ({ db }, gameId: Id<'Game'>) => {
   await Promise.all(
     prosetCards!.map(async (card) => {
       return await db.patch(card._id, {
-        selectedBy: player._id
+        selectedBy: player._id,
       })
     })
   )
+  scheduler.runAfter(20 * 1000, 'maybeClearSelectSet', gameId)
   return prosetCards!.map((card) => card._id)
 })
 
-function findProset (cards: Array<Document<'PlayingCard'>>) {
+function findProset(cards: Array<Document<'PlayingCard'>>) {
   for (let i = 1; i <= 128; i += 1) {
     const selection = []
     for (let cardIndex = 0; cardIndex < cards.length; cardIndex += 1) {
@@ -41,7 +42,7 @@ function findProset (cards: Array<Document<'PlayingCard'>>) {
   }
 }
 
-function isProset (cards: Array<Document<'PlayingCard'>>) {
+function isProset(cards: Array<Document<'PlayingCard'>>) {
   const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
   return colors.every((color) => {
     return cards.reduce(

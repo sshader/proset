@@ -2,12 +2,12 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithAuth0 } from 'convex/react-auth0'
 import type { AppProps } from 'next/app'
+import process from 'process'
 import Card from '../components/Card'
 import convexConfig from '../convex.json'
-import clientConfig from '../convex/_generated/clientConfig'
 import '../styles/globals.css'
 
-const convex = new ConvexReactClient(clientConfig)
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
 const authInfo = convexConfig.authInfo[0]
 
 export function Login() {
