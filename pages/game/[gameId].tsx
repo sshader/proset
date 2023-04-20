@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Game from '../../components/Game'
 import GameDetails from '../../components/GameDetails'
 import Sidebar from '../../components/Sidebar'
@@ -50,6 +50,12 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
       initialNumItems: 7,
     }
   )
+  useEffect(() => {
+    if (results.length < 7 && status === 'CanLoadMore') {
+      const timeout = setTimeout(() => loadMore(7 - results.length), 1000)
+      return () => clearTimeout(timeout)
+    }
+  }, [results, status, loadMore])
   if (
     latestKnownGameInfo === undefined ||
     (results.length === 0 && status !== 'Exhausted')
@@ -70,9 +76,6 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
       </div>
     )
   } else {
-    if (results.length < 7 && status === 'CanLoadMore') {
-      loadMore(7 - results.length)
-    }
     return (
       <div className="Container">
         <Sidebar gameInfo={latestKnownGameInfo} />

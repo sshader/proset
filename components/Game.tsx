@@ -72,23 +72,16 @@ const Game = (props: {
   }
 
   const onProsetFound = async () => {
-    await sendMessage({
-      gameId: game._id,
-      content: '🎉 You found a Proset!',
-      isPrivate: true,
-    })
-    await sendMessage({
-      gameId: game._id,
-      content: `Player ${currentPlayer.name} found a Proset!`,
-      isPrivate: false,
-    })
     if (selectionTimeout) {
       clearTimeout(selectionTimeout)
     }
   }
 
   return (
-    <div className="Game">
+    <div
+      className="Game"
+      style={{ gap: '2em', display: 'flex', flexDirection: 'column' }}
+    >
       {cards.results.length === 0 ? (
         <EndGameButton gameId={gameInfo.game._id} />
       ) : (

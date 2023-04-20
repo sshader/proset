@@ -1,22 +1,20 @@
+import { v } from 'convex/values'
 import { getPlayer } from './getPlayer'
-import { Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
-export default mutation(
-  async (
-    { db, auth },
-    args: {
-      gameId: Id<'Game'>
-      content: string
-      isPrivate?: boolean
-    }
-  ) => {
-    const player = await getPlayer(db, auth, args.gameId)
-    const isPrivate = args.isPrivate ?? false
+export default mutation({
+  args: {
+    gameId: v.id('Game'),
+    content: v.string(),
+    isPrivate: v.optional(v.boolean()),
+  },
+  handler: async ({ db, auth }, { gameId, content, isPrivate }) => {
+    const player = await getPlayer(db, auth, gameId)
+    isPrivate = isPrivate ?? false
     return await db.insert('Message', {
-      game: args.gameId,
+      game: gameId,
       player: isPrivate ? player._id : null,
-      content: args.content,
+      content,
     })
-  }
-)
+  },
+})
