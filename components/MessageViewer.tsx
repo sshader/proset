@@ -2,12 +2,15 @@ import { Id } from '../convex/_generated/dataModel'
 import { useQuery } from '../convex/_generated/react'
 
 const MessageViewer = ({ gameId }: { gameId: Id<'Game'> }) => {
-  const messages = useQuery('getRecentMessages', gameId)
+  const messages = useQuery('getRecentMessages', { gameId })
   if (messages != null) {
     return (
       <ul style={{ maxHeight: 200, overflowY: 'scroll' }}>
-        {messages.map((message) => (
-          <li style={{ color: message.player === null ? 'black' : 'blue' }}>
+        {messages.map((message, index) => (
+          <li
+            key={index}
+            style={{ color: message.player === null ? 'black' : 'blue' }}
+          >
             {message.content}
           </li>
         ))}

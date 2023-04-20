@@ -5,15 +5,18 @@ import { mutation } from './_generated/server'
 export default mutation(
   async (
     { db, auth },
-    gameId: Id<'Game'>,
-    content: string,
-    isPrivate = false
+    args: {
+      gameId: Id<'Game'>
+      content: string
+      isPrivate?: boolean
+    }
   ) => {
-    const player = await getPlayer(db, auth, gameId)
+    const player = await getPlayer(db, auth, args.gameId)
+    const isPrivate = args.isPrivate ?? false
     return await db.insert('Message', {
-      game: gameId,
+      game: args.gameId,
       player: isPrivate ? player._id : null,
-      content
+      content: args.content,
     })
   }
 )

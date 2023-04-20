@@ -3,10 +3,10 @@ import { useMutation } from '../convex/_generated/react'
 
 export const useSendMessage = () => {
   return useMutation('sendMessage').withOptimisticUpdate(
-    (localQueryStore, gameId, content, isPrivate) => {
+    (localQueryStore, { gameId, content, isPrivate }) => {
       const messages =
-        localQueryStore.getQuery('getRecentMessages', [gameId]) ?? []
-      const gameInfo = localQueryStore.getQuery('getGameInfo', [gameId])
+        localQueryStore.getQuery('getRecentMessages', { gameId }) ?? []
+      const gameInfo = localQueryStore.getQuery('getGameInfo', { gameId })
 
       const newMessage = {
         _id: new Id('Message', crypto.randomUUID()),
@@ -15,11 +15,10 @@ export const useSendMessage = () => {
         content,
         player: isPrivate ? gameInfo?.currentPlayer._id ?? null : null,
       }
-      localQueryStore.setQuery(
-        'getRecentMessages',
-        [gameId],
-        [...messages, newMessage]
-      )
+      localQueryStore.setQuery('getRecentMessages', { gameId }, [
+        ...messages,
+        newMessage,
+      ])
     }
   )
 }

@@ -14,8 +14,8 @@ export default function App() {
   async function handleStartGame(event: FormEvent) {
     event.preventDefault()
     setGameName('')
-    const { gameId } = await startGame(gameName)
-    await joinGame(gameId)
+    const { gameId } = await startGame({ name: gameName })
+    await joinGame({ gameId })
     await router.push({
       pathname: '/game/[gameId]',
       query: {

@@ -34,12 +34,12 @@ const CardContainer = ({
 
   const onClick = async (card: Doc<'PlayingCard'>) => {
     if (card.selectedBy === null) {
-      const selectionResult = await selectCard(card._id)
+      const selectionResult = await selectCard({ cardId: card._id })
       if (selectionResult === 'FoundProset') {
         onProsetFound()
       }
     } else {
-      await unselectCard(card._id)
+      await unselectCard({ cardId: card._id })
     }
   }
 

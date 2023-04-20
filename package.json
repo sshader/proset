@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
-    "convex": "^0.11.0",
+    "convex": "^0.13.0",
     "itertools": "^1.7.1",
     "next": "latest",
     "react": "^18.2.0",

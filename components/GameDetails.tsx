@@ -68,11 +68,11 @@ export default function GameDetails({
       >
         <CopyLinkButton
           onCopy={() =>
-            sendMessage(
-              gameInfo.game._id,
-              'Copied link to clipboard!',
-              gameInfo.currentPlayer._id
-            )
+            sendMessage({
+              gameId: gameInfo.game._id,
+              content: 'Copied link to clipboard!',
+              isPrivate: true,
+            })
           }
         />
         <EndGameButton gameId={gameInfo.game._id} />

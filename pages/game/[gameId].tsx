@@ -22,7 +22,7 @@ const GameBoundary = () => {
   }
   const gameId = new Id('Game', gameIdStr)
 
-  joinGame(gameId)
+  joinGame({ gameId })
     .then(() => {
       setReady(true)
     })
@@ -38,17 +38,17 @@ const GameBoundary = () => {
 
 const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
-  const gameInfo = useQuery('getGameInfo', gameId)
+  const gameInfo = useQuery('getGameInfo', { gameId })
   if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {
     setLatestKnownGameInfo(() => gameInfo as any)
   }
 
   const { results, status, loadMore } = usePaginatedQuery(
     'dealCards',
+    { gameId },
     {
       initialNumItems: 7,
-    },
-    gameId
+    }
   )
   if (
     latestKnownGameInfo === undefined ||

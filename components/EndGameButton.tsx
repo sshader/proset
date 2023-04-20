@@ -15,7 +15,7 @@ export default function EndGameButton({ gameId }: { gameId: Id<'Game'> }) {
     >
       <button
         onClick={async () => {
-          await endGame(gameId)
+          await endGame({ gameId })
           await router.push('/')
         }}
       >

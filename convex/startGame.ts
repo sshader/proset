@@ -1,8 +1,8 @@
 import { mutation } from './_generated/server'
 
-export default mutation(async ({ db }, name: string) => {
+export default mutation(async ({ db }, args: { name: string }) => {
   const gameId = await db.insert('Game', {
-    name,
+    name: args.name,
     selectingPlayer: null,
     selectionStartTime: null,
     inProgress: true,

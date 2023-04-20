@@ -28,14 +28,22 @@ const Game = (props: {
   const discardRevealedProset = useMutation('discardRevealedProset')
 
   const handleStartSelectSet = async () => {
-    const selectResponse = await startSelectSet(game._id)
+    const selectResponse = await startSelectSet({ gameId: game._id })
     if (selectResponse !== null) {
-      await sendMessage(game._id, selectResponse.reason, true)
+      await sendMessage({
+        gameId: game._id,
+        content: selectResponse.reason,
+        isPrivate: true,
+      })
       return
     }
     const timeout = window.setTimeout(async () => {
-      await sendMessage(game._id, '🐌 Too slow! Deducting a point.', true)
-      await clearSelectSet(game._id)
+      await sendMessage({
+        gameId: game._id,
+        content: '🐌 Too slow! Deducting a point.',
+        isPrivate: true,
+      })
+      await clearSelectSet({ gameId: game._id })
     }, 20 * 1000)
     setSelectionTimeout(timeout)
   }
@@ -52,24 +60,28 @@ const Game = (props: {
   )
 
   const handleRevealProset = async () => {
-    await sendMessage(
-      game._id,
-      `👀 Player ${currentPlayer.name} is revealing a set`,
-      false
-    )
-    const revealedProset = await revealProset(game._id)
+    await sendMessage({
+      gameId: game._id,
+      content: `👀 Player ${currentPlayer.name} is revealing a set`,
+      isPrivate: false,
+    })
+    const revealedProset = await revealProset({ gameId: game._id })
     setTimeout(async () => {
-      await discardRevealedProset(game._id, revealedProset)
+      await discardRevealedProset({ gameId: game._id, cardIds: revealedProset })
     }, 5 * 1000)
   }
 
   const onProsetFound = async () => {
-    await sendMessage(game._id, '🎉 You found a Proset!', true)
-    await sendMessage(
-      game._id,
-      `Player ${currentPlayer.name} found a Proset!`,
-      false
-    )
+    await sendMessage({
+      gameId: game._id,
+      content: '🎉 You found a Proset!',
+      isPrivate: true,
+    })
+    await sendMessage({
+      gameId: game._id,
+      content: `Player ${currentPlayer.name} found a Proset!`,
+      isPrivate: false,
+    })
     if (selectionTimeout) {
       clearTimeout(selectionTimeout)
     }
