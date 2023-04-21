@@ -1,11 +1,10 @@
+import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent } from 'react'
 import GamePicker from '../components/GamePicker'
 import { useMutation } from '../convex/_generated/react'
 
 export default function App() {
-  const [gameName, setGameName] = useState('')
-
   const startGame = useMutation('startGame')
   const joinGame = useMutation('joinGame')
 
@@ -13,8 +12,7 @@ export default function App() {
 
   async function handleStartGame(event: FormEvent) {
     event.preventDefault()
-    setGameName('')
-    const { gameId } = await startGame({ name: gameName })
+    const { gameId } = await startGame()
     await joinGame({ gameId })
     await router.push({
       pathname: '/game/[gameId]',
@@ -26,17 +24,19 @@ export default function App() {
   }
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        margin: 20,
+        gap: 20,
+      }}
+    >
+      <Button variant="contained" onClick={handleStartGame}>
+        Start new game
+      </Button>
       <GamePicker></GamePicker>
-      <h1>Create a new game</h1>
-      <form onSubmit={handleStartGame}>
-        <input
-          value={gameName}
-          onChange={(event) => setGameName(event.target.value)}
-          placeholder="Game name"
-        />
-        <input type="submit" value="Join" disabled={gameName.length === 0} />
-      </form>
     </div>
   )
 }

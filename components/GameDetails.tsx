@@ -38,17 +38,6 @@ export default function GameDetails({
 
   return (
     <div className="GameDetails">
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
-        <div>Proset</div>
-        <div>Game {gameInfo.game.name}</div>
-      </div>
       <PlayerInfo
         isCurrentPlayer={true}
         player={gameInfo.currentPlayer}
@@ -63,6 +52,7 @@ export default function GameDetails({
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'center',
           gap: 10,
         }}
       >

@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 import { getPlayer } from './getPlayer'
-import { mutation } from './_generated/server'
+import { internalMutation, mutation } from './_generated/server'
 
 export default mutation({
   args: {
@@ -8,13 +8,25 @@ export default mutation({
     content: v.string(),
     isPrivate: v.optional(v.boolean()),
   },
-  handler: async ({ db, auth }, { gameId, content, isPrivate }) => {
+  handler: async ({ db, auth, scheduler }, { gameId, content, isPrivate }) => {
     const player = await getPlayer(db, auth, gameId)
     isPrivate = isPrivate ?? false
-    return await db.insert('Message', {
+    const messageId = await db.insert('Message', {
       game: gameId,
       player: isPrivate ? player._id : null,
       content,
     })
+    await scheduler.runAfter(5 * 1000, 'sendMessage:deleteMessage', {
+      messageId,
+    })
+  },
+})
+
+export const deleteMessage = internalMutation({
+  args: {
+    messageId: v.id('Message'),
+  },
+  handler: async ({ db }, { messageId }) => {
+    await db.delete(messageId)
   },
 })

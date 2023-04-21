@@ -31,7 +31,7 @@ export default mutation(
     return await db.insert('Player', {
       game: gameId,
       tokenIdentifier: identity.tokenIdentifier,
-      name: uniqueNamesGenerator(customConfig), // big-donkey,
+      name: identity.name ?? uniqueNamesGenerator(customConfig),
       score: 0,
       color: PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)],
       isSystemPlayer: false,

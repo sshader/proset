@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import React from 'react'
 import { useQuery } from '../convex/_generated/react'
 
 const renderLoading = () => {
@@ -14,7 +13,7 @@ const GamePicker = () => {
   const onGoingGames = useQuery('queries/getOngoingGames')
 
   return (
-    <React.Fragment>
+    <div>
       <h1>Your ongoing games:</h1>
       {onGoingGames === undefined ? (
         renderLoading()
@@ -27,8 +26,7 @@ const GamePicker = () => {
                 key={game._id.id}
               >
                 <div>
-                  <p style={{ fontWeight: 'bold' }}>{game.name}</p>
-                  <p>Players: {game.numPlayers}</p>
+                  <p>Players: {game.playerNames.join(', ')}</p>
                 </div>
                 <Link
                   style={{ textDecoration: 'none', color: 'inherit' }}
@@ -41,7 +39,7 @@ const GamePicker = () => {
           })}
         </ul>
       )}
-    </React.Fragment>
+    </div>
   )
 }
 

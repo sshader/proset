@@ -1,4 +1,5 @@
 import { getSystemPlayer } from './getPlayer'
+import { clearSelectSet } from './maybeClearSelectSet'
 import { Id } from './_generated/dataModel'
 import { mutation } from './_generated/server'
 
@@ -23,5 +24,6 @@ export default mutation(
         })
       })
     )
+    await clearSelectSet(db, args.gameId)
   }
 )

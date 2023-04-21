@@ -1,26 +1,29 @@
+import { Alert, Snackbar } from '@mui/material'
 import { Id } from '../convex/_generated/dataModel'
 import { useQuery } from '../convex/_generated/react'
 
 const MessageViewer = ({ gameId }: { gameId: Id<'Game'> }) => {
-  const messages = useQuery('getRecentMessages', { gameId })
-  if (messages != null) {
-    return (
-      <ul style={{ maxHeight: 200, overflowY: 'scroll' }}>
+  const messages = useQuery('getRecentMessages', { gameId }) ?? []
+
+  return (
+    <Snackbar open={true}>
+      <div
+        style={{
+          maxHeight: 200,
+          overflowY: 'scroll',
+          gap: 5,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         {messages.map((message, index) => (
-          <li
-            key={index}
-            style={{ color: message.player === null ? 'black' : 'blue' }}
-          >
+          <Alert key={index} severity="success" sx={{ width: '100%' }}>
             {message.content}
-          </li>
+          </Alert>
         ))}
-      </ul>
-    )
-  } else {
-    return (
-      <div className="placeholder" style={{ width: 500, height: 100 }}></div>
-    )
-  }
+      </div>
+    </Snackbar>
+  )
 }
 
 export default MessageViewer

@@ -11,7 +11,12 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.1",
     "@types/react-transition-group": "^4.4.5",
+    "canvas-confetti": "^1.6.0",
     "convex": "^0.13.0",
     "itertools": "^1.7.1",
     "next": "latest",
@@ -22,6 +27,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.1.1",
+    "@types/canvas-confetti": "^1.6.0",
     "@types/node": "~16.11.12",
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",

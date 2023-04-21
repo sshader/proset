@@ -27,8 +27,9 @@ const getGamesInfo = async (db: DatabaseReader, games: Array<Doc<'Game'>>) => {
         .collect()
       return {
         ...game,
-        // subtract off system player
-        numPlayers: players.length - 1,
+        playerNames: players
+          .filter((p) => !p.isSystemPlayer)
+          .map((p) => p.name),
       }
     })
   )

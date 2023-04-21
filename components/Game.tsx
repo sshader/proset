@@ -1,3 +1,4 @@
+import confetti from 'canvas-confetti'
 import React, { useState } from 'react'
 import { Doc } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
@@ -25,7 +26,6 @@ const Game = (props: {
   const sendMessage = useSendMessage()
 
   const revealProset = useMutation('revealProset')
-  const discardRevealedProset = useMutation('discardRevealedProset')
 
   const handleStartSelectSet = async () => {
     const selectResponse = await startSelectSet({ gameId: game._id })
@@ -60,18 +60,11 @@ const Game = (props: {
   )
 
   const handleRevealProset = async () => {
-    await sendMessage({
-      gameId: game._id,
-      content: `👀 Player ${currentPlayer.name} is revealing a set`,
-      isPrivate: false,
-    })
-    const revealedProset = await revealProset({ gameId: game._id })
-    setTimeout(async () => {
-      await discardRevealedProset({ gameId: game._id, cardIds: revealedProset })
-    }, 5 * 1000)
+    await revealProset({ gameId: game._id })
   }
 
   const onProsetFound = async () => {
+    await confetti({})
     if (selectionTimeout) {
       clearTimeout(selectionTimeout)
     }
@@ -82,7 +75,7 @@ const Game = (props: {
       className="Game"
       style={{ gap: '2em', display: 'flex', flexDirection: 'column' }}
     >
-      {cards.results.length === 0 ? (
+      {cards.results.length === 0 && cards.status === 'Exhausted' ? (
         <EndGameButton gameId={gameInfo.game._id} />
       ) : (
         <React.Fragment>

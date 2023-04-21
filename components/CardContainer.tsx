@@ -1,6 +1,7 @@
 import { Doc } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 import { GameInfo } from '../types/game_info'
+import Card from './Card'
 import PlayingCard from './playing_card'
 
 const CardContainer = ({
@@ -48,24 +49,46 @@ const CardContainer = ({
       break
   }
 
+  const cardComponents = []
+  for (let i = 0; i < 7; i += 1) {
+    const card = cards[i]
+    if (card !== undefined) {
+      cardComponents.push(
+        <div key={card._id.toString()}>
+          <PlayingCard
+            selectionColor={card.selectedBy != null ? selectionColor : null}
+            card={card}
+            size="regular"
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onClick={gameSelectionState === 'selecting' ? onClick : () => {}}
+          />
+        </div>
+      )
+    } else {
+      cardComponents.push(
+        <div key={i} style={{ opacity: 0 }}>
+          <Card
+            card={{
+              red: false,
+              orange: false,
+              yellow: false,
+              green: false,
+              blue: false,
+              purple: false,
+            }}
+            size="regular"
+          />
+        </div>
+      )
+    }
+  }
+
   return (
     <div
       title={tooltipText}
       className={`CardContainer CardContainer--${gameSelectionState}`}
     >
-      {cards.map((card) => {
-        return (
-          <div key={card._id.toString()}>
-            <PlayingCard
-              selectionColor={card.selectedBy != null ? selectionColor : null}
-              card={card}
-              size="regular"
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onClick={gameSelectionState === 'selecting' ? onClick : () => {}}
-            />
-          </div>
-        )
-      })}
+      {...cardComponents}
     </div>
   )
 }

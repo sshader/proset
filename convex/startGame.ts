@@ -1,8 +1,20 @@
+import {
+  adjectives,
+  animals,
+  Config,
+  uniqueNamesGenerator,
+} from 'unique-names-generator'
 import { mutation } from './_generated/server'
 
-export default mutation(async ({ db }, args: { name: string }) => {
+const customConfig: Config = {
+  dictionaries: [adjectives, animals],
+  separator: ' ',
+  style: 'capital',
+}
+
+export default mutation(async ({ db }) => {
   const gameId = await db.insert('Game', {
-    name: args.name,
+    name: uniqueNamesGenerator(customConfig),
     selectingPlayer: null,
     selectionStartTime: null,
     inProgress: true,
