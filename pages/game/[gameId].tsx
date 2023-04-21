@@ -52,8 +52,7 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
   )
   useEffect(() => {
     if (results.length < 7 && status === 'CanLoadMore') {
-      const timeout = setTimeout(() => loadMore(7 - results.length), 1000)
-      return () => clearTimeout(timeout)
+      loadMore(7 - results.length)
     }
   }, [results, status, loadMore])
   if (

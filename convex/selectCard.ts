@@ -50,6 +50,11 @@ export default mutation(
         content: '⭐️ You found a set!',
         isPrivate: true,
       })
+      await sendMessage(ctx, {
+        gameId: card.game,
+        content: `⭐️ ${player.name} found a set!`,
+        isPrivate: false,
+      })
       await ctx.scheduler.runAfter(2 * 1000, 'claimSet', {
         gameId: card.game,
         playerId: player._id,
