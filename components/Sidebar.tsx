@@ -54,9 +54,9 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
           </div>
 
           <GameDetails gameInfo={gameInfo} />
-          <MessageViewer gameId={gameInfo.game._id}></MessageViewer>
         </div>
       </Drawer>
+      <MessageViewer gameId={gameInfo.game._id}></MessageViewer>
     </div>
   )
 }

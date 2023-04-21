@@ -14,6 +14,7 @@ const getAllGames = async (db: DatabaseReader) => {
   const games = await db
     .query('Game')
     .filter((q) => q.eq(q.field('inProgress'), true))
+    .order('desc')
     .take(10)
   return await getGamesInfo(db, games)
 }
@@ -39,6 +40,7 @@ const getGamesForUser = async (db: DatabaseReader, tokenIdentifier: string) => {
   const players = await db
     .query('Player')
     .withIndex('ByToken', (q) => q.eq('tokenIdentifier', tokenIdentifier))
+    .order('desc')
     .take(10)
   const games = await Promise.all(
     players.map(async (player) => {

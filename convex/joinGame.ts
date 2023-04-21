@@ -17,7 +17,7 @@ const customConfig: Config = {
 export default mutation(
   async ({ db, auth }, { gameId }: { gameId: Id<'Game'> }) => {
     const identity = await auth.getUserIdentity()
-    if (identity == null) {
+    if (identity === null) {
       throw new Error('Could not find identity')
     }
     const player = await db
@@ -25,7 +25,7 @@ export default mutation(
       .withIndex('ByGame', (q) => q.eq('game', gameId))
       .filter((q) => q.eq(q.field('tokenIdentifier'), identity.tokenIdentifier))
       .first()
-    if (player != null) {
+    if (player !== null) {
       return player._id
     }
     return await db.insert('Player', {
