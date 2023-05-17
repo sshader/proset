@@ -11,13 +11,21 @@
 
 import type { OptimisticLocalStore as GenericOptimisticLocalStore } from "convex/browser";
 import type {
+  ConvexProvider,
+  ConvexReactClient,
+  PaginatedQueryFunction,
+  ReactAction,
+  ReactMutation,
   UseActionForAPI,
   UseConvexForAPI,
   UseMutationForAPI,
   UsePaginatedQueryForAPI,
+  UsePaginatedQueryResult,
   UseQueriesForAPI,
   UseQueryForAPI,
+  UseQueryOptions,
 } from "convex/react";
+import { PaginationOptions, PaginationResult } from "convex/server";
 import type { API } from "./api";
 
 /**
@@ -30,7 +38,9 @@ import type { API } from "./api";
  *
  * @param name - The name of the query function.
  * @param args - The arguments to the query function.
- * @returns `undefined` if loading and the query's return value otherwise.
+ * @param options - [Optional] The {@link UseQueryOptions} options object.
+ * @returns the result of the query. If the query is loading or skipped,
+ * returns `undefined`.
  */
 export declare const useQuery: UseQueryForAPI<API>;
 
@@ -86,7 +96,7 @@ export declare const useConvex: UseConvexForAPI<API>;
  * This hook must be used with Convex query functions that match
  * {@link PaginatedQueryFunction}. This means they must:
  * 1. Have a single arguments object with a `paginationOpts` property
- * of type {@link server.PaginationOptions}.
+ * of type {@link PaginationOptions}.
  * 2. Return a {@link PaginationResult}.
  *
  * `usePaginatedQuery` concatenates all the pages
@@ -137,7 +147,7 @@ export declare const usePaginatedQuery: UsePaginatedQueryForAPI<API>;
  *
  * For example if you loaded a query like:
  * ```typescript
- * const results = useQueriesGeneric({
+ * const results = useQueries({
  *   messagesInGeneral: {
  *     name: "listMessages",
  *     args: ["#general"]

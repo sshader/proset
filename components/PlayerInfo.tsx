@@ -19,7 +19,7 @@ export const PlayerInfo = ({
       <div>No prosets yet!</div>
     ) : (
       prosets.map((cards) => {
-        return <Proset key={cards[0]._id.id} cards={cards}></Proset>
+        return <Proset key={cards[0]._id} cards={cards}></Proset>
       })
     )
 

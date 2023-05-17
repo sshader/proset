@@ -16,20 +16,23 @@ const GameBoundary = () => {
     | string
     | undefined
   const joinGame = useMutation('joinGame')
-  const [ready, setReady] = useState(false)
+  const [gameId, setGameId] = useState<Id<'Game'> | null>(null)
   if (gameIdStr === undefined) {
     return <div>Loading...</div>
   }
-  const gameId = new Id('Game', gameIdStr)
 
-  joinGame({ gameId })
-    .then(() => {
-      setReady(true)
+  joinGame({ gameIdStr })
+    .then((id) => {
+      if (id !== null) {
+        setGameId(id)
+      } else {
+        void router.push('/')
+      }
     })
     .catch((e) => {
       throw e
     })
-  if (ready) {
+  if (gameId !== null) {
     return <InnerGameBoundary gameId={gameId}></InnerGameBoundary>
   } else {
     return <div>Loading...</div>

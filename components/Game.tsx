@@ -13,7 +13,7 @@ const Game = (props: {
   gameInfo: GameInfo
   cards: {
     results: Array<Doc<'PlayingCard'>>
-    status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore'
+    status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore' | 'LoadingFirstPage'
   }
 }) => {
   const { gameInfo, cards } = props
@@ -48,16 +48,17 @@ const Game = (props: {
     setSelectionTimeout(timeout)
   }
 
-  const selectSetButton = game.selectingPlayer?.equals(currentPlayer._id) ? (
-    <Timer totalSeconds={20}></Timer>
-  ) : (
-    <button
-      onClick={handleStartSelectSet}
-      disabled={game.selectingPlayer !== null}
-    >
-      I found a Proset!
-    </button>
-  )
+  const selectSetButton =
+    game.selectingPlayer === currentPlayer._id ? (
+      <Timer totalSeconds={20}></Timer>
+    ) : (
+      <button
+        onClick={handleStartSelectSet}
+        disabled={game.selectingPlayer !== null}
+      >
+        I found a Proset!
+      </button>
+    )
 
   const handleRevealProset = async () => {
     await revealProset({ gameId: game._id })

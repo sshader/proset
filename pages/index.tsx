@@ -13,11 +13,11 @@ export default function App() {
   async function handleStartGame(event: FormEvent) {
     event.preventDefault()
     const { gameId } = await startGame()
-    await joinGame({ gameId })
+    await joinGame({ gameIdStr: gameId.toString() })
     await router.push({
       pathname: '/game/[gameId]',
       query: {
-        gameId: gameId.id,
+        gameId: gameId,
       },
     })
     return <div>Navigating...</div>

@@ -9,7 +9,7 @@ export const useSendMessage = () => {
       const gameInfo = localQueryStore.getQuery('getGameInfo', { gameId })
 
       const newMessage = {
-        _id: new Id('Message', crypto.randomUUID()),
+        _id: crypto.randomUUID() as Id<'Message'>,
         _creationTime: Date.now(),
         game: gameId,
         content,

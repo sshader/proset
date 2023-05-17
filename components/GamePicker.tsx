@@ -19,18 +19,18 @@ const GamePicker = () => {
         renderLoading()
       ) : (
         <ul>
-          {onGoingGames.map((game: any) => {
+          {onGoingGames.map((game) => {
             return (
               <li
                 style={{ display: 'flex', justifyContent: 'space-between' }}
-                key={game._id.id}
+                key={game._id}
               >
                 <div>
                   <p>Players: {game.playerNames.join(', ')}</p>
                 </div>
                 <Link
                   style={{ textDecoration: 'none', color: 'inherit' }}
-                  href={`/game/${game._id.id}`}
+                  href={`/game/${game._id}`}
                 >
                   <button>Join</button>
                 </Link>

@@ -1,9 +1,13 @@
+import { GameInfo } from '../types/game_info'
 import { getPlayer } from './getPlayer'
 import { Doc, Id } from './_generated/dataModel'
 import { DatabaseReader, query } from './_generated/server'
 
 export default query(
-  async ({ db, auth }, { gameId }: { gameId: Id<'Game'> }) => {
+  async (
+    { db, auth },
+    { gameId }: { gameId: Id<'Game'> }
+  ): Promise<GameInfo> => {
     const game = (await db.get(gameId))!
     const currentPlayer = await getPlayer(db, auth, gameId)
     const allPlayers = await db
@@ -14,11 +18,9 @@ export default query(
     const playerToProsets: Map<string, Doc<'PlayingCard'>[][]> = new Map()
     for (const player of allPlayers) {
       const prosets = await getProsets(db, player._id, gameId)
-      playerToProsets.set(player._id.id, prosets)
+      playerToProsets.set(player._id, prosets)
     }
-    const otherPlayers = allPlayers.filter(
-      (p) => !p._id.equals(currentPlayer._id)
-    )
+    const otherPlayers = allPlayers.filter((p) => p._id !== currentPlayer._id)
     return { game, currentPlayer, otherPlayers, playerToProsets }
   }
 )

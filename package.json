@@ -17,7 +17,7 @@
     "@mui/material": "^5.12.1",
     "@types/react-transition-group": "^4.4.5",
     "canvas-confetti": "^1.6.0",
-    "convex": "^0.14.1",
+    "convex": "file:convex-0.14.1.tgz",
     "itertools": "^1.7.1",
     "next": "latest",
     "react": "^18.2.0",
