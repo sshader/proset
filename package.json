@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.14",
     "@auth0/auth0-react": "^2.0.1",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -18,6 +19,7 @@
     "@types/react-transition-group": "^4.4.5",
     "canvas-confetti": "^1.6.0",
     "convex": "^0.14.1",
+    "graphql": "^16.6.0",
     "itertools": "^1.7.1",
     "next": "latest",
     "react": "^18.2.0",

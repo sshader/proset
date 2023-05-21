@@ -2,6 +2,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Drawer, Fab } from '@mui/material'
 import { useState } from 'react'
+import { Id } from '../convex/_generated/dataModel'
 import { GameInfo } from '../types/game_info'
 import GameDetails from './GameDetails'
 import MessageViewer from './MessageViewer'
@@ -56,7 +57,7 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
           <GameDetails gameInfo={gameInfo} />
         </div>
       </Drawer>
-      <MessageViewer gameId={gameInfo.game._id}></MessageViewer>
+      <MessageViewer gameId={new Id('Game', gameInfo.game.id)}></MessageViewer>
     </div>
   )
 }

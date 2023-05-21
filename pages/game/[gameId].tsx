@@ -1,3 +1,4 @@
+import { gql } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Game from '../../components/Game'
@@ -9,6 +10,7 @@ import {
   usePaginatedQuery,
   useQuery,
 } from '../../convex/_generated/react'
+import '../../types/graphql_schema'
 
 const GameBoundary = () => {
   const router = useRouter()
@@ -36,11 +38,50 @@ const GameBoundary = () => {
   }
 }
 
+const prosetQuery = gql`
+  fragment prosets on Player {
+    prosets {
+      cards(gameId: $id) {
+        id
+        red
+        orange
+        yellow
+        green
+        blue
+        purple
+      }
+    }
+  }
+`
+
+const getGameInfoQuery = gql`
+  query GameInfo($id: String!) {
+    game(id: $id) {
+      id
+      currentPlayer {
+        id
+        ...prosets
+      }
+      allPlayers {
+        id
+        ...prosets
+      }
+    }
+  }
+  ${prosetQuery}
+`
+
 const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
-  const gameInfo = useQuery('getGameInfo', { gameId })
-  if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {
-    setLatestKnownGameInfo(() => gameInfo as any)
+
+  console.log(getGameInfoQuery.loc?.source.body)
+  const gameInfo = useQuery('graphql', {
+    query: getGameInfoQuery.loc?.source.body,
+    variables: { id: gameId.id },
+  })
+  console.log(gameInfo)
+  if (gameInfo !== undefined && gameInfo.data !== latestKnownGameInfo) {
+    setLatestKnownGameInfo(() => gameInfo.data as any)
   }
 
   const { results, status, loadMore } = usePaginatedQuery(

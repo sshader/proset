@@ -11,8 +11,9 @@ export default function GameDetails({
   gameInfo: GameInfo
   showProsets?: boolean
 }) {
+  console.log(gameInfo)
   const otherPlayers =
-    gameInfo.otherPlayers.length === 0 ? (
+    gameInfo.game.allPlayers.length === 1 ? (
       ''
     ) : (
       <div
@@ -21,12 +22,12 @@ export default function GameDetails({
           flexDirection: 'row',
         }}
       >
-        {gameInfo.otherPlayers.map((otherPlayer) => {
+        {gameInfo.game.allPlayers.map((otherPlayer) => {
           return (
             <PlayerInfo
               isCurrentPlayer={false}
               player={otherPlayer}
-              prosets={gameInfo.playerToProsets.get(otherPlayer._id.id) ?? [[]]}
+              prosets={otherPlayer.prosets}
               initialShowProsets={showProsets}
             ></PlayerInfo>
           )
@@ -40,10 +41,8 @@ export default function GameDetails({
     <div className="GameDetails">
       <PlayerInfo
         isCurrentPlayer={true}
-        player={gameInfo.currentPlayer}
-        prosets={
-          gameInfo.playerToProsets.get(gameInfo.currentPlayer._id.id) ?? [[]]
-        }
+        player={gameInfo.game.currentPlayer}
+        prosets={gameInfo.game.currentPlayer.prosets}
         initialShowProsets={showProsets}
       />
       {otherPlayers}

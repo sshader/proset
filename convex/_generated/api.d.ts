@@ -17,6 +17,8 @@ import type * as endGame from "../endGame";
 import type * as getGameInfo from "../getGameInfo";
 import type * as getPlayer from "../getPlayer";
 import type * as getRecentMessages from "../getRecentMessages";
+import type * as graphql from "../graphql";
+import type * as http from "../http";
 import type * as joinGame from "../joinGame";
 import type * as maybeClearSelectSet from "../maybeClearSelectSet";
 import type * as prosetHelpers from "../prosetHelpers";
@@ -45,6 +47,8 @@ export type API = ApiFromModules<{
   getGameInfo: typeof getGameInfo;
   getPlayer: typeof getPlayer;
   getRecentMessages: typeof getRecentMessages;
+  graphql: typeof graphql;
+  http: typeof http;
   joinGame: typeof joinGame;
   maybeClearSelectSet: typeof maybeClearSelectSet;
   prosetHelpers: typeof prosetHelpers;

@@ -17,20 +17,20 @@ const CardContainer = ({
 
   const selectingPlayerId = gameInfo.game.selectingPlayer
 
-  const gameSelectionState =
-    selectingPlayerId === null
-      ? 'available'
-      : selectingPlayerId.equals(gameInfo.currentPlayer._id)
-      ? 'selecting'
-      : 'waiting'
+  const gameSelectionState = 'available'
+  // selectingPlayerId === null
+  //   ? 'available'
+  //   : selectingPlayerId.id === gameInfo.game.currentPlayer.id
+  //   ? 'selecting'
+  //   : 'waiting'
 
-  const selectionColor =
-    selectingPlayerId === null
-      ? null
-      : selectingPlayerId.equals(gameInfo.currentPlayer._id)
-      ? gameInfo.currentPlayer.color
-      : gameInfo.otherPlayers.find((p) => p._id.equals(selectingPlayerId))
-          ?.color ?? 'grey'
+  const selectionColor = 'grey'
+  // selectingPlayerId === null
+  //   ? null
+  //   : selectingPlayerId.id === gameInfo.game.currentPlayer.id
+  //   ? gameInfo.currentPlayer.color
+  //   : gameInfo.allPlayers.find((p) => p.id === selectingPlayerId.id)?.color ??
+  //     'grey'
 
   const onClick = async (card: Doc<'PlayingCard'>) => {
     const selectionResult = await selectCard({ cardId: card._id })

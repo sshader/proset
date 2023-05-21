@@ -10,7 +10,7 @@ export const PlayerInfo = ({
 }: {
   isCurrentPlayer: boolean
   player: Doc<'Player'>
-  prosets: Array<Array<Doc<'PlayingCard'>>>
+  prosets: Array<{ cards: Array<Doc<'PlayingCard'>> }>
   initialShowProsets?: boolean
 }) => {
   const [showProsets, setShowProsets] = useState(initialShowProsets)
@@ -18,8 +18,8 @@ export const PlayerInfo = ({
     prosets.length == 0 ? (
       <div>No prosets yet!</div>
     ) : (
-      prosets.map((cards) => {
-        return <Proset key={cards[0]._id.id} cards={cards}></Proset>
+      prosets.map((p) => {
+        return <Proset key={p.cards[0].id} cards={p.cards}></Proset>
       })
     )
 
