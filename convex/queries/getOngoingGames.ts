@@ -44,11 +44,13 @@ const getGamesForUser = async (db: DatabaseReader, tokenIdentifier: string) => {
     .take(10)
   const games = await Promise.all(
     players.map(async (player) => {
-      return (await db.get(player.game))!
+      return await db.get(player.game)
     })
   )
   return await getGamesInfo(
     db,
-    games.filter((game) => game.inProgress)
+    games.filter<Doc<'Game'>>(
+      (game): game is Doc<'Game'> => game !== null && game.inProgress
+    )
   )
 }
