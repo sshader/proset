@@ -16,7 +16,7 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
           color="primary"
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </Fab>
       </div>
       <Drawer
@@ -48,7 +48,7 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
                 color="primary"
                 onClick={() => setCollapsed(!collapsed)}
               >
-                {collapsed ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
               </Fab>
             </div>
           </div>

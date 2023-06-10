@@ -52,5 +52,4 @@ export default defineSchema({
     game: v.id('Game'),
     player: v.union(v.id('Player'), v.null()),
   }).index('ByGameAndCreationTime', ['game']),
-  sessions: defineTable(v.any()),
 })

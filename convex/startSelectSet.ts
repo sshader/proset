@@ -8,7 +8,7 @@ export default mutation(
     const player = await getPlayer(db, auth, gameId)
     if (game.selectingPlayer !== null) {
       return {
-        reason: 'OtherPlayerAlreadySelecting',
+        reason: 'Another player is already selecting!',
         selectedBy: game.selectingPlayer,
       }
     }

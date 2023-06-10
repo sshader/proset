@@ -1,5 +1,5 @@
 import confetti from 'canvas-confetti'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Doc } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 import { useSendMessage } from '../optimistic_updates/add_message'
@@ -22,6 +22,8 @@ const Game = (props: {
 
   const startSelectSet = useMutation('startSelectSet')
   const clearSelectSet = useMutation('maybeClearSelectSet')
+
+  const selectCard = useMutation('selectCard')
 
   const sendMessage = useSendMessage()
 
@@ -48,6 +50,64 @@ const Game = (props: {
     setSelectionTimeout(timeout)
   }
 
+  const handleSelectCard = async (card: Doc<'PlayingCard'> | null) => {
+    if (card === null) {
+      return
+    }
+    const selectionResult = await selectCard({ cardId: card._id })
+    if (selectionResult === 'FoundProset') {
+      await confetti({})
+      if (selectionTimeout) {
+        clearTimeout(selectionTimeout)
+      }
+    }
+  }
+
+  const handleKeyDown = async (event: KeyboardEvent) => {
+    if (event.defaultPrevented) {
+      return // Do nothing if event already handled
+    }
+
+    switch (event.code) {
+      case 'Space':
+        await handleStartSelectSet()
+        break
+      case 'KeyR':
+        await revealProset({ gameId: game._id })
+        break
+      case 'Digit1':
+        await handleSelectCard(cards.results[0] ?? null)
+        break
+      case 'Digit2':
+        await handleSelectCard(cards.results[1] ?? null)
+        break
+      case 'Digit3':
+        await handleSelectCard(cards.results[2] ?? null)
+        break
+      case 'Digit4':
+        await handleSelectCard(cards.results[3] ?? null)
+        break
+      case 'Digit5':
+        await handleSelectCard(cards.results[4] ?? null)
+        break
+      case 'Digit6':
+        await handleSelectCard(cards.results[5] ?? null)
+        break
+      case 'Digit7':
+        await handleSelectCard(cards.results[6] ?? null)
+        break
+      default:
+        return
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleKeyDown])
+
   const selectSetButton = game.selectingPlayer?.equals(currentPlayer._id) ? (
     <Timer totalSeconds={20}></Timer>
   ) : (
@@ -63,13 +123,6 @@ const Game = (props: {
     await revealProset({ gameId: game._id })
   }
 
-  const onProsetFound = async () => {
-    await confetti({})
-    if (selectionTimeout) {
-      clearTimeout(selectionTimeout)
-    }
-  }
-
   return (
     <div
       className="Game"
@@ -82,7 +135,7 @@ const Game = (props: {
           <CardContainer
             gameInfo={gameInfo}
             cards={cards.results}
-            onProsetFound={onProsetFound}
+            onCardClicked={handleSelectCard}
           />
           <div
             style={{
