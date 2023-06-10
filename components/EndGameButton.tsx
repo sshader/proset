@@ -3,7 +3,7 @@ import { Id } from '../convex/_generated/dataModel'
 import { useMutation } from '../convex/_generated/react'
 
 export default function EndGameButton({ gameId }: { gameId: Id<'Game'> }) {
-  const endGame = useMutation('endGame')
+  const endGame = useMutation('games:end')
   const router = useRouter()
 
   return (

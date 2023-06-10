@@ -38,7 +38,7 @@ const GameBoundary = () => {
 
 const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
-  const gameInfo = useQuery('getGameInfo', { gameId })
+  const gameInfo = useQuery('games:getInfo', { gameId })
   if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {
     setLatestKnownGameInfo(() => gameInfo as any)
   }

@@ -1,5 +1,4 @@
 import { Doc } from '../convex/_generated/dataModel'
-import { useMutation } from '../convex/_generated/react'
 import { GameInfo } from '../types/game_info'
 import Card from './Card'
 import PlayingCard from './playing_card'
@@ -7,14 +6,12 @@ import PlayingCard from './playing_card'
 const CardContainer = ({
   gameInfo,
   cards,
-  onProsetFound,
+  onCardClicked,
 }: {
   gameInfo: GameInfo
   cards: Array<Doc<'PlayingCard'>>
-  onProsetFound: () => void
+  onCardClicked: (card: Doc<'PlayingCard'> | null) => void
 }) => {
-  const selectCard = useMutation('selectCard')
-
   const selectingPlayerId = gameInfo.game.selectingPlayer
 
   const gameSelectionState =
@@ -31,13 +28,6 @@ const CardContainer = ({
       ? gameInfo.currentPlayer.color
       : gameInfo.otherPlayers.find((p) => p._id.equals(selectingPlayerId))
           ?.color ?? 'grey'
-
-  const onClick = async (card: Doc<'PlayingCard'>) => {
-    const selectionResult = await selectCard({ cardId: card._id })
-    if (selectionResult === 'FoundProset') {
-      onProsetFound()
-    }
-  }
 
   let tooltipText = ''
   switch (gameSelectionState) {
@@ -60,7 +50,13 @@ const CardContainer = ({
             card={card}
             size="regular"
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onClick={gameSelectionState === 'selecting' ? onClick : () => {}}
+            onClick={
+              gameSelectionState === 'selecting'
+                ? onCardClicked
+                : () => {
+                    // noop
+                  }
+            }
           />
         </div>
       )
