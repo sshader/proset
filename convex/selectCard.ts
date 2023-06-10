@@ -47,11 +47,6 @@ export default mutation(
     if (isProset(currentlySelected)) {
       await sendMessage(ctx, {
         gameId: card.game,
-        content: '⭐️ You found a set!',
-        isPrivate: true,
-      })
-      await sendMessage(ctx, {
-        gameId: card.game,
         content: `⭐️ ${player.name} found a set!`,
         isPrivate: false,
       })
