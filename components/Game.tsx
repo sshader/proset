@@ -13,7 +13,7 @@ const Game = (props: {
   gameInfo: GameInfo
   cards: {
     results: Array<Doc<'PlayingCard'>>
-    status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore'
+    status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore' | 'LoadingFirstPage'
   }
 }) => {
   const { gameInfo, cards } = props
