@@ -67,6 +67,19 @@ const Game = (props: {
     if (event.defaultPrevented) {
       return // Do nothing if event already handled
     }
+    // Ignore if following modifier is active.
+    if (
+      event.getModifierState('Control') ||
+      event.getModifierState('Alt') ||
+      event.getModifierState('Meta') ||
+      event.getModifierState('Fn') ||
+      event.getModifierState('Hyper') ||
+      event.getModifierState('OS') ||
+      event.getModifierState('Super') ||
+      event.getModifierState('Win') /* hack for IE */
+    ) {
+      return
+    }
 
     switch (event.code) {
       case 'Space':

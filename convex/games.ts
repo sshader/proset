@@ -35,7 +35,6 @@ export const cleanup = async (
   { db }: MutationCtx,
   { gameId }: { gameId: Id<'Game'> }
 ) => {
-  const game = (await db.get(gameId))!
   const allPlayers = await db
     .query('Player')
     .withIndex('ByGame', (q) => q.eq('game', gameId))
@@ -52,12 +51,15 @@ export const cleanup = async (
   }
   const cards = await db
     .query('PlayingCard')
-    .withIndex('ByGameAndProsetAndRank', (q) => q.eq('game', game._id))
+    .withIndex('ByGameAndProsetAndRank', (q) => q.eq('game', gameId))
     .collect()
   for (const c of cards) {
     await db.delete(c._id)
   }
-  await db.delete(game._id)
+  const game = await db.get(gameId)
+  if (game !== null) {
+    await db.delete(game._id)
+  }
 }
 
 export const internalCleanup = internalMutation({
