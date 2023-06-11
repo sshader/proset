@@ -1,6 +1,7 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Drawer, Fab } from '@mui/material'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { GameInfo } from '../types/game_info'
 import GameDetails from './GameDetails'
@@ -8,6 +9,7 @@ import MessageViewer from './MessageViewer'
 
 export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
   const [collapsed, setCollapsed] = useState(false)
+  const router = useRouter()
   return (
     <div>
       <div style={{ padding: 5 }}>
@@ -41,7 +43,7 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
               gap: 10,
             }}
           >
-            <div>Proset</div>
+            <button onClick={() => router.push('/all')}>Proset</button>
             <div style={{ padding: 5 }}>
               <Fab
                 size="small"

@@ -4,7 +4,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['./tsconfig.json', './src/cli/tsconfig.json'],
+    project: ['./tsconfig.json'],
     tsconfigRootDir: __dirname,
   },
   plugins: ['@typescript-eslint', 'react-hooks', 'react'],
@@ -52,5 +52,5 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'error',
     'react/destructuring-assignment': [2, 'always'],
   },
-  ignorePatterns: ['node_modules', 'convex/_generated'],
+  ignorePatterns: ['node_modules', 'convex/_generated', '*.js'],
 }

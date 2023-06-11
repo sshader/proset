@@ -1,42 +1,24 @@
-import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
-import { FormEvent } from 'react'
-import GamePicker from '../components/GamePicker'
+import { useEffect } from 'react'
 import { useMutation } from '../convex/_generated/react'
 
 export default function App() {
-  const startGame = useMutation('startGame')
-  const joinGame = useMutation('joinGame')
+  const startGame = useMutation('api/games:getOrCreate')
 
   const router = useRouter()
 
-  async function handleStartGame(event: FormEvent) {
-    event.preventDefault()
-    const { gameId } = await startGame()
-    await joinGame({ gameId })
-    await router.push({
-      pathname: '/game/[gameId]',
-      query: {
-        gameId: gameId.id,
-      },
-    })
-    return <div>Navigating...</div>
-  }
+  useEffect(() => {
+    const handleStartGame = async () => {
+      const gameId = await startGame()
+      await router.push({
+        pathname: '/game/[gameId]',
+        query: {
+          gameId: gameId.id,
+        },
+      })
+    }
+    handleStartGame().catch(console.error)
+  })
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        margin: 20,
-        gap: 20,
-      }}
-    >
-      <Button variant="contained" onClick={handleStartGame}>
-        Start new game
-      </Button>
-      <GamePicker></GamePicker>
-    </div>
-  )
+  return <div>Navigating...</div>
 }

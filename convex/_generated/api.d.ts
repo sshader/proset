@@ -10,6 +10,7 @@
  */
 
 import type { ApiFromModules } from "convex/api";
+import type * as api_games from "../api/games";
 import type * as claimSet from "../claimSet";
 import type * as crons from "../crons";
 import type * as dealCards from "../dealCards";
@@ -19,13 +20,13 @@ import type * as getPlayer from "../getPlayer";
 import type * as getRecentMessages from "../getRecentMessages";
 import type * as joinGame from "../joinGame";
 import type * as maybeClearSelectSet from "../maybeClearSelectSet";
+import type * as players from "../players";
 import type * as prosetHelpers from "../prosetHelpers";
 import type * as queries_getMyGames from "../queries/getMyGames";
 import type * as queries_getOngoingGames from "../queries/getOngoingGames";
 import type * as revealProset from "../revealProset";
 import type * as selectCard from "../selectCard";
 import type * as sendMessage from "../sendMessage";
-import type * as startGame from "../startGame";
 import type * as startSelectSet from "../startSelectSet";
 
 /**
@@ -38,6 +39,7 @@ import type * as startSelectSet from "../startSelectSet";
  * `ConvexReactClient` to create app-specific types.
  */
 export type API = ApiFromModules<{
+  "api/games": typeof api_games;
   claimSet: typeof claimSet;
   crons: typeof crons;
   dealCards: typeof dealCards;
@@ -47,12 +49,12 @@ export type API = ApiFromModules<{
   getRecentMessages: typeof getRecentMessages;
   joinGame: typeof joinGame;
   maybeClearSelectSet: typeof maybeClearSelectSet;
+  players: typeof players;
   prosetHelpers: typeof prosetHelpers;
   "queries/getMyGames": typeof queries_getMyGames;
   "queries/getOngoingGames": typeof queries_getOngoingGames;
   revealProset: typeof revealProset;
   selectCard: typeof selectCard;
   sendMessage: typeof sendMessage;
-  startGame: typeof startGame;
   startSelectSet: typeof startSelectSet;
 }>;

@@ -1,7 +1,7 @@
 import { cleanup } from './games'
 import { cronJobs, internalMutation } from './_generated/server'
 const crons = cronJobs()
-crons.interval('clean up old data', { seconds: 60 }, 'crons:cleanupOldData', {})
+crons.interval('clean up old data', { hours: 24 }, 'crons:cleanupOldData', {})
 
 export const cleanupOldData = internalMutation(async (ctx) => {
   const c = await ctx.db.query('Cleanup').first()
@@ -38,7 +38,7 @@ export const markForCleanup = internalMutation({
           .filter((q) => q.eq(q.field('inProgress'), false))
           .take(100)
         for (const game of games) {
-          db.insert('Cleanup', { gameId: game._id })
+          await db.insert('Cleanup', { gameId: game._id })
         }
         const lastGame = games.at(-1)
         if (lastGame !== undefined) {
@@ -60,7 +60,7 @@ export const markForCleanup = internalMutation({
           .take(100)
         for (const player of players) {
           if ((await db.get(player.game)) === null) {
-            db.insert('Cleanup', { gameId: player.game })
+            await db.insert('Cleanup', { gameId: player.game })
           }
         }
         const lastPlayer = players.at(-1)
@@ -83,7 +83,7 @@ export const markForCleanup = internalMutation({
           .take(100)
         for (const card of cards) {
           if ((await db.get(card.game)) === null) {
-            db.insert('Cleanup', { gameId: card.game })
+            await db.insert('Cleanup', { gameId: card.game })
           }
         }
         const lastCard = cards.at(-1)
@@ -106,7 +106,7 @@ export const markForCleanup = internalMutation({
           .take(100)
         for (const proset of prosets) {
           if ((await db.get(proset.player)) === null) {
-            db.delete(proset._id)
+            await db.delete(proset._id)
           }
         }
         const lastProset = prosets.at(-1)
@@ -121,7 +121,7 @@ export const markForCleanup = internalMutation({
     }
 
     if (nextCursor !== null) {
-      scheduler.runAfter(60 * 1000, 'crons:markForCleanup', {
+      await scheduler.runAfter(60 * 1000, 'crons:markForCleanup', {
         cursor: nextCursor,
       })
     }

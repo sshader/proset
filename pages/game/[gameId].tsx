@@ -15,7 +15,7 @@ const GameBoundary = () => {
   const gameIdStr: string | undefined = router.query.gameId as
     | string
     | undefined
-  const joinGame = useMutation('joinGame')
+  const joinGame = useMutation('api/players:joinGame')
   const [ready, setReady] = useState(false)
   if (gameIdStr === undefined) {
     return <div>Loading...</div>
