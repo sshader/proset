@@ -16,20 +16,23 @@ const GameBoundary = () => {
     | string
     | undefined
   const joinGame = useMutation('api/players:joinGame')
-  const [ready, setReady] = useState(false)
+  const [gameId, setGameId] = useState<Id<'Game'> | undefined>(undefined)
   if (gameIdStr === undefined) {
     return <div>Loading...</div>
   }
-  const gameId = new Id('Game', gameIdStr)
 
-  joinGame({ gameId })
-    .then(() => {
-      setReady(true)
+  joinGame({ gameId: gameIdStr })
+    .then(async (normalizedId) => {
+      if (normalizedId !== null) {
+        setGameId(normalizedId)
+      } else {
+        await router.push('/all')
+      }
     })
     .catch((e) => {
       throw e
     })
-  if (ready) {
+  if (gameId) {
     return <InnerGameBoundary gameId={gameId}></InnerGameBoundary>
   } else {
     return <div>Loading...</div>
