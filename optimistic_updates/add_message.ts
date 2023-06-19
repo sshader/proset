@@ -1,21 +1,23 @@
+import { useMutation } from 'convex/react'
+import { api } from '../convex/_generated/api'
 import { Id } from '../convex/_generated/dataModel'
-import { useMutation } from '../convex/_generated/react'
 
 export const useSendMessage = () => {
-  return useMutation('sendMessage').withOptimisticUpdate(
+  return useMutation(api.sendMessage.default).withOptimisticUpdate(
     (localQueryStore, { gameId, content, isPrivate }) => {
       const messages =
-        localQueryStore.getQuery('getRecentMessages', { gameId }) ?? []
-      const gameInfo = localQueryStore.getQuery('games:getInfo', { gameId })
+        localQueryStore.getQuery(api.getRecentMessages.default, { gameId }) ??
+        []
+      const gameInfo = localQueryStore.getQuery(api.games.getInfo, { gameId })
 
       const newMessage = {
-        _id: new Id('Message', crypto.randomUUID()),
+        _id: crypto.randomUUID() as Id<'Message'>,
         _creationTime: Date.now(),
         game: gameId,
         content,
         player: isPrivate ? gameInfo?.currentPlayer._id ?? null : null,
       }
-      localQueryStore.setQuery('getRecentMessages', { gameId }, [
+      localQueryStore.setQuery(api.getRecentMessages.default, { gameId }, [
         ...messages,
         newMessage,
       ])

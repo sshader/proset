@@ -1,9 +1,10 @@
+import { api } from "../convex/_generated/api";
+import { useMutation } from "convex/react";
 import { useRouter } from 'next/router'
 import { Id } from '../convex/_generated/dataModel'
-import { useMutation } from '../convex/_generated/react'
 
 export default function EndGameButton({ gameId }: { gameId: Id<'Game'> }) {
-  const endGame = useMutation('games:end')
+  const endGame = useMutation(api.games.end)
   const router = useRouter()
 
   return (

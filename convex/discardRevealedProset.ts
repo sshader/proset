@@ -1,7 +1,7 @@
 import { getSystemPlayer } from './getPlayer'
 import { clearSelectSet } from './maybeClearSelectSet'
 import { Id } from './_generated/dataModel'
-import { mutation } from './_generated/server'
+import { mutation } from './_generated/server';
 
 export default mutation(
   async (

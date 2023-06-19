@@ -1,9 +1,10 @@
+import { useMutation } from 'convex/react'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { useMutation } from '../convex/_generated/react'
+import { api } from '../convex/_generated/api'
 
 export default function App() {
-  const startGame = useMutation('api/games:getOrCreate')
+  const startGame = useMutation(api.api.games.getOrCreate)
 
   const router = useRouter()
 
@@ -13,7 +14,7 @@ export default function App() {
       await router.push({
         pathname: '/game/[gameId]',
         query: {
-          gameId: gameId.id,
+          gameId: gameId,
         },
       })
     }

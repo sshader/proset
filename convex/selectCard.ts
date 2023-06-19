@@ -1,8 +1,9 @@
+import { api } from "./_generated/api";
 import { getPlayer } from './getPlayer'
 import { isProset } from './prosetHelpers'
 import sendMessage from './sendMessage'
 import { Id } from './_generated/dataModel'
-import { mutation } from './_generated/server'
+import { mutation } from './_generated/server';
 
 export default mutation(
   async (ctx, { cardId }: { cardId: Id<'PlayingCard'> }) => {
@@ -50,7 +51,7 @@ export default mutation(
         content: `⭐️ ${player.name} found a set!`,
         isPrivate: false,
       })
-      await ctx.scheduler.runAfter(2 * 1000, 'claimSet', {
+      await ctx.scheduler.runAfter(2 * 1000, api.claimSet.default, {
         gameId: card.game,
         playerId: player._id,
       })

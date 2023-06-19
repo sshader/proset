@@ -1,4 +1,4 @@
-import { query } from '../_generated/server'
+import { query } from '../_generated/server';
 
 export default query(async ({ db, auth }) => {
   const identity = await auth.getUserIdentity()

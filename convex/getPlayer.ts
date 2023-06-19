@@ -1,6 +1,6 @@
 import { Auth } from 'convex/server'
 import { Doc, Id } from './_generated/dataModel'
-import { DatabaseReader } from './_generated/server'
+import { DatabaseReader } from './_generated/server';
 
 export const getPlayer = async (
   db: DatabaseReader,

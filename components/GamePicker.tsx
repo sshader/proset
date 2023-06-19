@@ -1,5 +1,6 @@
+import { useQuery } from 'convex/react'
 import Link from 'next/link'
-import { useQuery } from '../convex/_generated/react'
+import { api } from '../convex/_generated/api'
 
 const renderLoading = () => {
   return (
@@ -10,7 +11,7 @@ const renderLoading = () => {
   )
 }
 const GamePicker = () => {
-  const onGoingGames = useQuery('queries/getOngoingGames')
+  const onGoingGames = useQuery(api.queries.getOngoingGames.default)
 
   return (
     <div>
@@ -30,7 +31,7 @@ const GamePicker = () => {
                 </div>
                 <Link
                   style={{ textDecoration: 'none', color: 'inherit' }}
-                  href={`/game/${game._id.id}`}
+                  href={`/game/${game._id}`}
                 >
                   <button>Join</button>
                 </Link>

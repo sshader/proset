@@ -1,5 +1,5 @@
 import { Id } from './_generated/dataModel'
-import { DatabaseWriter, mutation } from './_generated/server'
+import { DatabaseWriter, mutation } from './_generated/server';
 
 export default mutation(async ({ db }, { gameId }: { gameId: Id<'Game'> }) => {
   const game = (await db.get(gameId))!

@@ -1,6 +1,7 @@
 import { v } from 'convex/values'
 import { getPlayer } from './getPlayer'
 import * as Players from './players'
+import { api } from './_generated/api'
 import { Doc, Id } from './_generated/dataModel'
 import {
   DatabaseReader,
@@ -23,11 +24,9 @@ export const getInfo = query({
     const playerToProsets: Map<string, Doc<'PlayingCard'>[][]> = new Map()
     for (const player of allPlayers) {
       const prosets = await getProsets(db, player._id, gameId)
-      playerToProsets.set(player._id.id, prosets)
+      playerToProsets.set(player._id, prosets)
     }
-    const otherPlayers = allPlayers.filter(
-      (p) => !p._id.equals(currentPlayer._id)
-    )
+    const otherPlayers = allPlayers.filter((p) => p._id !== currentPlayer._id)
     return { game, currentPlayer, otherPlayers, playerToProsets }
   },
 })
@@ -61,6 +60,7 @@ export const cleanup = async (
   if (game !== null) {
     await db.delete(game._id)
   }
+  return null
 }
 
 export const internalCleanup = internalMutation({
@@ -75,7 +75,8 @@ export const end = mutation({
     await db.patch(gameId, {
       inProgress: false,
     })
-    await scheduler.runAfter(2000, 'games:internalCleanup', { gameId })
+    await scheduler.runAfter(2000, api.games.internalCleanup, { gameId })
+    return null
   },
 })
 

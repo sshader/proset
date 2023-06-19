@@ -1,7 +1,8 @@
 import confetti from 'canvas-confetti'
+import { useMutation } from 'convex/react'
 import React, { useCallback, useEffect, useState } from 'react'
+import { api } from '../convex/_generated/api'
 import { Doc } from '../convex/_generated/dataModel'
-import { useMutation } from '../convex/_generated/react'
 import { useSendMessage } from '../optimistic_updates/add_message'
 import { GameInfo } from '../types/game_info'
 import Card from './Card'
@@ -20,14 +21,14 @@ const Game = (props: {
   const { game, currentPlayer } = gameInfo
   const [selectionTimeout, setSelectionTimeout] = useState<number | null>(null)
 
-  const startSelectSet = useMutation('startSelectSet')
-  const clearSelectSet = useMutation('maybeClearSelectSet')
+  const startSelectSet = useMutation(api.startSelectSet.default)
+  const clearSelectSet = useMutation(api.maybeClearSelectSet.default)
 
-  const selectCard = useMutation('selectCard')
+  const selectCard = useMutation(api.selectCard.default)
 
   const sendMessage = useSendMessage()
 
-  const revealProset = useMutation('revealProset')
+  const revealProset = useMutation(api.revealProset.default)
 
   const handleStartSelectSet = useCallback(async () => {
     const selectResponse = await startSelectSet({ gameId: game._id })
@@ -57,10 +58,11 @@ const Game = (props: {
       }
       const selectionResult = await selectCard({ cardId: card._id })
       if (selectionResult === 'FoundProset') {
-        await confetti({})
         if (selectionTimeout) {
           clearTimeout(selectionTimeout)
+          setSelectionTimeout(null)
         }
+        await confetti({})
       }
     },
     [selectCard, selectionTimeout]
@@ -132,16 +134,21 @@ const Game = (props: {
     }
   }, [handleKeyDown])
 
-  const selectSetButton = game.selectingPlayer?.equals(currentPlayer._id) ? (
-    <Timer totalSeconds={20}></Timer>
-  ) : (
-    <button
-      onClick={handleStartSelectSet}
-      disabled={game.selectingPlayer !== null}
-    >
-      I found a Proset!
-    </button>
-  )
+  const selectSetButton =
+    game.selectingPlayer === currentPlayer._id ? (
+      selectionTimeout !== null ? (
+        <Timer totalSeconds={20}></Timer>
+      ) : (
+        <button disabled>🥳</button>
+      )
+    ) : (
+      <button
+        onClick={handleStartSelectSet}
+        disabled={game.selectingPlayer !== null}
+      >
+        I found a Proset!
+      </button>
+    )
 
   const handleRevealProset = async () => {
     await revealProset({ gameId: game._id })

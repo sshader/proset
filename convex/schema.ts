@@ -1,4 +1,4 @@
-import { defineSchema, defineTable } from 'convex/schema'
+import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
 export default defineSchema({
@@ -52,8 +52,4 @@ export default defineSchema({
     game: v.id('Game'),
     player: v.union(v.id('Player'), v.null()),
   }).index('ByGameAndCreationTime', ['game']),
-
-  Cleanup: defineTable({
-    gameId: v.id('Game'),
-  }),
 })

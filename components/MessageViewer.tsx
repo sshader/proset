@@ -1,9 +1,10 @@
+import { api } from "../convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Alert, Snackbar } from '@mui/material'
 import { Id } from '../convex/_generated/dataModel'
-import { useQuery } from '../convex/_generated/react'
 
 const MessageViewer = ({ gameId }: { gameId: Id<'Game'> }) => {
-  const messages = useQuery('getRecentMessages', { gameId }) ?? []
+  const messages = useQuery(api.getRecentMessages.default, { gameId }) ?? []
 
   return (
     <Snackbar open={true}>

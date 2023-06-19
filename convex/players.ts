@@ -6,7 +6,7 @@ import {
 } from 'unique-names-generator'
 import { PLAYER_COLORS } from '../types/player_colors'
 import { Id } from './_generated/dataModel'
-import { MutationCtx, QueryCtx } from './_generated/server'
+import { MutationCtx, QueryCtx } from './_generated/server';
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],

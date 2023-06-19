@@ -1,38 +1,24 @@
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Game from '../../components/Game'
 import GameDetails from '../../components/GameDetails'
 import Sidebar from '../../components/Sidebar'
+import { api } from '../../convex/_generated/api'
 import { Id } from '../../convex/_generated/dataModel'
-import {
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from '../../convex/_generated/react'
 
 const GameBoundary = () => {
   const router = useRouter()
-  const gameIdStr: string | undefined = router.query.gameId as
-    | string
-    | undefined
-  const joinGame = useMutation('api/players:joinGame')
-  const [gameId, setGameId] = useState<Id<'Game'> | undefined>(undefined)
-  if (gameIdStr === undefined) {
-    return <div>Loading...</div>
-  }
+  const gameId: Id<'Game'> = router.query.gameId as Id<'Game'>
+  const joinGame = useMutation(api.api.players.joinGame)
+  const [ready, setReady] = useState(false)
 
-  joinGame({ gameId: gameIdStr })
-    .then(async (normalizedId) => {
-      if (normalizedId !== null) {
-        setGameId(normalizedId)
-      } else {
-        await router.push('/all')
-      }
-    })
+  joinGame({ gameId })
+    .then(() => setReady(true))
     .catch((e) => {
       throw e
     })
-  if (gameId) {
+  if (ready) {
     return <InnerGameBoundary gameId={gameId}></InnerGameBoundary>
   } else {
     return <div>Loading...</div>
@@ -41,13 +27,13 @@ const GameBoundary = () => {
 
 const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
-  const gameInfo = useQuery('games:getInfo', { gameId })
+  const gameInfo = useQuery(api.games.getInfo, { gameId })
   if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {
     setLatestKnownGameInfo(() => gameInfo as any)
   }
 
   const { results, status, loadMore } = usePaginatedQuery(
-    'dealCards',
+    api.dealCards.default,
     { gameId },
     {
       initialNumItems: 7,

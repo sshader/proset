@@ -1,8 +1,9 @@
+import { api } from "./_generated/api";
 import { getPlayer, getSystemPlayer } from './getPlayer'
 import { findProset } from './prosetHelpers'
 import sendMessage from './sendMessage'
 import { Id } from './_generated/dataModel'
-import { mutation } from './_generated/server'
+import { mutation } from './_generated/server';
 
 export default mutation(async (ctx, { gameId }: { gameId: Id<'Game'> }) => {
   const { db, auth, scheduler } = ctx
@@ -35,7 +36,7 @@ export default mutation(async (ctx, { gameId }: { gameId: Id<'Game'> }) => {
     })
   )
   const cardIds = prosetCards!.map((card) => card._id)
-  await scheduler.runAfter(5 * 1000, 'discardRevealedProset', {
+  await scheduler.runAfter(5 * 1000, api.discardRevealedProset.default, {
     gameId,
     cardIds,
   })

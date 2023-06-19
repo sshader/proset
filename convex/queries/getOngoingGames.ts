@@ -1,5 +1,5 @@
 import { Doc } from '../_generated/dataModel'
-import { DatabaseReader, query } from '../_generated/server'
+import { DatabaseReader, query } from '../_generated/server';
 
 export default query(async ({ db, auth }) => {
   const identity = await auth.getUserIdentity()

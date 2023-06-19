@@ -1,6 +1,7 @@
+import { api } from "./_generated/api";
 import { v } from 'convex/values'
 import { getPlayer } from './getPlayer'
-import { internalMutation, mutation } from './_generated/server'
+import { internalMutation, mutation } from './_generated/server';
 
 export default mutation({
   args: {
@@ -16,7 +17,7 @@ export default mutation({
       player: isPrivate ? player._id : null,
       content,
     })
-    await scheduler.runAfter(5 * 1000, 'sendMessage:deleteMessage', {
+    await scheduler.runAfter(5 * 1000, api.sendMessage.deleteMessage, {
       messageId,
     })
   },

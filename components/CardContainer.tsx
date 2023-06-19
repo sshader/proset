@@ -17,17 +17,17 @@ const CardContainer = ({
   const gameSelectionState =
     selectingPlayerId === null
       ? 'available'
-      : selectingPlayerId.equals(gameInfo.currentPlayer._id)
+      : selectingPlayerId === gameInfo.currentPlayer._id
       ? 'selecting'
       : 'waiting'
 
   const selectionColor =
     selectingPlayerId === null
       ? null
-      : selectingPlayerId.equals(gameInfo.currentPlayer._id)
+      : selectingPlayerId === gameInfo.currentPlayer._id
       ? gameInfo.currentPlayer.color
-      : gameInfo.otherPlayers.find((p) => p._id.equals(selectingPlayerId))
-          ?.color ?? 'grey'
+      : gameInfo.otherPlayers.find((p) => p._id === selectingPlayerId)?.color ??
+        'grey'
 
   let tooltipText = ''
   switch (gameSelectionState) {

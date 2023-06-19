@@ -1,6 +1,6 @@
 import { PaginationOptions, PaginationResult } from 'convex/server'
 import { Doc, Id } from './_generated/dataModel'
-import { query } from './_generated/server'
+import { query } from './_generated/server';
 
 export default query(
   async (

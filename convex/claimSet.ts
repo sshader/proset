@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 import { clearSelectSet } from './maybeClearSelectSet'
 import { isProset } from './prosetHelpers'
-import { internalMutation } from './_generated/server'
+import { internalMutation } from './_generated/server';
 
 export default internalMutation({
   args: {

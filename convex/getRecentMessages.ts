@@ -1,6 +1,6 @@
 import { getPlayer } from './getPlayer'
 import { Id } from './_generated/dataModel'
-import { query } from './_generated/server'
+import { query } from './_generated/server';
 
 export default query(
   async ({ db, auth }, { gameId }: { gameId: Id<'Game'> }) => {

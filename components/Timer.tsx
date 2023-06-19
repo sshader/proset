@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react'
 
-const Timer = ({ totalSeconds }: { totalSeconds: number }) => {
+const Timer = ({
+  totalSeconds,
+  pause,
+}: {
+  totalSeconds: number
+  pause?: boolean
+}) => {
+  console.log('####', pause)
   const [seconds, setSeconds] = useState(totalSeconds)
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds((seconds) => seconds - 1)
-    }, 1000)
-    return () => clearInterval(interval)
+    if (!pause) {
+      const interval = setInterval(() => {
+        if (!pause) {
+          setSeconds((seconds) => seconds - 1)
+        }
+      }, 1000)
+      return () => clearInterval(interval)
+    }
   }, [])
 
   return (
