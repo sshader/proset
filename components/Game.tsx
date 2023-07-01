@@ -139,10 +139,13 @@ const Game = (props: {
       selectionTimeout !== null ? (
         <Timer totalSeconds={20}></Timer>
       ) : (
-        <button disabled>🥳</button>
+        <button className="btn btn-primary" disabled>
+          🥳
+        </button>
       )
     ) : (
       <button
+        className="btn btn-primary"
         onClick={handleStartSelectSet}
         disabled={game.selectingPlayer !== null}
       >
@@ -155,36 +158,30 @@ const Game = (props: {
   }
 
   return (
-    <div
-      className="Game"
-      style={{ gap: '2em', display: 'flex', flexDirection: 'column' }}
-    >
-      {cards.results.length === 0 && cards.status === 'Exhausted' ? (
-        <EndGameButton gameId={gameInfo.game._id} />
-      ) : (
-        <React.Fragment>
-          <CardContainer
-            gameInfo={gameInfo}
-            cards={cards.results}
-            onCardClicked={handleSelectCard}
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            {selectSetButton}
-            <button
-              onClick={handleRevealProset}
-              disabled={game.selectingPlayer !== null}
-            >
-              Reveal Proset
-            </button>
-          </div>
-        </React.Fragment>
-      )}
+    <div className="flex grow shrink min-w-fit justify-center">
+      <div className="flex flex-col gap-4 justify-center">
+        {cards.results.length === 0 && cards.status === 'Exhausted' ? (
+          <EndGameButton gameId={gameInfo.game._id} />
+        ) : (
+          <React.Fragment>
+            <CardContainer
+              gameInfo={gameInfo}
+              cards={cards.results}
+              onCardClicked={handleSelectCard}
+            />
+            <div className="flex shrink min-w-0 justify-center gap-2">
+              {selectSetButton}
+              <button
+                className="btn btn-primary"
+                onClick={handleRevealProset}
+                disabled={game.selectingPlayer !== null}
+              >
+                Reveal Proset
+              </button>
+            </div>
+          </React.Fragment>
+        )}
+      </div>
     </div>
   )
 }

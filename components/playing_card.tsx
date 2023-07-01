@@ -13,9 +13,13 @@ const PlayingCard = ({
   onClick: (card: Doc<'PlayingCard'>) => void
 }) => {
   return (
-    <div onClick={() => onClick(card)}>
+    <button
+      className="rounded-box focus-visible:border-10 focus-visible:outline-black focus-visible:outline-offset-4"
+      onClick={() => onClick(card)}
+      role="tab"
+    >
       <Card card={card} selectionColor={selectionColor} size={size}></Card>
-    </div>
+    </button>
   )
 }
 export default PlayingCard

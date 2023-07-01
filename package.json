@@ -11,13 +11,14 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.0.1",
+    "@clerk/clerk-react": "^4.18.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.1",
     "@types/react-transition-group": "^4.4.5",
     "canvas-confetti": "^1.6.0",
-    "convex": "^0.17.0",
+    "convex": "^0.18.0",
     "itertools": "^1.7.1",
     "next": "latest",
     "react": "^18.2.0",
@@ -32,6 +33,8 @@
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "autoprefixer": "^10.4.14",
+    "daisyui": "^3.1.7",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
@@ -41,8 +44,10 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.24",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^3.2.1",
+    "tailwindcss": "^3.3.2",
     "typescript": "^5.1.3"
   }
 }

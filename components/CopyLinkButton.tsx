@@ -4,6 +4,7 @@ export default function CopyLinkButton({ onCopy }: { onCopy: () => void }) {
   const [linkCopied, setLinkCopied] = useState(false)
   return (
     <button
+      className="btn btn-primary"
       disabled={linkCopied}
       onClick={async () => {
         await navigator.clipboard.writeText(window.location.href)

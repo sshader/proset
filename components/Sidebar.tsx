@@ -1,11 +1,10 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import { Drawer, Fab } from '@mui/material'
+import { Drawer } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { GameInfo } from '../types/game_info'
 import GameDetails from './GameDetails'
-import MessageViewer from './MessageViewer'
 
 export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -13,13 +12,12 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
   return (
     <div>
       <div style={{ padding: 5 }}>
-        <Fab
-          size="small"
-          color="primary"
+        <button
           onClick={() => setCollapsed(!collapsed)}
+          className="btn btn-circle btn-sm btn-primary"
         >
           {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-        </Fab>
+        </button>
       </div>
       <Drawer
         anchor={'left'}
@@ -27,12 +25,10 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
         onClose={() => setCollapsed(true)}
         variant="persistent"
         PaperProps={{
-          style: {
-            borderRight: '1px solid black',
-          },
+          style: { border: 'none' },
         }}
       >
-        <div className="Sidebar-content">
+        <div className="bg-slate-200 w-64 rounded-r-lg h-full">
           <div
             style={{
               display: 'flex',
@@ -43,22 +39,26 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
               gap: 10,
             }}
           >
-            <button onClick={() => router.push('/all')}>Proset</button>
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => router.push('/all')}
+            >
+              Proset
+            </button>
             <div style={{ padding: 5 }}>
-              <Fab
-                size="small"
-                color="primary"
+              <button
                 onClick={() => setCollapsed(!collapsed)}
+                className="btn btn-circle btn-sm btn-primary"
               >
                 {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-              </Fab>
+              </button>
             </div>
           </div>
 
           <GameDetails gameInfo={gameInfo} />
         </div>
       </Drawer>
-      <MessageViewer gameId={gameInfo.game._id}></MessageViewer>
+      {/* <MessageViewer gameId={gameInfo.game._id}></MessageViewer> */}
     </div>
   )
 }

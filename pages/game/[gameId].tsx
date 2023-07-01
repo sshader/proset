@@ -65,7 +65,7 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
     )
   } else {
     return (
-      <div className="Container">
+      <div className="Container flex">
         <Sidebar gameInfo={latestKnownGameInfo} />
         <Game gameInfo={latestKnownGameInfo} cards={{ results, status }} />
       </div>

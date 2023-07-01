@@ -1,27 +1,16 @@
 import { useEffect, useState } from 'react'
 
-const Timer = ({
-  totalSeconds,
-  pause,
-}: {
-  totalSeconds: number
-  pause?: boolean
-}) => {
-  console.log('####', pause)
+const Timer = ({ totalSeconds }: { totalSeconds: number }) => {
   const [seconds, setSeconds] = useState(totalSeconds)
   useEffect(() => {
-    if (!pause) {
-      const interval = setInterval(() => {
-        if (!pause) {
-          setSeconds((seconds) => seconds - 1)
-        }
-      }, 1000)
-      return () => clearInterval(interval)
-    }
+    const interval = setInterval(() => {
+      setSeconds((seconds) => seconds - 1)
+    }, 1000)
+    return () => clearInterval(interval)
   }, [])
 
   return (
-    <button style={{ backgroundColor: 'grey' }}>
+    <button className="btn btn-primary" style={{ backgroundColor: 'grey' }}>
       ⏰ {seconds < 10 ? `:0${seconds}` : `:${seconds}`}
     </button>
   )

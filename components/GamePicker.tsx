@@ -33,7 +33,7 @@ const GamePicker = () => {
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   href={`/game/${game._id}`}
                 >
-                  <button>Join</button>
+                  <button className="btn btn-primary">Join</button>
                 </Link>
               </li>
             )

@@ -1,15 +1,15 @@
 import { v } from 'convex/values'
-import { getPlayer } from './getPlayer'
-import * as Players from './players'
-import { api } from './_generated/api'
+import { internal } from './_generated/api'
 import { Doc, Id } from './_generated/dataModel'
 import {
   DatabaseReader,
+  MutationCtx,
   internalMutation,
   mutation,
-  MutationCtx,
   query,
 } from './_generated/server'
+import { getPlayer } from './getPlayer'
+import * as Players from './players'
 
 export const getInfo = query({
   args: { gameId: v.id('Game') },
@@ -75,7 +75,7 @@ export const end = mutation({
     await db.patch(gameId, {
       inProgress: false,
     })
-    await scheduler.runAfter(2000, api.games.internalCleanup, { gameId })
+    await scheduler.runAfter(2000, internal.games.internalCleanup, { gameId })
     return null
   },
 })

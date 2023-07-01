@@ -11,7 +11,7 @@ export default defineSchema({
 
   Player: defineTable({
     game: v.id('Game'),
-    tokenIdentifier: v.string(),
+    tokenIdentifier: v.union(v.string(), v.null()),
     name: v.union(v.string(), v.null()),
     score: v.number(),
     color: v.union(

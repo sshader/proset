@@ -1,4 +1,3 @@
-import { Button } from '@mui/material'
 import { useMutation } from 'convex/react'
 import { useRouter } from 'next/router'
 import { FormEvent } from 'react'
@@ -35,9 +34,9 @@ export default function App() {
       }}
     >
       <GamePicker></GamePicker>
-      <Button variant="contained" onClick={handleStartGame}>
+      <button className="btn btn-primary" onClick={handleStartGame}>
         Start new game
-      </Button>
+      </button>
 
       <Instructions />
     </div>
