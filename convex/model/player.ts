@@ -1,6 +1,7 @@
 import { Doc, Id } from '../_generated/dataModel'
 import { MutationCtx, QueryCtx } from '../_generated/server'
 import { PLAYER_COLORS } from '../types/player_colors'
+import * as User from './user'
 
 export const joinGame = async (
   ctx: MutationCtx,
@@ -30,12 +31,13 @@ export const createSystemPlayer = async (
   ctx: MutationCtx,
   { gameId }: { gameId: Id<'Game'> }
 ) => {
+  const user = await User.getOrCreate(ctx, process.env.SYSTEM_SESSION_ID!)
   await ctx.db.insert('Player', {
     game: gameId,
     name: 'System Player',
     score: 0,
     color: 'grey',
-    user: process.env.SYSTEM_USER_ID as Id<'User'>,
+    user: user.userId,
     isSystemPlayer: true,
   })
 }
