@@ -7,7 +7,7 @@ import * as User from './model/user'
 
 export const start = mutation({
   args: {
-    sessionId: v.union(v.id('Session'), v.null()),
+    sessionId: v.string(),
   },
   handler: async (ctx, { sessionId }) => {
     const user = await User.get(ctx, { sessionId })
@@ -19,7 +19,7 @@ export const start = mutation({
 
 export const getOrCreate = mutation({
   args: {
-    sessionId: v.union(v.id('Session'), v.null()),
+    sessionId: v.string(),
   },
   handler: async (ctx, { sessionId }) => {
     const user = await User.get(ctx, { sessionId })
@@ -36,7 +36,7 @@ export const end = mutationWithGame({
 })
 
 export const getInfo = queryWithGame({
-  args: { sessionId: v.union(v.null(), v.id('Session')), gameId: v.id('Game') },
+  args: { sessionId: v.string(), gameId: v.id('Game') },
   handler: async (ctx, {}) => {
     return await Games.getInfo(ctx, {
       currentPlayer: ctx.player,

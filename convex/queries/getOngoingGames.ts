@@ -6,9 +6,12 @@ import * as User from '../model/user'
 
 export default query({
   args: {
-    sessionId: v.union(v.id('Session'), v.null()),
+    sessionId: v.union(v.string(), v.null()),
   },
   handler: async (ctx, { sessionId }) => {
+    if (sessionId === null) {
+      return []
+    }
     const user = await User.get(ctx, { sessionId })
     const games = await getGamesForUser(ctx, user)
     if (games.length === 0) {

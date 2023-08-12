@@ -19,7 +19,7 @@ type TransformedContext = {
   user: Doc<'User'>
 }
 const inGameValidator = {
-  sessionId: v.union(v.null(), v.id('Session')),
+  sessionId: v.string(),
   gameId: v.id('Game'),
 }
 

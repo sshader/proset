@@ -3,11 +3,12 @@ import { FormEvent } from 'react'
 import GamePicker from '../components/GamePicker'
 import Instructions from '../components/Instructions'
 import { api } from '../convex/_generated/api'
-import { useSessionMutation } from '../hooks/SessionProvider'
+import { useSessionMutation, useSessionQuery } from '../hooks/SessionProvider'
 
 export default function App() {
   const startGame = useSessionMutation(api.games.start)
   const joinGame = useSessionMutation(api.players.joinGame)
+  const userOrNull = useSessionQuery(api.users.getOrNull)
 
   const router = useRouter()
 
@@ -34,9 +35,11 @@ export default function App() {
       }}
     >
       <GamePicker />
-      <button className="btn btn-primary" onClick={handleStartGame}>
-        Start new game
-      </button>
+      {userOrNull?.isGuest ? null : (
+        <button className="btn btn-primary" onClick={handleStartGame}>
+          Start new game
+        </button>
+      )}
 
       <Instructions />
     </div>

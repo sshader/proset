@@ -17,13 +17,10 @@ import { api } from '../convex/_generated/api'
  */
 import { FunctionReference, OptionalRestArgs } from 'convex/server'
 import React, { useContext, useEffect, useState } from 'react'
-import { Id } from '../convex/_generated/dataModel'
 
 const StoreKey = 'ProsetSessionId'
 
-export const SessionContext = React.createContext<
-  Id<'Session'> | null | undefined
->(undefined)
+export const SessionContext = React.createContext<string | undefined>(undefined)
 
 export const useSessionId = () => {
   const sessionId = useContext(SessionContext)
@@ -48,28 +45,27 @@ export const SessionProvider: React.FC<{
   const store =
     // If it's rendering in SSR or such.
     typeof window === 'undefined' ? null : window.localStorage
-  const [sessionId, setSession] = useState<Id<'Session'> | null | undefined>(
-    undefined
-  )
+  const [sessionId, setSession] = useState<string | undefined>(undefined)
   const getOrCreateSession = useMutation(api.users.getOrCreate)
 
   // Get or set the ID from our desired storage location, whenever it changes.
   useEffect(() => {
     void (async () => {
-      const stored = store?.getItem(StoreKey) ?? null
-      const verifiedSessionId = await getOrCreateSession({ sessionId: stored })
-      setSession(verifiedSessionId)
-      if (verifiedSessionId !== null) {
-        store?.setItem(StoreKey, verifiedSessionId)
+      if (store === null) {
+        return
       }
+      const stored = store?.getItem(StoreKey) ?? crypto.randomUUID()
+      setSession(stored)
+      store?.setItem(StoreKey, stored)
+      await getOrCreateSession({ sessionId: stored })
     })()
   }, [setSession, getOrCreateSession, store])
 
   if (sessionId === undefined) {
     return React.createElement(
       SessionContext.Provider,
-      { value: null },
-      React.createElement('div', {}, 'Loading xcxc')
+      { value: undefined },
+      React.createElement('div', {}, 'Loading')
     )
   }
 
@@ -94,7 +90,7 @@ declare type BetterOmit<T, K extends keyof T> = {
 type SessionFunction<Args extends any> = FunctionReference<
   'query' | 'mutation',
   'public',
-  { sessionId: Id<'Session'> | null } & Args,
+  { sessionId: string | null } & Args,
   any
 >
 
@@ -108,7 +104,7 @@ export function useSessionQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: Id<'Session'> | null },
+    { sessionId: string | null },
     any
   >
 >(
@@ -118,7 +114,7 @@ export function useSessionQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: Id<'Session'> | null },
+    { sessionId: string | null },
     any
   >
 >(
@@ -129,7 +125,7 @@ export function useSessionQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: Id<'Session'> | null },
+    { sessionId: string | null },
     any
   >
 >(
@@ -152,7 +148,7 @@ export const useSessionMutation = <
   Mutation extends FunctionReference<
     'mutation',
     'public',
-    { sessionId: Id<'Session'> | null },
+    { sessionId: string | null },
     any
   >
 >(

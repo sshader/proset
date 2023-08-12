@@ -62,7 +62,7 @@ declare type BetterOmit<T, K extends keyof T> = {
 type SessionFunction<Args extends any> = FunctionReference<
   'query' | 'mutation',
   'public',
-  { sessionId: Id<'Session'> | null; gameId: Id<'Game'> } & Args,
+  { sessionId: string; gameId: Id<'Game'> } & Args,
   any
 >
 
@@ -76,7 +76,7 @@ export function useGameQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: Id<'Session'> | null; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Game'> },
     any
   >
 >(
@@ -86,7 +86,7 @@ export function useGameQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: Id<'Session'> | null; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Game'> },
     any
   >
 >(
@@ -97,7 +97,7 @@ export function useGameQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: Id<'Session'> | null; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Game'> },
     any
   >
 >(
@@ -117,7 +117,7 @@ export const useGameMutation = <
   Mutation extends FunctionReference<
     'mutation',
     'public',
-    { sessionId: Id<'Session'> | null; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Game'> },
     any
   >
 >(

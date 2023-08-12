@@ -15,37 +15,47 @@ const customConfig: Config = {
 
 export const getOrCreate = async (
   ctx: MutationCtx,
-  sessionId: Id<'Session'> | null
-): Promise<{ sessionId: Id<'Session'> | null; userId: Id<'User'> }> => {
+  sessionId: string
+): Promise<{ userId: Id<'User'> }> => {
   const { db, auth } = ctx
   const existingUserId = await getOrNull(ctx, { sessionId })
-  if (existingUserId !== null) {
-    return { userId: existingUserId, sessionId }
-  }
+  console.log('existingUserId', existingUserId)
   const identity = await auth.getUserIdentity()
+  if (existingUserId !== null) {
+    const existingUser = (await db.get(existingUserId))!
+    if (existingUser.isGuest && identity !== null) {
+      await db.patch(existingUser._id, {
+        name: identity.name ?? existingUser.name,
+        identifier: identity.tokenIdentifier,
+        isGuest: false,
+      })
+    }
+    return { userId: existingUserId }
+  }
+
   if (identity !== null) {
+    console.log('creating full user')
     const userId = await db.insert('User', {
       name: identity.name ?? uniqueNamesGenerator(customConfig),
       showOnboarding: true,
       identifier: identity.tokenIdentifier,
+      isGuest: false,
     })
-    return { userId, sessionId: null }
+    return { userId }
   }
+  console.log('creating guest user')
   const userId = await db.insert('User', {
     name: uniqueNamesGenerator(customConfig),
     showOnboarding: true,
-    identifier: null,
+    identifier: sessionId,
+    isGuest: true,
   })
-  const newSessionId = await db.insert('Session', { user: userId })
-  await db.patch(userId, {
-    identifier: newSessionId,
-  })
-  return { sessionId: newSessionId, userId }
+  return { userId }
 }
 
 export const getOrNull = async (
   ctx: QueryCtx,
-  { sessionId }: { sessionId: Id<'Session'> | null }
+  { sessionId }: { sessionId: string }
 ) => {
   const { db, auth } = ctx
   const identity = await auth.getUserIdentity()
@@ -56,10 +66,9 @@ export const getOrNull = async (
         q.eq('identifier', identity.tokenIdentifier)
       )
       .unique()
-    return user?._id ?? null
-  }
-  if (sessionId === null) {
-    return null
+    if (user !== null) {
+      return user._id
+    }
   }
 
   const user = await db
@@ -71,7 +80,7 @@ export const getOrNull = async (
 
 export const get = async (
   ctx: QueryCtx,
-  { sessionId }: { sessionId: Id<'Session'> | null }
+  { sessionId }: { sessionId: string }
 ) => {
   const userOrNull = await getOrNull(ctx, { sessionId })
   if (userOrNull === null) {

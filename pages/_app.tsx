@@ -79,7 +79,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                     padding: 5,
                   }}
                 >
-                  <UserButton></UserButton>
+                  <UserButton afterSignOutUrl="/"></UserButton>
                 </div>
                 <Component {...pageProps} />
               </div>

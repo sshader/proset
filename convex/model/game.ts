@@ -16,10 +16,10 @@ export const getInfo = async (
     .withIndex('ByGame', (q) => q.eq('game', gameId))
     .filter((q) => q.eq(q.field('isSystemPlayer'), false))
     .collect()
-  const playerToProsets: Map<string, Doc<'PlayingCard'>[][]> = new Map()
+  const playerToProsets: Record<string, Doc<'PlayingCard'>[][]> = {}
   for (const player of allPlayers) {
     const prosets = await getProsets(db, player._id, gameId)
-    playerToProsets.set(player._id, prosets)
+    playerToProsets[player._id] = prosets
   }
   const otherPlayers = allPlayers.filter((p) => p._id !== currentPlayer._id)
   return {

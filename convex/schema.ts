@@ -31,13 +31,11 @@ export default defineSchema({
 
   User: defineTable({
     name: v.string(),
-    // Either an auth identity token identifier or null if a session
-    identifier: v.union(v.null(), v.string()),
+    // Either an auth identity token identifier or a UUID
+    identifier: v.string(),
     showOnboarding: v.boolean(),
+    isGuest: v.boolean(),
   }).index('ByIdentifier', ['identifier']),
-  Session: defineTable({
-    user: v.id('User'),
-  }),
 
   PlayingCard: defineTable({
     red: v.boolean(),
