@@ -17,11 +17,11 @@ const GameBoundary = () => {
 
   useEffect(() => {
     joinGame({ gameId })
-      .catch((e) => {
-        throw e
-      })
       .then(() => {
         setReady(true)
+      })
+      .catch((e) => {
+        throw e
       })
   })
 

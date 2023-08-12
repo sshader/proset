@@ -172,7 +172,7 @@ export const reveal = async (
   const { db, scheduler } = ctx
   const systemPlayer = await Player.getSystemPlayer(ctx, player.game)
 
-  Message.send(ctx, {
+  await Message.send(ctx, {
     content: `👀 ${user.name} is revealing a set`,
     isPrivate: false,
     player,

@@ -25,15 +25,7 @@ export default function App() {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        margin: 20,
-        gap: 20,
-      }}
-    >
+    <div className="flex flex-col items-center m-20 gap-5">
       <GamePicker />
       {userOrNull?.isGuest ? null : (
         <button className="btn btn-primary" onClick={handleStartGame}>

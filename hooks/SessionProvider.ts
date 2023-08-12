@@ -87,7 +87,7 @@ declare type BetterOmit<T, K extends keyof T> = {
   [Property in keyof T as Property extends K ? never : Property]: T[Property]
 }
 
-type SessionFunction<Args extends any> = FunctionReference<
+type SessionFunction<Args> = FunctionReference<
   'query' | 'mutation',
   'public',
   { sessionId: string | null } & Args,
@@ -135,7 +135,7 @@ export function useSessionQuery<
   const sessionId = useContext(SessionContext)
 
   if (sessionId === undefined) {
-    return undefined
+    throw new Error('session not set')
   }
 
   const newArgs = { ...args, sessionId }

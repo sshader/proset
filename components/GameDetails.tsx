@@ -10,7 +10,6 @@ export default function GameDetails({
   showProsets?: boolean
 }) {
   const gameInfo = useGameInfo()
-  const gameId = gameInfo.game._id
   const otherPlayers =
     gameInfo.otherPlayers.length === 0 ? (
       ''

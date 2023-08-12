@@ -4,13 +4,10 @@ import { useSessionQuery } from '../hooks/SessionProvider'
 
 const renderLoading = () => {
   return (
-    <>
-      <h1>Your ongoing games:</h1>
-      <ul>
-        <li className="Placeholder Placeholder-row"></li>
-        <li className="Placeholder Placeholder-row"></li>
-      </ul>
-    </>
+    <ul>
+      <li className="Placeholder Placeholder-row"></li>
+      <li className="Placeholder Placeholder-row"></li>
+    </ul>
   )
 }
 const GamePicker = () => {
@@ -18,6 +15,7 @@ const GamePicker = () => {
 
   return (
     <div className="w-full">
+      <h1>Ongoing games:</h1>
       {onGoingGames === undefined ? (
         renderLoading()
       ) : (

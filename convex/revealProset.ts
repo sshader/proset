@@ -6,11 +6,11 @@ import { findProset } from './prosetHelpers'
 
 export default mutationWithGame({
   args: {},
-  handler: async (ctx, {}) => {
-    const { db, scheduler, player, game, user } = ctx
+  handler: async (ctx) => {
+    const { db, scheduler, player, user } = ctx
     const systemPlayer = await Player.getSystemPlayer(ctx, player.game)
 
-    Message.send(ctx, {
+    await Message.send(ctx, {
       content: `👀 ${user.name} is revealing a set`,
       isPrivate: false,
       player,

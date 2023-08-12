@@ -29,15 +29,15 @@ export const getOrCreate = mutation({
 
 export const end = mutationWithGame({
   args: {},
-  handler: async (ctx, {}) => {
+  handler: async (ctx) => {
     const { game } = ctx
     await Games.end(ctx, game)
   },
 })
 
 export const getInfo = queryWithGame({
-  args: { sessionId: v.string(), gameId: v.id('Game') },
-  handler: async (ctx, {}) => {
+  args: {},
+  handler: async (ctx) => {
     return await Games.getInfo(ctx, {
       currentPlayer: ctx.player,
       user: ctx.user,

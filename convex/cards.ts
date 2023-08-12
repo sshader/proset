@@ -7,7 +7,7 @@ import { mutationWithGame } from './lib/functions'
 
 export const startSelectSet = mutationWithGame({
   args: {},
-  handler: async (ctx, {}) => {
+  handler: async (ctx) => {
     const { game, player } = ctx
 
     return Cards.startSelectSet(ctx, { game, player })
@@ -26,7 +26,7 @@ export const select = mutationWithGame({
 
 export const reveal = mutationWithGame({
   args: {},
-  handler: async (ctx, {}) => {
+  handler: async (ctx) => {
     const { player, user } = ctx
     return await Cards.reveal(ctx, { player, user })
   },

@@ -49,13 +49,7 @@ const Game = (props: {
       })
     }, 20 * 1000)
     setSelectionTimeout(timeout)
-  }, [
-    game._id,
-    sendMessage,
-    startSelectSet,
-    setSelectionTimeout,
-    selectionTimeout,
-  ])
+  }, [sendMessage, startSelectSet, setSelectionTimeout, selectionTimeout])
 
   const handleSelectCard = useCallback(
     async (card: Doc<'PlayingCard'> | null) => {
@@ -128,7 +122,7 @@ const Game = (props: {
     },
     [
       cards.results,
-      game._id,
+      gameId,
       handleSelectCard,
       handleStartSelectSet,
       revealProset,

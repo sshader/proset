@@ -9,7 +9,7 @@ export const send = mutationWithGame({
     isPrivate: v.optional(v.boolean()),
   },
   handler: async (ctx, { content, isPrivate }) => {
-    Message.send(ctx, {
+    await Message.send(ctx, {
       content,
       isPrivate,
       player: ctx.player,
@@ -28,7 +28,7 @@ export const remove = internalMutation({
 
 export const list = queryWithGame({
   args: {},
-  handler: async (ctx, {}) => {
+  handler: async (ctx) => {
     const { db, player } = ctx
     return await db
       .query('Message')
