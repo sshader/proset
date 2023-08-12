@@ -7,6 +7,7 @@ import { StrictMode } from 'react'
 
 import Head from 'next/head'
 import Instructions from '../components/Instructions'
+import { SessionProvider } from '../hooks/SessionProvider'
 import '../styles/globals.css'
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
@@ -17,8 +18,20 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
 export function Login() {
   return (
     <main>
+      <div
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          padding: 5,
+        }}
+      >
+        <SignInButton mode="modal">
+          <button className="btn btn-primary">Sign in</button>
+        </SignInButton>
+      </div>
       <h1 className="text-center">Proset</h1>
-      <SignInButton mode="modal" />
+
       <Instructions />
     </main>
   )
@@ -35,21 +48,37 @@ function MyApp({ Component, pageProps }: AppProps) {
       >
         <ConvexProviderWithClerk client={convex}>
           <Unauthenticated>
-            <Login />
-          </Unauthenticated>
-          <Authenticated>
-            <div>
+            <SessionProvider>
               <div
                 style={{
                   position: 'absolute',
                   right: 0,
+                  top: 0,
                   padding: 5,
                 }}
               >
-                <UserButton></UserButton>
+                <SignInButton mode="modal">
+                  <button className="btn btn-primary">Sign in</button>
+                </SignInButton>
               </div>
               <Component {...pageProps} />
-            </div>
+            </SessionProvider>
+          </Unauthenticated>
+          <Authenticated>
+            <SessionProvider>
+              <div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    padding: 5,
+                  }}
+                >
+                  <UserButton></UserButton>
+                </div>
+                <Component {...pageProps} />
+              </div>
+            </SessionProvider>
           </Authenticated>
         </ConvexProviderWithClerk>
       </ClerkProvider>

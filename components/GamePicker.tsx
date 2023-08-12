@@ -1,6 +1,6 @@
-import { useQuery } from 'convex/react'
 import Link from 'next/link'
 import { api } from '../convex/_generated/api'
+import { useSessionQuery } from '../hooks/SessionProvider'
 
 const renderLoading = () => {
   return (
@@ -11,10 +11,10 @@ const renderLoading = () => {
   )
 }
 const GamePicker = () => {
-  const onGoingGames = useQuery(api.queries.getOngoingGames.default)
+  const onGoingGames = useSessionQuery(api.queries.getOngoingGames.default)
 
   return (
-    <div>
+    <div className="w-full">
       <h1>Your ongoing games:</h1>
       {onGoingGames === undefined ? (
         renderLoading()
@@ -27,7 +27,7 @@ const GamePicker = () => {
                 key={game._id.id}
               >
                 <div>
-                  <p>Players: {game.playerNames.join(', ')}</p>
+                  <p>{game.numPlayers} Players</p>
                 </div>
                 <Link
                   style={{ textDecoration: 'none', color: 'inherit' }}

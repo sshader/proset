@@ -1,19 +1,16 @@
-import { useState } from 'react'
 import { Doc } from '../convex/_generated/dataModel'
-import { GameInfo } from '../types/game_info'
+import { useGameInfo } from '../hooks/GameInfoProvider'
 import Card from './Card'
 import PlayingCard from './playing_card'
 
 const CardContainer = ({
-  gameInfo,
   cards,
   onCardClicked,
 }: {
-  gameInfo: GameInfo
   cards: Array<Doc<'PlayingCard'>>
   onCardClicked: (card: Doc<'PlayingCard'> | null) => void
 }) => {
-  const [tabSelect, setTabSelect] = useState(null)
+  const gameInfo = useGameInfo()
   const selectingPlayerId = gameInfo.game.selectingPlayer
 
   const gameSelectionState =
@@ -50,7 +47,6 @@ const CardContainer = ({
           <PlayingCard
             selectionColor={card.selectedBy != null ? selectionColor : null}
             card={card}
-            index={i + 5}
             size="regular"
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             onClick={

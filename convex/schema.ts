@@ -7,12 +7,13 @@ export default defineSchema({
     selectingPlayer: v.union(v.null(), v.id('Player')),
     selectionStartTime: v.union(v.null(), v.number()),
     inProgress: v.boolean(),
-  }),
+    isPublic: v.optional(v.boolean()),
+  }).index('ByInProgressPublic', ['inProgress', 'isPublic']),
 
   Player: defineTable({
     game: v.id('Game'),
-    tokenIdentifier: v.union(v.string(), v.null()),
-    name: v.union(v.string(), v.null()),
+    user: v.id('User'),
+    name: v.string(),
     score: v.number(),
     color: v.union(
       v.literal('red'),
@@ -25,8 +26,18 @@ export default defineSchema({
     ),
     isSystemPlayer: v.boolean(),
   })
-    .index('ByGame', ['game', 'tokenIdentifier'])
-    .index('ByToken', ['tokenIdentifier']),
+    .index('ByGame', ['game'])
+    .index('ByUser', ['user']),
+
+  User: defineTable({
+    name: v.string(),
+    // Either an auth identity token identifier or null if a session
+    identifier: v.union(v.null(), v.string()),
+    showOnboarding: v.boolean(),
+  }).index('ByIdentifier', ['identifier']),
+  Session: defineTable({
+    user: v.id('User'),
+  }),
 
   PlayingCard: defineTable({
     red: v.boolean(),

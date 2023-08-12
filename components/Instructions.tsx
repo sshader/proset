@@ -3,7 +3,7 @@ import Card from './Card'
 const Instructions = () => {
   return (
     <div>
-      <h2>
+      <h2 className="text-lg font-bold">
         How to play{' '}
         <a href="https://en.wikipedia.org/wiki/Projective_Set_(game)">
           Proset:

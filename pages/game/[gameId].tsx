@@ -1,4 +1,4 @@
-import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { usePaginatedQuery } from 'convex/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Game from '../../components/Game'
@@ -6,32 +6,37 @@ import GameDetails from '../../components/GameDetails'
 import Sidebar from '../../components/Sidebar'
 import { api } from '../../convex/_generated/api'
 import { Id } from '../../convex/_generated/dataModel'
+import { GameInfoProvider } from '../../hooks/GameInfoProvider'
+import { useSessionMutation } from '../../hooks/SessionProvider'
 
 const GameBoundary = () => {
   const router = useRouter()
   const gameId: Id<'Game'> = router.query.gameId as Id<'Game'>
-  const joinGame = useMutation(api.api.players.joinGame)
+  const joinGame = useSessionMutation(api.players.joinGame)
   const [ready, setReady] = useState(false)
 
-  joinGame({ gameId })
-    .then(() => setReady(true))
-    .catch((e) => {
-      throw e
-    })
+  useEffect(() => {
+    joinGame({ gameId })
+      .catch((e) => {
+        throw e
+      })
+      .then(() => {
+        setReady(true)
+      })
+  })
+
   if (ready) {
-    return <InnerGameBoundary gameId={gameId}></InnerGameBoundary>
+    return (
+      <GameInfoProvider gameId={gameId}>
+        <InnerGameBoundary gameId={gameId} />
+      </GameInfoProvider>
+    )
   } else {
     return <div>Loading...</div>
   }
 }
 
 const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
-  const [latestKnownGameInfo, setLatestKnownGameInfo] = useState(undefined)
-  const gameInfo = useQuery(api.games.getInfo, { gameId })
-  if (gameInfo !== undefined && gameInfo !== latestKnownGameInfo) {
-    setLatestKnownGameInfo(() => gameInfo as any)
-  }
-
   const { results, status, loadMore } = usePaginatedQuery(
     api.dealCards.default,
     { gameId },
@@ -44,10 +49,7 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
       loadMore(7 - results.length)
     }
   }, [results, status, loadMore])
-  if (
-    latestKnownGameInfo === undefined ||
-    (results.length === 0 && status !== 'Exhausted')
-  ) {
+  if (results.length === 0 && status !== 'Exhausted') {
     return <div>Loading</div>
   } else if (results.length === 0 && status === 'Exhausted') {
     return (
@@ -60,14 +62,14 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
         }}
       >
         <div>Game complete! 👏 Summary</div>
-        <GameDetails gameInfo={latestKnownGameInfo} showProsets={true} />
+        <GameDetails showProsets={true} />
       </div>
     )
   } else {
     return (
       <div className="Container flex">
-        <Sidebar gameInfo={latestKnownGameInfo} />
-        <Game gameInfo={latestKnownGameInfo} cards={{ results, status }} />
+        <Sidebar />
+        <Game cards={{ results, status }} />
       </div>
     )
   }

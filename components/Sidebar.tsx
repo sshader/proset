@@ -3,10 +3,15 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Drawer } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { GameInfo } from '../types/game_info'
+import { api } from '../convex/_generated/api'
+import { useGameInfo } from '../hooks/GameInfoProvider'
+import { useSessionMutation } from '../hooks/SessionProvider'
 import GameDetails from './GameDetails'
+import MessageViewer from './MessageViewer'
 
-export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
+export default function Sidebar() {
+  const gameInfo = useGameInfo()
+  const completeOnboarding = useSessionMutation(api.users.completeOnboarding)
   const [collapsed, setCollapsed] = useState(false)
   const router = useRouter()
   return (
@@ -28,37 +33,54 @@ export default function Sidebar({ gameInfo }: { gameInfo: GameInfo }) {
           style: { border: 'none' },
         }}
       >
-        <div className="bg-slate-200 w-64 rounded-r-lg h-full">
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: 5,
-              gap: 10,
-            }}
-          >
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => router.push('/all')}
+        <div className="bg-slate-200 w-64 rounded-r-lg h-full flex flex-col justify-between p-1 gap-2">
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
             >
-              Proset
-            </button>
-            <div style={{ padding: 5 }}>
               <button
-                onClick={() => setCollapsed(!collapsed)}
-                className="btn btn-circle btn-sm btn-primary"
+                className="btn btn-primary btn-sm"
+                onClick={() => router.push('/all')}
               >
-                {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                Proset
               </button>
+              <div style={{ padding: 5 }}>
+                <button
+                  onClick={() => setCollapsed(!collapsed)}
+                  className="btn btn-circle btn-sm btn-primary"
+                >
+                  {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <GameDetails gameInfo={gameInfo} />
+            <GameDetails />
+          </div>
+          {gameInfo.currentPlayer.showOnboarding ? (
+            <button
+              className="btn btn-info relative"
+              onClick={async () => {
+                await completeOnboarding({})
+                await router.push('/all')
+              }}
+            >
+              <span className="absolute top-0 right-0 -mr-1 -mt-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+              </span>
+              How to play
+            </button>
+          ) : (
+            ''
+          )}
         </div>
       </Drawer>
-      {/* <MessageViewer gameId={gameInfo.game._id}></MessageViewer> */}
+      <MessageViewer></MessageViewer>
     </div>
   )
 }

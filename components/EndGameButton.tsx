@@ -1,10 +1,11 @@
-import { useMutation } from 'convex/react'
 import { useRouter } from 'next/router'
 import { api } from '../convex/_generated/api'
-import { Id } from '../convex/_generated/dataModel'
+import { useGameInfo } from '../hooks/GameInfoProvider'
+import { useSessionMutation } from '../hooks/SessionProvider'
 
-export default function EndGameButton({ gameId }: { gameId: Id<'Game'> }) {
-  const endGame = useMutation(api.games.end)
+export default function EndGameButton() {
+  const gameInfo = useGameInfo()
+  const endGame = useSessionMutation(api.games.end)
   const router = useRouter()
 
   return (
@@ -17,7 +18,7 @@ export default function EndGameButton({ gameId }: { gameId: Id<'Game'> }) {
       <button
         className="btn btn-primary"
         onClick={async () => {
-          await endGame({ gameId })
+          await endGame({ gameId: gameInfo.game._id })
           await router.push('/all')
         }}
       >

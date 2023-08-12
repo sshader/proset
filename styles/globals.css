@@ -152,7 +152,7 @@ input:not([type]) {
 .PlayerInfo-prosets {
   max-height: 200px;
   overflow: auto;
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   min-width: 1px;
   gap: 10px;
   display: flex;

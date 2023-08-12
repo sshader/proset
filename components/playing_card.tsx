@@ -14,7 +14,7 @@ const PlayingCard = ({
 }) => {
   return (
     <button
-      className="rounded-box focus-visible:border-10 focus-visible:outline-black focus-visible:outline-offset-4"
+      className="rounded-box focus-visible:border-10 focus-visible:outline-slate-500 focus-visible:outline-offset-4"
       onClick={() => onClick(card)}
       role="tab"
     >

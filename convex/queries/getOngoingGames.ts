@@ -1,23 +1,23 @@
+import { v } from 'convex/values'
 import { Doc } from '../_generated/dataModel'
-import { DatabaseReader, query } from '../_generated/server';
+import { DatabaseReader, query, QueryCtx } from '../_generated/server'
+import * as Game from '../model/game'
+import * as User from '../model/user'
 
-export default query(async ({ db, auth }) => {
-  const identity = await auth.getUserIdentity()
-  if (!identity) {
-    return await getAllGames(db)
-  } else {
-    return await getGamesForUser(db, identity.tokenIdentifier)
-  }
+export default query({
+  args: {
+    sessionId: v.union(v.id('Session'), v.null()),
+  },
+  handler: async (ctx, { sessionId }) => {
+    const user = await User.get(ctx, { sessionId })
+    const games = await getGamesForUser(ctx, user)
+    if (games.length === 0) {
+      const publicGame = await Game.getPublicGame(ctx)
+      return await getGamesInfo(ctx.db, [publicGame])
+    }
+    return games
+  },
 })
-
-const getAllGames = async (db: DatabaseReader) => {
-  const games = await db
-    .query('Game')
-    .filter((q) => q.eq(q.field('inProgress'), true))
-    .order('desc')
-    .take(10)
-  return await getGamesInfo(db, games)
-}
 
 const getGamesInfo = async (db: DatabaseReader, games: Array<Doc<'Game'>>) => {
   return await Promise.all(
@@ -28,18 +28,17 @@ const getGamesInfo = async (db: DatabaseReader, games: Array<Doc<'Game'>>) => {
         .collect()
       return {
         ...game,
-        playerNames: players
-          .filter((p) => !p.isSystemPlayer)
-          .map((p) => p.name),
+        numPlayers: players.filter((p) => !p.isSystemPlayer).length,
       }
     })
   )
 }
 
-const getGamesForUser = async (db: DatabaseReader, tokenIdentifier: string) => {
+const getGamesForUser = async (ctx: QueryCtx, user: Doc<'User'>) => {
+  const { db } = ctx
   const players = await db
     .query('Player')
-    .withIndex('ByToken', (q) => q.eq('tokenIdentifier', tokenIdentifier))
+    .withIndex('ByUser', (q) => q.eq('user', user._id))
     .order('desc')
     .take(10)
   const games = await Promise.all(

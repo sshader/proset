@@ -1,16 +1,16 @@
+import { useGameInfo } from '../hooks/GameInfoProvider'
 import { useSendMessage } from '../optimistic_updates/add_message'
-import { GameInfo } from '../types/game_info'
 import CopyLinkButton from './CopyLinkButton'
 import EndGameButton from './EndGameButton'
 import { PlayerInfo } from './PlayerInfo'
 
 export default function GameDetails({
-  gameInfo,
   showProsets = false,
 }: {
-  gameInfo: GameInfo
   showProsets?: boolean
 }) {
+  const gameInfo = useGameInfo()
+  const gameId = gameInfo.game._id
   const otherPlayers =
     gameInfo.otherPlayers.length === 0 ? (
       ''
@@ -18,7 +18,7 @@ export default function GameDetails({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
+          flexDirection: 'column',
         }}
       >
         {gameInfo.otherPlayers.map((otherPlayer) => {
@@ -59,13 +59,12 @@ export default function GameDetails({
         <CopyLinkButton
           onCopy={() =>
             sendMessage({
-              gameId: gameInfo.game._id,
               content: 'Copied link to clipboard!',
               isPrivate: true,
             })
           }
         />
-        <EndGameButton gameId={gameInfo.game._id} />
+        <EndGameButton />
       </div>
     </div>
   )

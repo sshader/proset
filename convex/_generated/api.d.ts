@@ -14,23 +14,24 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as api_games from "../api/games";
-import type * as api_players from "../api/players";
-import type * as claimSet from "../claimSet";
+import type * as cards from "../cards";
 import type * as dealCards from "../dealCards";
-import type * as discardRevealedProset from "../discardRevealedProset";
 import type * as games from "../games";
-import type * as getPlayer from "../getPlayer";
-import type * as getRecentMessages from "../getRecentMessages";
-import type * as maybeClearSelectSet from "../maybeClearSelectSet";
+import type * as lib_functions from "../lib/functions";
+import type * as lib_middlewareUtils from "../lib/middlewareUtils";
+import type * as message from "../message";
+import type * as model_cards from "../model/cards";
+import type * as model_game from "../model/game";
+import type * as model_message from "../model/message";
+import type * as model_player from "../model/player";
+import type * as model_user from "../model/user";
 import type * as players from "../players";
 import type * as prosetHelpers from "../prosetHelpers";
-import type * as queries_getMyGames from "../queries/getMyGames";
 import type * as queries_getOngoingGames from "../queries/getOngoingGames";
 import type * as revealProset from "../revealProset";
-import type * as selectCard from "../selectCard";
-import type * as sendMessage from "../sendMessage";
-import type * as startSelectSet from "../startSelectSet";
+import type * as types_game_info from "../types/game_info";
+import type * as types_player_colors from "../types/player_colors";
+import type * as users from "../users";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -41,23 +42,24 @@ import type * as startSelectSet from "../startSelectSet";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "api/games": typeof api_games;
-  "api/players": typeof api_players;
-  claimSet: typeof claimSet;
+  cards: typeof cards;
   dealCards: typeof dealCards;
-  discardRevealedProset: typeof discardRevealedProset;
   games: typeof games;
-  getPlayer: typeof getPlayer;
-  getRecentMessages: typeof getRecentMessages;
-  maybeClearSelectSet: typeof maybeClearSelectSet;
+  "lib/functions": typeof lib_functions;
+  "lib/middlewareUtils": typeof lib_middlewareUtils;
+  message: typeof message;
+  "model/cards": typeof model_cards;
+  "model/game": typeof model_game;
+  "model/message": typeof model_message;
+  "model/player": typeof model_player;
+  "model/user": typeof model_user;
   players: typeof players;
   prosetHelpers: typeof prosetHelpers;
-  "queries/getMyGames": typeof queries_getMyGames;
   "queries/getOngoingGames": typeof queries_getOngoingGames;
   revealProset: typeof revealProset;
-  selectCard: typeof selectCard;
-  sendMessage: typeof sendMessage;
-  startSelectSet: typeof startSelectSet;
+  "types/game_info": typeof types_game_info;
+  "types/player_colors": typeof types_player_colors;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

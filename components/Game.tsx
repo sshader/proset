@@ -1,40 +1,42 @@
 import confetti from 'canvas-confetti'
-import { useMutation } from 'convex/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { api } from '../convex/_generated/api'
 import { Doc } from '../convex/_generated/dataModel'
+import { useGameInfo, useGameMutation } from '../hooks/GameInfoProvider'
+import { useSessionMutation } from '../hooks/SessionProvider'
 import { useSendMessage } from '../optimistic_updates/add_message'
-import { GameInfo } from '../types/game_info'
 import Card from './Card'
 import CardContainer from './CardContainer'
 import EndGameButton from './EndGameButton'
 import Timer from './Timer'
 
 const Game = (props: {
-  gameInfo: GameInfo
   cards: {
     results: Array<Doc<'PlayingCard'>>
     status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore' | 'LoadingFirstPage'
   }
 }) => {
-  const { gameInfo, cards } = props
+  const gameInfo = useGameInfo()
+  const { cards } = props
   const { game, currentPlayer } = gameInfo
+  const gameId = game._id
   const [selectionTimeout, setSelectionTimeout] = useState<number | null>(null)
 
-  const startSelectSet = useMutation(api.startSelectSet.default)
-  const clearSelectSet = useMutation(api.maybeClearSelectSet.default)
+  const startSelectSet = useGameMutation(api.cards.startSelectSet)
 
-  const selectCard = useMutation(api.selectCard.default)
+  const selectCard = useGameMutation(api.cards.select)
 
   const sendMessage = useSendMessage()
 
-  const revealProset = useMutation(api.revealProset.default)
+  const revealProset = useSessionMutation(api.cards.reveal)
 
   const handleStartSelectSet = useCallback(async () => {
-    const selectResponse = await startSelectSet({ gameId: game._id })
+    if (selectionTimeout !== null) {
+      return
+    }
+    const selectResponse = await startSelectSet({})
     if (selectResponse !== null) {
       await sendMessage({
-        gameId: game._id,
         content: selectResponse.reason,
         isPrivate: true,
       })
@@ -42,21 +44,27 @@ const Game = (props: {
     }
     const timeout = window.setTimeout(async () => {
       await sendMessage({
-        gameId: game._id,
         content: '🐌 Too slow! Deducting a point.',
         isPrivate: true,
       })
-      await clearSelectSet({ gameId: game._id })
     }, 20 * 1000)
     setSelectionTimeout(timeout)
-  }, [clearSelectSet, game._id, sendMessage, startSelectSet])
+  }, [
+    game._id,
+    sendMessage,
+    startSelectSet,
+    setSelectionTimeout,
+    selectionTimeout,
+  ])
 
   const handleSelectCard = useCallback(
     async (card: Doc<'PlayingCard'> | null) => {
       if (card === null) {
         return
       }
-      const selectionResult = await selectCard({ cardId: card._id })
+      const selectionResult = await selectCard({
+        cardId: card._id,
+      })
       if (selectionResult === 'FoundProset') {
         if (selectionTimeout) {
           clearTimeout(selectionTimeout)
@@ -91,7 +99,7 @@ const Game = (props: {
           await handleStartSelectSet()
           break
         case 'KeyR':
-          await revealProset({ gameId: game._id })
+          await revealProset({ gameId })
           break
         case 'Digit1':
           await handleSelectCard(cards.results[0] ?? null)
@@ -154,18 +162,17 @@ const Game = (props: {
     )
 
   const handleRevealProset = async () => {
-    await revealProset({ gameId: game._id })
+    await revealProset({ gameId })
   }
 
   return (
     <div className="flex grow shrink min-w-fit justify-center">
       <div className="flex flex-col gap-4 justify-center">
         {cards.results.length === 0 && cards.status === 'Exhausted' ? (
-          <EndGameButton gameId={gameInfo.game._id} />
+          <EndGameButton />
         ) : (
           <React.Fragment>
             <CardContainer
-              gameInfo={gameInfo}
               cards={cards.results}
               onCardClicked={handleSelectCard}
             />
@@ -188,7 +195,7 @@ const Game = (props: {
 
 export const Proset = ({ cards }: { cards: Array<Doc<'PlayingCard'>> }) => {
   return (
-    <div style={{ display: 'flex', gap: 10 }}>
+    <div className="flex gap-2 flex-shrink-0 flex-grow min-w-fit">
       {cards.map((card) => {
         return <Card card={card} size="mini"></Card>
       })}

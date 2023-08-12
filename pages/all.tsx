@@ -1,19 +1,19 @@
-import { useMutation } from 'convex/react'
 import { useRouter } from 'next/router'
 import { FormEvent } from 'react'
 import GamePicker from '../components/GamePicker'
 import Instructions from '../components/Instructions'
 import { api } from '../convex/_generated/api'
+import { useSessionMutation } from '../hooks/SessionProvider'
 
 export default function App() {
-  const startGame = useMutation(api.api.games.start)
-  const joinGame = useMutation(api.api.players.joinGame)
+  const startGame = useSessionMutation(api.games.start)
+  const joinGame = useSessionMutation(api.players.joinGame)
 
   const router = useRouter()
 
   async function handleStartGame(event: FormEvent) {
     event.preventDefault()
-    const gameId = await startGame()
+    const { gameId } = await startGame({})
     await joinGame({ gameId })
     await router.push({
       pathname: '/game/[gameId]',
@@ -33,7 +33,7 @@ export default function App() {
         gap: 20,
       }}
     >
-      <GamePicker></GamePicker>
+      <GamePicker />
       <button className="btn btn-primary" onClick={handleStartGame}>
         Start new game
       </button>
