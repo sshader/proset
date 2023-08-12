@@ -25,7 +25,7 @@ export default function GameDetails({
             <PlayerInfo
               isCurrentPlayer={false}
               player={otherPlayer}
-              prosets={gameInfo.playerToProsets[otherPlayer._id] ?? [[]]}
+              prosets={gameInfo.playerToProsets[otherPlayer._id] ?? []}
               initialShowProsets={showProsets}
             ></PlayerInfo>
           )
@@ -40,7 +40,7 @@ export default function GameDetails({
       <PlayerInfo
         isCurrentPlayer={true}
         player={gameInfo.currentPlayer}
-        prosets={gameInfo.playerToProsets[gameInfo.currentPlayer._id] ?? [[]]}
+        prosets={gameInfo.playerToProsets[gameInfo.currentPlayer._id] ?? []}
         initialShowProsets={showProsets}
       />
       {otherPlayers}

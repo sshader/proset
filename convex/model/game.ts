@@ -26,6 +26,7 @@ export const getInfo = async (
     game,
     currentPlayer: {
       ...currentPlayer,
+      name: args.user.name,
       showOnboarding: args.user.showOnboarding,
       isGuest: args.user.isGuest,
     },
