@@ -1,4 +1,9 @@
-import { ClerkProvider, SignInButton, UserButton } from '@clerk/clerk-react'
+import {
+  ClerkProvider,
+  SignInButton,
+  UserButton,
+  useAuth,
+} from '@clerk/clerk-react'
 import { Authenticated, ConvexReactClient, Unauthenticated } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import type { AppProps } from 'next/app'
@@ -46,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ClerkProvider
         publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string}
       >
-        <ConvexProviderWithClerk client={convex}>
+        <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
           <Unauthenticated>
             <SessionProvider>
               <div
