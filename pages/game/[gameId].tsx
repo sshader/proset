@@ -1,6 +1,7 @@
 import { usePaginatedQuery } from 'convex/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import EndGameButton from '../../components/EndGameButton'
 import Game from '../../components/Game'
 import GameDetails from '../../components/GameDetails'
 import Sidebar from '../../components/Sidebar'
@@ -53,16 +54,10 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
     return <div>Loading</div>
   } else if (results.length === 0 && status === 'Exhausted') {
     return (
-      <div
-        className="Container"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <div className="Container flex flex-col items-center gap-5">
         <div>Game complete! 👏 Summary</div>
         <GameDetails showProsets={true} />
+        <EndGameButton />
       </div>
     )
   } else {

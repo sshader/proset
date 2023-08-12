@@ -31,7 +31,7 @@ const Game = (props: {
   const revealProset = useSessionMutation(api.cards.reveal)
 
   const handleStartSelectSet = useCallback(async () => {
-    if (selectionTimeout !== null) {
+    if (game.selectingPlayer === currentPlayer._id) {
       return
     }
     const selectResponse = await startSelectSet({})

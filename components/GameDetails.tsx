@@ -61,7 +61,7 @@ export default function GameDetails({
             })
           }
         />
-        <EndGameButton />
+        {gameInfo.currentPlayer.isGuest ? null : <EndGameButton />}
       </div>
     </div>
   )

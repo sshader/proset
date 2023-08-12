@@ -19,7 +19,6 @@ export const getOrCreate = async (
 ): Promise<{ userId: Id<'User'> }> => {
   const { db, auth } = ctx
   const existingUserId = await getOrNull(ctx, { sessionId })
-  console.log('existingUserId', existingUserId)
   const identity = await auth.getUserIdentity()
   if (existingUserId !== null) {
     const existingUser = (await db.get(existingUserId))!
@@ -34,7 +33,6 @@ export const getOrCreate = async (
   }
 
   if (identity !== null) {
-    console.log('creating full user')
     const userId = await db.insert('User', {
       name: identity.name ?? uniqueNamesGenerator(customConfig),
       showOnboarding: true,
@@ -43,7 +41,6 @@ export const getOrCreate = async (
     })
     return { userId }
   }
-  console.log('creating guest user')
   const userId = await db.insert('User', {
     name: uniqueNamesGenerator(customConfig),
     showOnboarding: true,

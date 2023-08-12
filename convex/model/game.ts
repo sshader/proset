@@ -27,6 +27,7 @@ export const getInfo = async (
     currentPlayer: {
       ...currentPlayer,
       showOnboarding: args.user.showOnboarding,
+      isGuest: args.user.isGuest,
     },
     otherPlayers,
     playerToProsets,
