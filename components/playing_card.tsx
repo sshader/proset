@@ -7,10 +7,10 @@ const PlayingCard = ({
   size,
   onClick,
 }: {
-  card: Doc<'PlayingCard'>
+  card: Doc<'PlayingCards'>
   selectionColor: string | null
   size: 'regular' | 'mini'
-  onClick: (card: Doc<'PlayingCard'>) => void
+  onClick: (card: Doc<'PlayingCards'>) => void
 }) => {
   return (
     <button

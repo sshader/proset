@@ -1,8 +1,8 @@
 import { v } from 'convex/values'
-import { mutation, query } from './_generated/server'
 import * as User from './model/user'
+import { mutationWithEnt, queryWithEnt } from './lib/functions'
 
-export const getOrCreate = mutation({
+export const getOrCreate = mutationWithEnt({
   args: { sessionId: v.string() },
   handler: async (ctx, { sessionId }) => {
     const result = await User.getOrCreate(ctx, sessionId)
@@ -10,21 +10,21 @@ export const getOrCreate = mutation({
   },
 })
 
-export const getOrNull = query({
+export const getOrNull = queryWithEnt({
   args: { sessionId: v.string() },
   handler: async (ctx, { sessionId }) => {
-    const userIdOrNull = await User.getOrNull(ctx, { sessionId })
-    if (userIdOrNull !== null) {
-      return await ctx.db.get(userIdOrNull)
+    const userOrNull = await User.getOrNull(ctx, { sessionId })
+    if (userOrNull !== null) {
+      return userOrNull
     }
     return null
   },
 })
 
-export const completeOnboarding = mutation({
+export const completeOnboarding = mutationWithEnt({
   args: { sessionId: v.string() },
   handler: async (ctx, { sessionId }) => {
     const user = await User.get(ctx, { sessionId })
-    await User.completeOnboarding(ctx, user._id)
+    await User.completeOnboarding(ctx, user)
   },
 })

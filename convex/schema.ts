@@ -1,18 +1,20 @@
-import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
+import { defineEnt, defineEntSchema, getEntDefinitions } from "convex-ents";
 
-export default defineSchema({
-  Game: defineTable({
+const schema = defineEntSchema({
+  Games: defineEnt({
     name: v.string(),
-    selectingPlayer: v.union(v.null(), v.id('Player')),
+    selectingPlayer: v.union(v.null(), v.id('Players')),
     selectionStartTime: v.union(v.null(), v.number()),
     inProgress: v.boolean(),
     isPublic: v.optional(v.boolean()),
-  }).index('ByInProgressPublic', ['inProgress', 'isPublic']),
+  }).deletion("scheduled", { delayMs: 5 * 60 * 1000 })
+  .edges("Players", { ref: true })
+  .edges("PlayingCards", { ref: true })
+  .edges("Messages", { ref: true })
+  .index('ByInProgressPublic', ['deletionTime', 'isPublic']),
 
-  Player: defineTable({
-    game: v.id('Game'),
-    user: v.id('User'),
+  Players: defineEnt({
     name: v.string(),
     score: v.number(),
     color: v.union(
@@ -25,40 +27,38 @@ export default defineSchema({
       v.literal('grey')
     ),
     isSystemPlayer: v.boolean(),
-  })
-    .index('ByGame', ['game'])
-    .index('ByUser', ['user']),
+  }).edge("Game").edge("User").edges("Prosets", { ref: true }),
 
-  User: defineTable({
+  Users: defineEnt({
     name: v.string(),
-    // Either an auth identity token identifier or a UUID
-    identifier: v.string(),
     showOnboarding: v.boolean(),
     isGuest: v.boolean(),
-  }).index('ByIdentifier', ['identifier']),
+  }).field(
+    // Either an auth identity token identifier or a UUID
+    "identifier", v.string(), { unique: true}
+  ).edges("Players", { ref: true }),
 
-  PlayingCard: defineTable({
+  PlayingCards: defineEnt({
     red: v.boolean(),
     orange: v.boolean(),
     yellow: v.boolean(),
     green: v.boolean(),
     blue: v.boolean(),
     purple: v.boolean(),
-    game: v.id('Game'),
+    selectedBy: v.union(v.null(), v.id('Players')),
+    proset: v.union(v.null(), v.id("Prosets")),
     rank: v.number(),
-    proset: v.union(v.null(), v.id('Proset')),
-    selectedBy: v.union(v.null(), v.id('Player')),
-  })
-    .index('ByGameAndProsetAndRank', ['game', 'proset', 'rank'])
-    .index('ByGameAndProsetAndSelectedBy', ['game', 'proset', 'selectedBy']),
+  }).edge("Game").edges("Prosets").index('ByGameAndProsetAndRank', ['GameId', 'proset', 'rank']),
+    // .index('ByGameAndProsetAndSelectedBy', ['game', 'proset', 'selectedBy']),
 
-  Proset: defineTable({
-    player: v.id('Player'),
-  }).index('ByPlayer', ['player']),
+  Prosets: defineEnt({
+  }).edges("PlayingCards").edge("Player"),
 
-  Message: defineTable({
+  Messages: defineEnt({
     content: v.string(),
-    game: v.id('Game'),
-    player: v.union(v.id('Player'), v.null()),
-  }).index('ByGameAndCreationTime', ['game']),
+    player: v.union(v.null(), v.string())
+  }).edge("Game")
 })
+
+export const entDefinitions = getEntDefinitions(schema);
+export default schema;

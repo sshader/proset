@@ -1,10 +1,9 @@
 import { v } from 'convex/values'
-import { Doc } from '../_generated/dataModel'
-import { DatabaseReader, query, QueryCtx } from '../_generated/server'
 import * as Game from '../model/game'
 import * as User from '../model/user'
+import { BaseQueryCtx, Ent, queryWithEnt } from '../lib/functions'
 
-export default query({
+export default queryWithEnt({
   args: {
     sessionId: v.union(v.string(), v.null()),
   },
@@ -16,19 +15,16 @@ export default query({
     const games = await getGamesForUser(ctx, user)
     if (games.length === 0) {
       const publicGame = await Game.getPublicGame(ctx)
-      return await getGamesInfo(ctx.db, [publicGame])
+      return await getGamesInfo([publicGame])
     }
     return games
   },
 })
 
-const getGamesInfo = async (db: DatabaseReader, games: Array<Doc<'Game'>>) => {
+const getGamesInfo = async (games: Array<Ent<'Games'>>) => {
   return await Promise.all(
     games.map(async (game) => {
-      const players = await db
-        .query('Player')
-        .withIndex('ByGame', (q) => q.eq('game', game._id))
-        .collect()
+      const players = await game.edge("Players");
       return {
         ...game,
         numPlayers: players.filter((p) => !p.isSystemPlayer).length,
@@ -37,22 +33,12 @@ const getGamesInfo = async (db: DatabaseReader, games: Array<Doc<'Game'>>) => {
   )
 }
 
-const getGamesForUser = async (ctx: QueryCtx, user: Doc<'User'>) => {
-  const { db } = ctx
-  const players = await db
-    .query('Player')
-    .withIndex('ByUser', (q) => q.eq('user', user._id))
-    .order('desc')
-    .take(10)
+const getGamesForUser = async (ctx: BaseQueryCtx, user: Ent<'Users'>) => {
+  const players = await user.edge("Players").take(10);
   const games = await Promise.all(
     players.map(async (player) => {
-      return await db.get(player.game)
+      return player.edgeX("Game")
     })
   )
-  return await getGamesInfo(
-    db,
-    games.filter<Doc<'Game'>>(
-      (game): game is Doc<'Game'> => game !== null && game.inProgress
-    )
-  )
+  return await getGamesInfo(games.filter(game => game.deletionTime === undefined))
 }

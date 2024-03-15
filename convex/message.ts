@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 import { internalMutation } from './_generated/server'
-import { mutationWithGame, queryWithGame } from './lib/functions'
+import { mutationWithGame, queryWithGame, } from './lib/functions'
 import * as Message from './model/message'
 
 export const send = mutationWithGame({
@@ -12,14 +12,13 @@ export const send = mutationWithGame({
     await Message.send(ctx, {
       content,
       isPrivate,
-      player: ctx.player,
     })
   },
 })
 
 export const remove = internalMutation({
   args: {
-    messageId: v.id('Message'),
+    messageId: v.id('Messages'),
   },
   handler: async ({ db }, { messageId }) => {
     await db.delete(messageId)
@@ -29,15 +28,7 @@ export const remove = internalMutation({
 export const list = queryWithGame({
   args: {},
   handler: async (ctx) => {
-    const { db, player } = ctx
-    return await db
-      .query('Message')
-      .withIndex('ByGameAndCreationTime', (q) =>
-        q.eq('game', player.game).gte('_creationTime', Date.now() - 10 * 1000)
-      )
-      .filter((q) =>
-        q.or(q.eq(q.field('player'), null), q.eq(q.field('player'), player._id))
-      )
-      .collect()
+    const messages = await ctx.game.edge("Messages")
+    return messages.filter(m => m._creationTime >= Date.now() - 10 * 1000 && (m.player === null || m.player === ctx.player._id))
   },
 })

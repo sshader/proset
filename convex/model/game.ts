@@ -1,27 +1,23 @@
-import { internal } from '../_generated/api'
-import { Doc, Id } from '../_generated/dataModel'
-import { DatabaseReader, MutationCtx, QueryCtx } from '../_generated/server'
+import { Doc } from '../_generated/dataModel'
+import { Ent, QueryCtx, MutationCtx, BaseMutationCtx, BaseQueryCtx } from '../lib/functions'
 import { GameInfo } from '../types/game_info'
 import * as Players from './player'
 
 export const getInfo = async (
   ctx: QueryCtx,
-  args: { currentPlayer: Doc<'Player'>; game: Doc<'Game'>; user: Doc<'User'> }
+  args: { currentPlayer: Ent<'Players'>; game: Ent<'Games'>; user: Ent<'Users'> }
 ): Promise<GameInfo> => {
-  const { db } = ctx
   const { currentPlayer, game } = args
-  const gameId = currentPlayer.game
-  const allPlayers = await db
-    .query('Player')
-    .withIndex('ByGame', (q) => q.eq('game', gameId))
-    .filter((q) => q.eq(q.field('isSystemPlayer'), false))
-    .collect()
-  const playerToProsets: Record<string, Doc<'PlayingCard'>[][]> = {}
+  const allPlayers = await ctx.game.edge("Players")
+  const playerToProsets: Record<string, Doc<'PlayingCards'>[][]> = {}
   for (const player of allPlayers) {
-    const prosets = await getProsets(db, player._id, gameId)
+    if (player.isSystemPlayer) {
+      continue
+    }
+    const prosets = await getProsets(ctx, player)
     playerToProsets[player._id] = prosets
   }
-  const otherPlayers = allPlayers.filter((p) => p._id !== currentPlayer._id)
+  const otherPlayers = allPlayers.filter((p) => p._id !== currentPlayer._id && !p.isSystemPlayer)
   return {
     game,
     currentPlayer: {
@@ -35,97 +31,88 @@ export const getInfo = async (
   }
 }
 
-export const cleanup = async (
-  { db }: MutationCtx,
-  { gameId }: { gameId: Id<'Game'> }
-) => {
-  const allPlayers = await db
-    .query('Player')
-    .withIndex('ByGame', (q) => q.eq('game', gameId))
-    .collect()
-  for (const player of allPlayers) {
-    const prosets = await db
-      .query('Proset')
-      .withIndex('ByPlayer', (q) => q.eq('player', player._id))
-      .collect()
-    for (const p of prosets) {
-      await db.delete(p._id)
-    }
-    await db.delete(player._id)
-  }
-  const cards = await db
-    .query('PlayingCard')
-    .withIndex('ByGameAndProsetAndRank', (q) => q.eq('game', gameId))
-    .collect()
-  for (const c of cards) {
-    await db.delete(c._id)
-  }
-  const game = await db.get(gameId)
-  if (game !== null) {
-    await db.delete(game._id)
-  }
-  return null
-}
+// export const cleanup = async (
+//   { db }: MutationCtx,
+//   { gameId }: { gameId: Id<'Games'> }
+// ) => {
+//   const allPlayers = await db
+//     .query('Player')
+//     .withIndex('ByGame', (q) => q.eq('game', gameId))
+//     .collect()
+//   for (const player of allPlayers) {
+//     const prosets = await db
+//       .query('Proset')
+//       .withIndex('ByPlayer', (q) => q.eq('player', player._id))
+//       .collect()
+//     for (const p of prosets) {
+//       await db.delete(p._id)
+//     }
+//     await db.delete(player._id)
+//   }
+//   const cards = await db
+//     .query('PlayingCard')
+//     .withIndex('ByGameAndProsetAndRank', (q) => q.eq('game', gameId))
+//     .collect()
+//   for (const c of cards) {
+//     await db.delete(c._id)
+//   }
+//   const game = await db.get(gameId)
+//   if (game !== null) {
+//     await db.delete(game._id)
+//   }
+//   return null
+// }
 
-export const end = async (ctx: MutationCtx, game: Doc<'Game'>) => {
-  const { db, scheduler } = ctx
-  await db.patch(game._id, {
-    inProgress: false,
-  })
+export const end = async (ctx: MutationCtx, game: Ent<'Games'>) => {
+  if (game.deletionTime !== undefined) {
+    return null
+  }
+  await ctx.table("Games").getX(game._id).delete()
   if (game.isPublic) {
     await createGame(ctx, { isPublic: true })
   }
 
-  await scheduler.runAfter(2000, internal.games.cleanup, { gameId: game._id })
+  // await ctx.scheduler.runAfter(2000, internal.games.cleanup, { gameId: game._id })
   return null
 }
 
 const getProsets = async (
-  db: DatabaseReader,
-  playerId: Id<'Player'>,
-  gameId: Id<'Game'>
-): Promise<Array<Array<Doc<'PlayingCard'>>>> => {
-  const prosets = await db
-    .query('Proset')
-    .withIndex('ByPlayer', (q) => q.eq('player', playerId))
-    .collect()
-  return await Promise.all(
-    prosets.map(async (proset) => {
-      return await db
-        .query('PlayingCard')
-        .withIndex('ByGameAndProsetAndRank', (q) =>
-          q.eq('game', gameId).eq('proset', proset._id)
-        )
-        .collect()
-    })
-  )
+  ctx: QueryCtx,
+  player: Ent<"Players">
+): Promise<Array<Array<Doc<'PlayingCards'>>>> => {
+  return player.edge("Prosets").map((proset) => proset.edge("PlayingCards"))
 }
 
 export const createGame = async (
-  ctx: MutationCtx,
+  ctx: BaseMutationCtx,
   args: { isPublic: boolean }
 ) => {
-  const { db } = ctx
-  const gameId = await db.insert('Game', {
+  console.time("createGame")
+  const gameId = await ctx.table("Games").insert({
     name: '',
     selectingPlayer: null,
     selectionStartTime: null,
     inProgress: true,
     isPublic: args.isPublic,
   })
+  console.timeEnd("createGame")
 
+  console.time("createPlayer")
   await Players.createSystemPlayer(ctx, { gameId })
+  console.timeEnd("createPlayer")
 
+  console.time("createCards")
   const cardNumbers = []
   for (let i = 1; i <= 63; i += 1) {
     cardNumbers.push(i)
   }
   shuffleArray(cardNumbers)
+  console.timeLog("createCards", "after shuffle")
 
   await Promise.all(
     cardNumbers.map((cardNumber, cardIndex) => {
-      return db.insert('PlayingCard', {
-        game: gameId,
+      return ctx.table("PlayingCards").insert({
+        GameId: gameId,
         rank: cardIndex,
         proset: null,
         red: cardNumber % 2 === 1,
@@ -138,39 +125,33 @@ export const createGame = async (
       })
     })
   )
+  console.timeEnd("createCards")
 
   return gameId
 }
 
-export const getPublicGame = async (ctx: QueryCtx) => {
-  const { db } = ctx
-  const game = await db
-    .query('Game')
-    .withIndex('ByInProgressPublic', (q) =>
-      q.eq('inProgress', true).eq('isPublic', true)
+export const getPublicGame = async (ctx: BaseQueryCtx) => {
+  const game = await ctx.table('Games', 'ByInProgressPublic', (q) =>
+      q.eq('deletionTime', undefined).eq('isPublic', true)
     )
     .unique()
   if (game === null) {
     throw new Error("Couldn't find public game")
   }
-  return game
+  return ctx.table("Games").getX(game._id)
 }
 
 export const getOrCreate = async (
-  ctx: MutationCtx,
-  { user }: { user: Doc<'User'> }
+  ctx: BaseMutationCtx,
+  { user }: { user: Ent<'Users'> }
 ) => {
-  const { db } = ctx
 
-  const player = await db
-    .query('Player')
-    .withIndex('ByUser', (q) => q.eq('user', user._id))
-    .order('desc')
-    .first()
-  if (player !== null) {
-    const game = await db.get(player.game)
+  const players = await ctx.table("Users").getX(user._id).edge("Players");
+  if (players.length !== 0) {
+    const player = players[0];
+    const game = await player.edge("Game")
     if (game !== null) {
-      return { gameId: player.game, playerId: player._id }
+      return { gameId: player.GameId, playerId: player._id }
     }
   }
   const game = await getPublicGame(ctx)

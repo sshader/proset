@@ -1,11 +1,10 @@
 import { v } from 'convex/values'
-import { internalMutation, mutation } from './_generated/server'
-import { mutationWithGame, queryWithGame } from './lib/functions'
+import { internalMutationWithEnt, mutationWithEnt, mutationWithGame, queryWithGame } from './lib/functions'
 import * as Games from './model/game'
 import * as Players from './model/player'
 import * as User from './model/user'
 
-export const start = mutation({
+export const start = mutationWithEnt({
   args: {
     sessionId: v.string(),
   },
@@ -17,7 +16,7 @@ export const start = mutation({
   },
 })
 
-export const getOrCreate = mutation({
+export const getOrCreate = mutationWithEnt({
   args: {
     sessionId: v.string(),
   },
@@ -46,12 +45,12 @@ export const getInfo = queryWithGame({
   },
 })
 
-export const cleanup = internalMutation({
-  args: { gameId: v.id('Game') },
-  handler: (ctx, args) => Games.cleanup(ctx, args),
+export const cleanup = internalMutationWithEnt({
+  args: { gameId: v.id('Games') },
+  handler: (ctx, args) => {} // Games.cleanup(ctx, args),
 })
 
-export const setup = internalMutation({
+export const setup = internalMutationWithEnt({
   args: {},
   handler: async (ctx) => {
     await Games.createGame(ctx, { isPublic: true })
