@@ -4,6 +4,8 @@ import { mutationWithGame, queryWithGame } from './lib/functions'
 import * as Games from './model/game'
 import * as Players from './model/player'
 import * as User from './model/user'
+import { z } from 'zod'
+import { zid } from 'convex-helpers/server/zod'
 
 export const start = mutation({
   args: {
@@ -37,6 +39,34 @@ export const end = mutationWithGame({
 
 export const getInfo = queryWithGame({
   args: {},
+  output: z.object({
+    game: z.object({
+
+    }),
+    currentPlayer: z.object({
+      showOnboarding: z.boolean(),
+      isGuest: z.boolean(),
+      _id: zid("Player"),
+      _creationTime: z.number(),
+      game: zid("Game"),
+      user: zid("User"),
+      name: z.string(),
+      score: z.number(),
+      color: z.string(),
+      isSystemPlayer: z.boolean()
+    }),
+    otherPlayers: z.array(z.object({
+      _id: zid("Player"),
+      _creationTime: z.number(),
+      game: zid("Game"),
+      user: zid("User"),
+      name: z.string(),
+      score: z.number(),
+      color: z.string(),
+      isSystemPlayer: z.boolean()
+    })),
+    playerToProsets: z.any()
+  }),
   handler: async (ctx) => {
     return await Games.getInfo(ctx, {
       currentPlayer: ctx.player,

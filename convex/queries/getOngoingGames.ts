@@ -1,13 +1,26 @@
 import { v } from 'convex/values'
 import { Doc } from '../_generated/dataModel'
-import { DatabaseReader, query, QueryCtx } from '../_generated/server'
+import { DatabaseReader, QueryCtx } from '../_generated/server'
 import * as Game from '../model/game'
 import * as User from '../model/user'
+import { query } from '../lib/functions'
+import { z } from 'zod'
+import { zid } from 'convex-helpers/server/zod'
 
 export default query({
   args: {
-    sessionId: v.union(v.string(), v.null()),
+    sessionId: z.union([z.string(), z.null()]),
   },
+  output: z.array(z.object({
+    _id: zid("Game"),
+    _creationTime: z.number(),
+    numPlayers: z.number(),
+    isPublic: z.optional(z.boolean()),
+    name: z.string(),
+    selectingPlayer: z.union([zid("Player"), z.null()]),
+    selectionStartTime: z.union([z.number(), z.null()]),
+    inProgress: z.boolean()
+  })),
   handler: async (ctx, { sessionId }) => {
     if (sessionId === null) {
       return []

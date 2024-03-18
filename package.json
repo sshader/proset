@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "npm-run-all init dev:init --parallel dev:server dev:client",
     "build": "tsc && next build",
@@ -10,6 +11,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.18.0",
     "@auth0/auth0-react": "^2.0.1",
     "@clerk/clerk-react": "^4.23.2",
     "@emotion/react": "^11.10.6",
@@ -17,14 +19,18 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.1",
     "@types/react-transition-group": "^4.4.5",
+    "anthropic": "^0.0.0",
     "canvas-confetti": "^1.6.0",
     "convex": "^1.10.0",
+    "convex-helpers": "^0.1.25",
     "itertools": "^1.7.1",
     "next": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-transition-group": "^4.4.5",
-    "unique-names-generator": "^4.7.1"
+    "ts-node": "^10.9.2",
+    "unique-names-generator": "^4.7.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.1.1",

@@ -1,12 +1,19 @@
 import { v } from 'convex/values'
-import { internalMutation } from './_generated/server'
+import { action, internalMutation, mutation } from './_generated/server'
 import * as Cards from './model/cards'
 import * as Player from './model/player'
 
-import { mutationWithGame } from './lib/functions'
+import { mutaiton, mutationWithGame } from './lib/functions'
+import { zid } from 'convex-helpers/server/zod'
+import { z } from 'zod'
+import { Anthropic } from "@anthropic-ai/sdk"
+import { api } from './_generated/api'
 
 export const startSelectSet = mutationWithGame({
   args: {},
+  output: z.union([z.null(), z.object({
+    reason: z.string(),
+  })]),
   handler: async (ctx) => {
     const { game, player } = ctx
 
@@ -16,16 +23,19 @@ export const startSelectSet = mutationWithGame({
 
 export const select = mutationWithGame({
   args: {
-    cardId: v.id('PlayingCard'),
+    cardId: zid('PlayingCard'),
   },
+  output: z.null(),
   handler: async (ctx, { cardId }) => {
     const { user, player } = ctx
-    return await Cards.select(ctx, { user, player, cardId })
+    await Cards.select(ctx, { user, player, cardId })
+    return null;
   },
 })
 
 export const reveal = mutationWithGame({
   args: {},
+  output: z.null(),
   handler: async (ctx) => {
     const { player, user } = ctx
     return await Cards.reveal(ctx, { player, user })

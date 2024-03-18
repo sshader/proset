@@ -2,11 +2,12 @@ import { v } from 'convex/values'
 import { internalMutation } from './_generated/server'
 import { mutationWithGame, queryWithGame } from './lib/functions'
 import * as Message from './model/message'
+import { z } from 'zod'
 
 export const send = mutationWithGame({
   args: {
-    content: v.string(),
-    isPrivate: v.optional(v.boolean()),
+    content: z.string(),
+    isPrivate: z.optional(z.boolean()),
   },
   handler: async (ctx, { content, isPrivate }) => {
     await Message.send(ctx, {

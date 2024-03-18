@@ -1,23 +1,11 @@
-import { ObjectType, v } from 'convex/values'
-import { Doc } from '../_generated/dataModel'
-import { QueryCtx } from '../_generated/server'
+import {  ObjectType, v } from 'convex/values'
+import { QueryCtx, mutation as rawMutation, query as rawQuery } from '../_generated/server'
 import * as Player from '../model/player'
 import * as User from '../model/user'
-import {
-  generateMiddlewareContextOnly,
-  generateMutationWithMiddleware,
-  generateQueryWithMiddleware,
-} from './middlewareUtils'
+import {  zCustomQuery } from './withOutputForked'
+import { zCustomMutation, } from 'convex-helpers/server/zod'
+import { NoOp } from 'convex-helpers/server/customFunctions'
 
-// ----------------------------------------------------------------------
-// Fill these in:
-
-type RequiredContext = QueryCtx
-type TransformedContext = {
-  game: Doc<'Game'>
-  player: Doc<'Player'>
-  user: Doc<'User'>
-}
 const inGameValidator = {
   sessionId: v.string(),
   gameId: v.id('Game'),
@@ -25,9 +13,9 @@ const inGameValidator = {
 
 // The transformation your middleware is doing
 const addGameInfo = async (
-  ctx: RequiredContext,
+  ctx: QueryCtx,
   args: ObjectType<typeof inGameValidator>
-): Promise<TransformedContext> => {
+) => {
   const user = await User.get(ctx, { sessionId: args.sessionId })
   const player = await Player.getPlayer(ctx, { user, gameId: args.gameId })
   const game = await ctx.db.get(args.gameId)
@@ -36,31 +24,21 @@ const addGameInfo = async (
   }
   return { player, game, user }
 }
-// ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
-// No need to modify these aside from renaming
+export const queryWithGame = zCustomQuery(rawQuery, {
+  args: inGameValidator,
+  input: async (ctx, args) => {
+    return { ctx: await addGameInfo(ctx, args), args: {}  }
+  }
+})
 
-// Helper function to allow applying this transform to multiple types of `Context`
-// (e.g. QueryCtx, MutaitonCtx)
-const addGameInfoGeneric = async <Ctx extends RequiredContext>(
-  ctx: Ctx,
-  args: ObjectType<typeof inGameValidator>
-): Promise<Omit<Ctx, keyof TransformedContext> & TransformedContext> => {
-  return { ...ctx, ...(await addGameInfo(ctx, args)) }
-}
 
-export const withGame = generateMiddlewareContextOnly(
-  inGameValidator,
-  addGameInfo
-)
+export const mutationWithGame = zCustomMutation(rawMutation, {
+  args: inGameValidator,
+  input: async (ctx, args) => {
+    return { ctx: await addGameInfo(ctx, args), args: {}  }
+  }
+})
 
-export const queryWithGame = generateQueryWithMiddleware(
-  inGameValidator,
-  addGameInfoGeneric
-)
-
-export const mutationWithGame = generateMutationWithMiddleware(
-  inGameValidator,
-  addGameInfoGeneric
-)
+export const query = zCustomQuery(rawQuery, NoOp)
+export const mutaiton = zCustomMutation(rawMutation, NoOp)

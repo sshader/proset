@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { internal } from './_generated/api'
 import { mutationWithGame } from './lib/functions'
 import * as Message from './model/message'
@@ -6,6 +7,7 @@ import { findProset } from './prosetHelpers'
 
 export default mutationWithGame({
   args: {},
+  output: z.null(),
   handler: async (ctx) => {
     const { db, scheduler, player, user } = ctx
     const systemPlayer = await Player.getSystemPlayer(ctx, player.game)
@@ -40,5 +42,6 @@ export default mutationWithGame({
       gameId: player.game,
       cardIds,
     })
+    return null
   },
 })

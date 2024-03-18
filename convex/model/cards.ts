@@ -202,4 +202,5 @@ export const reveal = async (
     gameId: player.game,
     cardIds,
   })
+  return null
 }
