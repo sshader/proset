@@ -9,8 +9,8 @@ export const PlayerInfo = ({
   initialShowProsets = false,
 }: {
   isCurrentPlayer: boolean
-  player: Doc<'Player'>
-  prosets: Array<Array<Doc<'PlayingCard'>>>
+  player: Doc<'Players'>
+  prosets: Array<Array<Doc<'PlayingCards'>>>
   initialShowProsets?: boolean
 }) => {
   const [showProsets, setShowProsets] = useState(initialShowProsets)

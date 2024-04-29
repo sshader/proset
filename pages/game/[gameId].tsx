@@ -12,7 +12,7 @@ import { useSessionMutation } from '../../hooks/SessionProvider'
 
 const GameBoundary = () => {
   const router = useRouter()
-  const gameId: Id<'Game'> = router.query.gameId as Id<'Game'>
+  const gameId: Id<'Games'> = router.query.gameId as Id<'Games'>
   const joinGame = useSessionMutation(api.players.joinGame)
   const [ready, setReady] = useState(false)
 
@@ -21,8 +21,10 @@ const GameBoundary = () => {
       .then(() => {
         setReady(true)
       })
-      .catch((e) => {
-        throw e
+      .catch((_e) => {
+        void router.push({
+          pathname: "/"
+        })
       })
   })
 
@@ -37,7 +39,7 @@ const GameBoundary = () => {
   }
 }
 
-const InnerGameBoundary = ({ gameId }: { gameId: Id<'Game'> }) => {
+const InnerGameBoundary = ({ gameId }: { gameId: Id<'Games'> }) => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.dealCards.default,
     { gameId },

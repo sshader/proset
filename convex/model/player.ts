@@ -1,73 +1,68 @@
 import { Doc, Id } from '../_generated/dataModel'
-import { MutationCtx, QueryCtx } from '../_generated/server'
+import { mutation } from '../_generated/server'
+import { MutationCtx, QueryCtx, Ent, BaseMutationCtx, BaseQueryCtx } from '../lib/functions'
 import { PLAYER_COLORS } from '../types/player_colors'
 import * as User from './user'
 
 export const joinGame = async (
-  ctx: MutationCtx,
-  { gameId, user }: { gameId: Id<'Game'>; user: Doc<'User'> }
+  ctx: BaseMutationCtx,
+  { gameId, user }: { gameId: Id<'Games'>; user: Ent<'Users'> }
 ) => {
-  const { db } = ctx
-  const player = await db
-    .query('Player')
-    .withIndex('ByGame', (q) => q.eq('game', gameId))
-    .filter((q) => q.eq(q.field('user'), user._id))
-    .first()
+  console.time("joinGame")
+  console.time("getPlayer")
+  const allPlayers = await ctx.table("Games").getX(gameId).edgeX("Players")
+  const player = allPlayers.find(p => p.UserId === user._id) ?? null
+  console.timeEnd("getPlayer")
   if (player !== null) {
-    return { playerId: player._id, gameId: player.game }
+    console.timeEnd("joinGame")
+    return { playerId: player._id, gameId: player.GameId }
   }
-  const playerId = await db.insert('Player', {
-    game: gameId,
+  console.time("createPlayer")
+  const playerId = await ctx.table("Players").insert({
+    UserId: user._id,
+    GameId: gameId,
     name: user.name,
-    user: user._id,
     score: 0,
     color: PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)],
     isSystemPlayer: false,
   })
+  console.timeEnd("createPlayer")
+  console.timeEnd("joinGame")
   return { playerId, gameId }
 }
 
 export const createSystemPlayer = async (
-  ctx: MutationCtx,
-  { gameId }: { gameId: Id<'Game'> }
+  ctx: BaseMutationCtx,
+  { gameId }: { gameId: Id<'Games'> }
 ) => {
   const user = await User.getOrCreate(ctx, process.env.SYSTEM_SESSION_ID!)
-  await ctx.db.insert('Player', {
-    game: gameId,
+  await ctx.table("Players").insert({
     name: 'System Player',
     score: 0,
     color: 'grey',
-    user: user.userId,
+    UserId: user.userId,
+    GameId: gameId,
     isSystemPlayer: true,
   })
 }
 
 export const getPlayer = async (
-  ctx: QueryCtx,
-  { user, gameId }: { user: Doc<'User'>; gameId: Id<'Game'> }
+  ctx: BaseQueryCtx,
+  { user, gameId }: { user: Ent<'Users'>; gameId: Id<'Games'> }
 ) => {
-  const { db } = ctx
-  const player = await db
-    .query('Player')
-    .withIndex('ByGame', (q) => q.eq('game', gameId))
-    .filter((q) => q.eq(q.field('user'), user._id))
-    .unique()
-  if (player === null) {
+  const player = (await ctx.table("Games").getX(gameId).edge("Players")).find(p => p.UserId === user._id)
+  if (player === undefined) {
     throw new Error('Could not find player for user and game')
   }
   return player
 }
 
 export const getSystemPlayer = async (
-  ctx: QueryCtx,
-  gameId: Id<'Game'>
-): Promise<Doc<'Player'>> => {
-  const player = await ctx.db
-    .query('Player')
-    .withIndex('ByGame', (q) => q.eq('game', gameId))
-    .filter((q) => q.eq(q.field('isSystemPlayer'), true))
-    .unique()
-  if (player === null) {
+  ctx: BaseQueryCtx,
+  gameId: Id<'Games'>
+): Promise<Doc<'Players'>> => {
+  const player = (await ctx.table("Games").getX(gameId).edge("Players")).find(p => p.isSystemPlayer)
+  if (player === undefined) {
     throw new Error('Could not find system player')
   }
   return player

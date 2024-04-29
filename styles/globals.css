@@ -230,9 +230,19 @@ input:not([type]) {
 .Dropshadow--purple {
   box-shadow: 0px 0px 10px 10px var(--purple);
 }
-.Dropshadow--grey {
-  box-shadow: 0px 0px 10px 10px black;
+
+@media (prefers-color-scheme: dark) {
+  .Dropshadow--grey {
+    box-shadow: 0px 0px 10px 10px white;
+  }
 }
+
+@media (prefers-color-scheme: light) {
+  .Dropshadow--grey {
+    box-shadow: 0px 0px 10px 10px black;
+  }
+}
+
 
 .Sidebar {
   max-width: 25%;

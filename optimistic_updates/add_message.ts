@@ -1,6 +1,6 @@
 import { useMutation } from 'convex/react'
 import { api } from '../convex/_generated/api'
-import { Id } from '../convex/_generated/dataModel'
+import { Doc, Id } from '../convex/_generated/dataModel'
 import { useGameInfo } from '../hooks/GameInfoProvider'
 import { useSessionId } from '../hooks/SessionProvider'
 
@@ -11,10 +11,10 @@ export const useSendMessage = () => {
     (localQueryStore, { content, isPrivate, gameId, sessionId }) => {
       const messages =
         localQueryStore.getQuery(api.message.list, { gameId, sessionId }) ?? []
-      const newMessage = {
-        _id: crypto.randomUUID() as Id<'Message'>,
+      const newMessage: Doc<"Messages"> = {
+        _id: crypto.randomUUID() as Id<'Messages'>,
         _creationTime: Date.now(),
-        game: gameInfo?.game._id ?? ('' as Id<'Game'>),
+        GameId: gameInfo?.game._id ?? ('' as Id<'Games'>),
         content,
         player: isPrivate ? gameInfo?.currentPlayer._id ?? null : null,
       }

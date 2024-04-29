@@ -1,9 +1,8 @@
 import { v } from 'convex/values'
-import { internalMutation } from './_generated/server'
 import * as Cards from './model/cards'
 import * as Player from './model/player'
 
-import { mutationWithGame } from './lib/functions'
+import { internalMutationWithEnt, mutationWithGame } from './lib/functions'
 
 export const startSelectSet = mutationWithGame({
   args: {},
@@ -16,43 +15,42 @@ export const startSelectSet = mutationWithGame({
 
 export const select = mutationWithGame({
   args: {
-    cardId: v.id('PlayingCard'),
+    cardId: v.id('PlayingCards'),
   },
   handler: async (ctx, { cardId }) => {
-    const { user, player } = ctx
-    return await Cards.select(ctx, { user, player, cardId })
+    return Cards.select(ctx, { cardId })
   },
 })
 
 export const reveal = mutationWithGame({
   args: {},
   handler: async (ctx) => {
-    const { player, user } = ctx
-    return await Cards.reveal(ctx, { player, user })
+    return Cards.reveal(ctx)
   },
 })
 
-export const discardRevealedProset = internalMutation({
+export const discardRevealedProset = internalMutationWithEnt({
   args: {
-    gameId: v.id('Game'),
-    cardIds: v.array(v.id('PlayingCard')),
+    gameId: v.id('Games'),
+    cardIds: v.array(v.id('PlayingCards')),
   },
   handler: async (ctx, args) => {
-    const { db } = ctx
     const player = await Player.getSystemPlayer(ctx, args.gameId)
-    const game = (await db.get(args.gameId))!
 
-    const proset = await db.insert('Proset', {
-      player: player._id,
+    const game = await ctx.table("Games").getX(args.gameId)
+
+    const prosetId = await ctx.table('Prosets').insert({
+      PlayingCards: args.cardIds,
+      PlayerId: player._id
     })
-    await db.patch(args.gameId, {
+    await game.patch({
       selectingPlayer: null,
       selectionStartTime: null,
     })
     await Promise.all(
       args.cardIds.map((cardId) => {
-        return db.patch(cardId, {
-          proset,
+        return ctx.table("PlayingCards").getX(cardId).patch({
+          proset: prosetId,
         })
       })
     )
@@ -60,27 +58,27 @@ export const discardRevealedProset = internalMutation({
   },
 })
 
-export const claimSet = internalMutation({
+export const claimSet = internalMutationWithEnt({
   args: {
-    gameId: v.id('Game'),
-    playerId: v.id('Player'),
+    gameId: v.id('Games'),
+    playerId: v.id('Players'),
   },
   handler: async (ctx, { gameId, playerId }) => {
-    const game = await ctx.db.get(gameId)
-    const player = await ctx.db.get(playerId)
+    const game = await ctx.table("Games").getX(gameId)
+    const player = await ctx.table("Players").getX(playerId)
     await Cards.claimSet(ctx, {
-      game: game!,
-      player: player!,
+      game: game,
+      player: player,
     })
   },
 })
 
-export const maybeClearSelectSet = internalMutation({
+export const maybeClearSelectSet = internalMutationWithEnt({
   args: {
-    gameId: v.id('Game'),
+    gameId: v.id('Games'),
   },
   handler: async (ctx, { gameId }) => {
-    const game = await ctx.db.get(gameId)
-    await Cards.maybeClearSelectSet(ctx, game!)
+    const game = await ctx.table("Games").getX(gameId)
+    await Cards.maybeClearSelectSet(ctx, game)
   },
 })

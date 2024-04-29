@@ -7,8 +7,8 @@ const CardContainer = ({
   cards,
   onCardClicked,
 }: {
-  cards: Array<Doc<'PlayingCard'>>
-  onCardClicked: (card: Doc<'PlayingCard'> | null) => void
+  cards: Array<Doc<'PlayingCards'>>
+  onCardClicked: (card: Doc<'PlayingCards'> | null) => void
 }) => {
   const gameInfo = useGameInfo()
   const selectingPlayerId = gameInfo.game.selectingPlayer

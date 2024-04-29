@@ -1,62 +1,46 @@
 import { internal } from '../_generated/api'
-import { Doc, Id } from '../_generated/dataModel'
-import { MutationCtx } from '../_generated/server'
+import { Id } from '../_generated/dataModel'
+import { MutationCtx, Ent, BaseMutationCtx } from '../lib/functions'
 import { findProset, isProset } from '../prosetHelpers'
 import * as Message from './message'
 import * as Player from './player'
 
 export const claimSet = async (
-  ctx: MutationCtx,
-  { game, player }: { game: Doc<'Game'>; player: Doc<'Player'> }
+  ctx: BaseMutationCtx,
+  { game, player }: { game: Ent<'Games'>; player: Ent<'Players'> }
 ) => {
-  const { db } = ctx
-  const currentlySelected = await db
-    .query('PlayingCard')
-    .withIndex('ByGameAndProsetAndSelectedBy', (q) => {
-      return q
-        .eq('game', player.game)
-        .eq('proset', null)
-        .eq('selectedBy', player._id)
-    })
-    .collect()
+  const currentlySelected = (await game.edge("PlayingCards")).filter(p => p.selectedBy === player._id)
   if (isProset(currentlySelected)) {
-    const prosetId = await db.insert('Proset', {
-      player: player._id,
+    const prosetId = await ctx.table("Prosets").insert({
+      PlayingCards: currentlySelected.map(p => p._id),
+      PlayerId: player._id
     })
     await Promise.all(
-      currentlySelected.map((selectedCard) => {
-        return db.patch(selectedCard._id, {
-          proset: prosetId,
+      currentlySelected.map(async (card) => {
+        return ctx.table("PlayingCards").getX(card._id).patch({
+          selectedBy: null,
+          proset: prosetId
         })
       })
     )
     await clearSelectSet(ctx, game)
-    await db.patch(player._id, {
+    await ctx.table("Players").getX(player._id).patch({
       score: player.score + 1,
     })
   }
 }
 
-export const clearSelectSet = async (ctx: MutationCtx, game: Doc<'Game'>) => {
-  const { db } = ctx
+export const clearSelectSet = async (ctx: BaseMutationCtx, game: Ent<'Games'>) => {
   const selectingPlayer = game.selectingPlayer
-  await db.patch(game._id, {
+  await ctx.table("Games").getX(game._id).patch({
     selectingPlayer: null,
     selectionStartTime: null,
   })
   if (selectingPlayer != null) {
-    const currentlySelected = await db
-      .query('PlayingCard')
-      .withIndex('ByGameAndProsetAndSelectedBy', (q) => {
-        return q
-          .eq('game', game._id)
-          .eq('proset', null)
-          .eq('selectedBy', selectingPlayer)
-      })
-      .collect()
+    const currentlySelected = (await game.edge("PlayingCards")).filter(p => p.selectedBy === selectingPlayer)
     await Promise.all(
       currentlySelected.map(async (card) => {
-        return await db.patch(card._id, {
+        return ctx.table("PlayingCards").getX(card._id).patch({
           selectedBy: null,
         })
       })
@@ -65,17 +49,16 @@ export const clearSelectSet = async (ctx: MutationCtx, game: Doc<'Game'>) => {
 }
 
 export const maybeClearSelectSet = async (
-  ctx: MutationCtx,
-  game: Doc<'Game'>
+  ctx: BaseMutationCtx,
+  game: Ent<'Games'>
 ) => {
-  const { db } = ctx
   if (game.selectingPlayer === null) {
     return
   }
   if (Date.now() - game.selectionStartTime! > 20 * 1000) {
     await clearSelectSet(ctx, game)
-    const player = await db.get(game.selectingPlayer)
-    await db.patch(player!._id, {
+    const player = await ctx.table("Players").getX(game.selectingPlayer)
+    await player.patch({
       score: player!.score - 1,
     })
   }
@@ -83,9 +66,8 @@ export const maybeClearSelectSet = async (
 
 export const startSelectSet = async (
   ctx: MutationCtx,
-  { game, player }: { game: Doc<'Game'>; player: Doc<'Player'> }
+  { game, player }: { game: Ent<'Games'>; player: Ent<'Players'> }
 ) => {
-  const { db, scheduler } = ctx
 
   if (game.selectingPlayer !== null) {
     return {
@@ -93,14 +75,14 @@ export const startSelectSet = async (
       selectedBy: game.selectingPlayer,
     }
   }
-  await db.patch(player.user, {
+  await ctx.table("Users").getX(player.UserId).patch({
     showOnboarding: false,
   })
-  await db.patch(game._id, {
+  await ctx.table("Games").getX(game._id).patch({
     selectingPlayer: player._id,
     selectionStartTime: Date.now(),
   })
-  await scheduler.runAfter(20 * 1000, internal.cards.maybeClearSelectSet, {
+  await ctx.scheduler.runAfter(20 * 1000, internal.cards.maybeClearSelectSet, {
     gameId: game._id,
   })
   return null
@@ -109,56 +91,37 @@ export const startSelectSet = async (
 export const select = async (
   ctx: MutationCtx,
   {
-    user,
-    player,
     cardId,
-  }: { user: Doc<'User'>; player: Doc<'Player'>; cardId: Id<'PlayingCard'> }
+  }: { cardId: Id<'PlayingCards'> }
 ) => {
-  const { db } = ctx
-  const card = (await db.get(cardId))!
-  let currentlySelected = await db
-    .query('PlayingCard')
-    .withIndex('ByGameAndProsetAndSelectedBy', (q) => {
-      return q
-        .eq('game', card.game)
-        .eq('proset', null)
-        .eq('selectedBy', player._id)
-    })
-    .collect()
+  const { game, user, player } = ctx;
+  let currentlySelected = (await game.edge("PlayingCards")).filter(p => p.selectedBy === player._id)
 
   if (isProset(currentlySelected)) {
     // don't allow selecting more cards
     return
   }
+  const card = await ctx.table("PlayingCards").getX(cardId);
 
   if (card.selectedBy !== null) {
-    await db.patch(card._id, {
+    await card.patch({
       selectedBy: null,
     })
   } else {
-    await db.patch(card._id, {
+    await card.patch({
       selectedBy: player._id,
     })
   }
 
-  currentlySelected = await db
-    .query('PlayingCard')
-    .withIndex('ByGameAndProsetAndSelectedBy', (q) => {
-      return q
-        .eq('game', card.game)
-        .eq('proset', null)
-        .eq('selectedBy', player._id)
-    })
-    .collect()
+  currentlySelected = (await game.edge("PlayingCards")).filter(p => p.selectedBy === player._id)
 
   if (isProset(currentlySelected)) {
     await Message.send(ctx, {
       content: `⭐️ ${user.name} found a set!`,
       isPrivate: false,
-      player,
     })
     await ctx.scheduler.runAfter(2 * 1000, internal.cards.claimSet, {
-      gameId: card.game,
+      gameId: game._id,
       playerId: player._id,
     })
     return 'FoundProset'
@@ -167,39 +130,37 @@ export const select = async (
 
 export const reveal = async (
   ctx: MutationCtx,
-  { player, user }: { player: Doc<'Player'>; user: Doc<'User'> }
 ) => {
-  const { db, scheduler } = ctx
-  const systemPlayer = await Player.getSystemPlayer(ctx, player.game)
+  const { player, user } = ctx
+  const systemPlayer = await Player.getSystemPlayer(ctx, player.GameId)
 
   await Message.send(ctx, {
     content: `👀 ${user.name} is revealing a set`,
     isPrivate: false,
-    player,
   })
 
-  await db.patch(player.game, {
+  await ctx.table("Games").getX(player.GameId).patch({
     selectingPlayer: systemPlayer._id,
     selectionStartTime: Date.now(),
   })
 
-  const cards = await db
-    .query('PlayingCard')
+  const cards = await ctx.db
+    .query('PlayingCards')
     .withIndex('ByGameAndProsetAndRank', (q) =>
-      q.eq('game', player.game).eq('proset', null)
+      q.eq('GameId', player.GameId).eq('proset', null)
     )
     .take(7)
   const prosetCards = findProset(cards)
   await Promise.all(
     prosetCards!.map(async (card) => {
-      return await db.patch(card._id, {
+      return await ctx.table("PlayingCards").getX(card._id).patch({
         selectedBy: systemPlayer._id,
       })
     })
   )
-  const cardIds = prosetCards!.map((card) => card._id)
-  await scheduler.runAfter(5 * 1000, internal.cards.discardRevealedProset, {
-    gameId: player.game,
+  const cardIds = prosetCards.map((card) => card._id)
+  await ctx.scheduler.runAfter(5 * 1000, internal.cards.discardRevealedProset, {
+    gameId: player.GameId,
     cardIds,
   })
 }

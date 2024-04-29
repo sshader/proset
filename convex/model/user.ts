@@ -5,7 +5,7 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator'
 import { Id } from '../_generated/dataModel'
-import { MutationCtx, QueryCtx } from '../_generated/server'
+import { BaseMutationCtx, BaseQueryCtx, Ent } from '../lib/functions'
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -14,26 +14,25 @@ const customConfig: Config = {
 }
 
 export const getOrCreate = async (
-  ctx: MutationCtx,
+  ctx: BaseMutationCtx,
   sessionId: string
-): Promise<{ userId: Id<'User'> }> => {
+): Promise<{ userId: Id<'Users'> }> => {
   const { db, auth } = ctx
-  const existingUserId = await getOrNull(ctx, { sessionId })
+  const existingUser = await getOrNull(ctx, { sessionId })
   const identity = await auth.getUserIdentity()
-  if (existingUserId !== null) {
-    const existingUser = (await db.get(existingUserId))!
+  if (existingUser !== null) {
     if (existingUser.isGuest && identity !== null) {
-      await db.patch(existingUser._id, {
-        name: identity.name ?? existingUser.name,
-        identifier: identity.tokenIdentifier,
-        isGuest: false,
+      await ctx.table("Users").getX(existingUser._id).patch({
+          name: identity.name ?? existingUser.name,
+          identifier: identity.tokenIdentifier,
+          isGuest: false,
       })
     }
-    return { userId: existingUserId }
+    return { userId: existingUser._id }
   }
 
   if (identity !== null) {
-    const userId = await db.insert('User', {
+    const userId = await db.insert('Users', {
       name: identity.name ?? uniqueNamesGenerator(customConfig),
       showOnboarding: true,
       identifier: identity.tokenIdentifier,
@@ -41,7 +40,7 @@ export const getOrCreate = async (
     })
     return { userId }
   }
-  const userId = await db.insert('User', {
+  const userId = await db.insert('Users', {
     name: uniqueNamesGenerator(customConfig),
     showOnboarding: true,
     identifier: sessionId,
@@ -51,46 +50,37 @@ export const getOrCreate = async (
 }
 
 export const getOrNull = async (
-  ctx: QueryCtx,
+  ctx: BaseQueryCtx,
   { sessionId }: { sessionId: string }
 ) => {
-  const { db, auth } = ctx
-  const identity = await auth.getUserIdentity()
+  const identity = await ctx.auth.getUserIdentity()
   if (identity !== null) {
-    const user = await db
-      .query('User')
-      .withIndex('ByIdentifier', (q) =>
-        q.eq('identifier', identity.tokenIdentifier)
-      )
-      .unique()
+    const user = await ctx.table("Users").get("identifier", identity.tokenIdentifier);
     if (user !== null) {
-      return user._id
+      return user
     }
   }
 
-  const user = await db
-    .query('User')
-    .withIndex('ByIdentifier', (q) => q.eq('identifier', sessionId))
-    .unique()
-  return user?._id ?? null
+  const user = await ctx.table("Users").get("identifier", sessionId);
+  return user ?? null
 }
 
 export const get = async (
-  ctx: QueryCtx,
+  ctx: BaseQueryCtx,
   { sessionId }: { sessionId: string }
 ) => {
   const userOrNull = await getOrNull(ctx, { sessionId })
   if (userOrNull === null) {
     throw new Error('Could not find user')
   }
-  return (await ctx.db.get(userOrNull))!
+  return userOrNull
 }
 
 export const completeOnboarding = async (
-  ctx: MutationCtx,
-  userId: Id<'User'>
+  ctx: BaseMutationCtx,
+  user: Ent<"Users">
 ) => {
-  await ctx.db.patch(userId, {
+  await ctx.table("Users").getX(user._id).patch({
     showOnboarding: false,
   })
 }

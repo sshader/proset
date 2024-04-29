@@ -8,7 +8,7 @@ import { SessionContext, useSessionId } from './SessionProvider'
 
 export const GameInfoContext = React.createContext<{
   info: GameInfo | null
-  id: Id<'Game'>
+  id: Id<'Games'>
 } | null>(null)
 
 export const useGameInfo = () => {
@@ -20,12 +20,12 @@ export const useGameInfo = () => {
 }
 
 export const GameInfoProvider: React.FC<{
-  gameId: Id<'Game'>
+  gameId: Id<'Games'>
   children?: React.ReactNode
 }> = ({ gameId, children }) => {
   const [latestKnownGameInfo, setLatestKnownGameInfo] = useState<{
     info: GameInfo | null
-    id: Id<'Game'>
+    id: Id<'Games'>
   }>({ info: null, id: gameId })
   const sessionId = useSessionId()
   const gameInfo = useQuery(api.games.getInfo, { gameId, sessionId })
@@ -62,7 +62,7 @@ declare type BetterOmit<T, K extends keyof T> = {
 type SessionFunction<Args> = FunctionReference<
   'query' | 'mutation',
   'public',
-  { sessionId: string; gameId: Id<'Game'> } & Args,
+  { sessionId: string; gameId: Id<'Games'> } & Args,
   any
 >
 
@@ -76,7 +76,7 @@ export function useGameQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: string; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Games'> },
     any
   >
 >(
@@ -86,7 +86,7 @@ export function useGameQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: string; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Games'> },
     any
   >
 >(
@@ -97,7 +97,7 @@ export function useGameQuery<
   Query extends FunctionReference<
     'query',
     'public',
-    { sessionId: string; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Games'> },
     any
   >
 >(
@@ -117,7 +117,7 @@ export const useGameMutation = <
   Mutation extends FunctionReference<
     'mutation',
     'public',
-    { sessionId: string; gameId: Id<'Game'> },
+    { sessionId: string; gameId: Id<'Games'> },
     any
   >
 >(

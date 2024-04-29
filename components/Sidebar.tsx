@@ -33,7 +33,7 @@ export default function Sidebar() {
           style: { border: 'none' },
         }}
       >
-        <div className="bg-slate-200 w-64 rounded-r-lg h-full flex flex-col justify-between p-1 gap-2">
+        <div className="bg-base-300 w-64 rounded-r-lg h-full flex flex-col justify-between p-3 gap-2">
           <div>
             <div
               style={{
