@@ -12,7 +12,7 @@ import Timer from './Timer'
 
 const Game = (props: {
   cards: {
-    results: Array<Doc<'PlayingCard'>>
+    results: Array<Doc<'PlayingCards'>>
     status: 'Exhausted' | 'CanLoadMore' | 'LoadingMore' | 'LoadingFirstPage'
   }
 }) => {
@@ -49,10 +49,10 @@ const Game = (props: {
       })
     }, 20 * 1000)
     setSelectionTimeout(timeout)
-  }, [sendMessage, startSelectSet, setSelectionTimeout, selectionTimeout])
+  }, [sendMessage, startSelectSet, setSelectionTimeout, currentPlayer._id, game.selectingPlayer])
 
   const handleSelectCard = useCallback(
-    async (card: Doc<'PlayingCard'> | null) => {
+    async (card: Doc<'PlayingCards'> | null) => {
       if (card === null) {
         return
       }
@@ -187,7 +187,7 @@ const Game = (props: {
   )
 }
 
-export const Proset = ({ cards }: { cards: Array<Doc<'PlayingCard'>> }) => {
+export const Proset = ({ cards }: { cards: Array<Doc<'PlayingCards'>> }) => {
   return (
     <div className="flex gap-2 flex-shrink-0 flex-grow min-w-fit">
       {cards.map((card) => {

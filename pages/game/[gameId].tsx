@@ -21,7 +21,7 @@ const GameBoundary = () => {
       .then(() => {
         setReady(true)
       })
-      .catch((e) => {
+      .catch((_e) => {
         void router.push({
           pathname: "/"
         })
