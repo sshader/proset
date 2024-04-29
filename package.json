@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "npm-run-all init dev:init --parallel dev:server dev:client",
     "build": "tsc && next build",
@@ -19,6 +20,7 @@
     "@types/react-transition-group": "^4.4.5",
     "canvas-confetti": "^1.6.0",
     "convex": "^1.10.0",
+    "convex-test": "^0.0.13",
     "itertools": "^1.7.1",
     "next": "latest",
     "react": "^18.2.0",
@@ -27,6 +29,8 @@
     "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.24.1",
+    "@jest/globals": "^29.7.0",
     "@next/eslint-plugin-next": "^13.1.1",
     "@types/canvas-confetti": "^1.6.0",
     "@types/node": "^20.3.3",
@@ -43,11 +47,13 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.7.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.24",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^3.2.1",
     "tailwindcss": "^3.3.2",
+    "ts-jest": "^29.1.2",
     "typescript": "^5.1.3"
   }
 }
