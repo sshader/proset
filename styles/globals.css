@@ -44,7 +44,6 @@ h1 {
 }
 
 ul {
-  background-color: white;
   margin: 8px;
   border-radius: 8px;
   border: solid 1px lightgray;
@@ -132,6 +131,7 @@ input:not([type]) {
 }
 
 .PlayerInfo {
+  color: light-dark(#333b3c, #efefec);
   flex: 1 1 auto;
   min-width: 1px;
   display: flex;
@@ -161,6 +161,7 @@ input:not([type]) {
 
 :hover.Fill--red {
   background-color: var(--light-red);
+  color: #333b3c;
 }
 
 .Border--red {
@@ -173,6 +174,7 @@ input:not([type]) {
 
 :hover.Fill--orange {
   background-color: var(--light-orange);
+  color: #333b3c;
 }
 
 .Border--orange {
@@ -185,6 +187,7 @@ input:not([type]) {
 
 :hover.Fill--yellow {
   background-color: var(--light-yellow);
+  color: #333b3c;
 }
 
 .Border--yellow {
@@ -197,6 +200,7 @@ input:not([type]) {
 
 :hover.Fill--green {
   background-color: var(--light-green);
+  color: #333b3c;
 }
 
 .Border--green {
@@ -209,6 +213,7 @@ input:not([type]) {
 
 :hover.Fill--blue {
   background-color: var(--light-blue);
+  color: #333b3c;
 }
 
 .Border--blue {
@@ -221,6 +226,7 @@ input:not([type]) {
 
 :hover.Fill--purple {
   background-color: var(--light-purple);
+  color: #333b3c;
 }
 
 .Border--purple {
