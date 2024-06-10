@@ -5,6 +5,7 @@ import {
   mutationWithGame,
   queryWithGame,
 } from './lib/functions'
+import { betterV } from './lib/validators'
 import * as Games from './model/game'
 import * as Players from './model/player'
 import * as User from './model/user'
@@ -75,23 +76,15 @@ const playerFields = {
 export const getInfo = queryWithGame({
   args: {},
   returns: v.object({
-    game: v.object({
-      name: v.string(),
-      selectingPlayer: v.union(v.null(), v.id('Players')),
-      selectionStartTime: v.union(v.null(), v.number()),
-      inProgress: v.boolean(),
-      isPublic: v.optional(v.boolean()),
-      // system fields
-      _id: v.id('Games'),
-      _creationTime: v.number(),
-      // fields added by ents
-    }),
-    currentPlayer: v.object({
-      ...playerFields,
-      isGuest: v.boolean(),
-      showOnboarding: v.boolean(),
-    }),
-    otherPlayers: v.array(v.object(playerFields)),
+    game: betterV.doc('Games'),
+    currentPlayer: betterV.mergeObjects(
+      betterV.doc('Players'),
+      v.object({
+        isGuest: v.boolean(),
+        showOnboarding: v.boolean(),
+      })
+    ),
+    otherPlayers: v.array(betterV.doc('Players')),
     // record
     playerToProsets: v.any(),
   }),

@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 import { Doc } from './_generated/dataModel'
 import { internalMutation } from './_generated/server'
 import { mutationWithGame, queryWithGame } from './lib/functions'
+import { betterV } from './lib/validators'
 import * as Message from './model/message'
 
 export const send = mutationWithGame({
@@ -28,15 +29,7 @@ export const remove = internalMutation({
 
 export const list = queryWithGame({
   args: {},
-  returns: v.array(
-    v.object({
-      content: v.string(),
-      player: v.union(v.null(), v.string()),
-      GameId: v.id('Games'),
-      _id: v.id('Messages'),
-      _creationTime: v.number(),
-    })
-  ),
+  returns: v.array(betterV.doc('Messages')),
   handler: async (ctx): Promise<Array<Doc<'Messages'>>> => {
     const messages = await ctx.game.edge('Messages')
     return messages.filter(
