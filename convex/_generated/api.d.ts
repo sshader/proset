@@ -14,10 +14,16 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as analyze_group0 from "../analyze/group0.js";
+import type * as analyze_group1 from "../analyze/group1.js";
+import type * as analyze_group2 from "../analyze/group2.js";
+import type * as analyze_group3 from "../analyze/group3.js";
+import type * as analyze_helpers from "../analyze/helpers.js";
 import type * as cards from "../cards.js";
 import type * as dealCards from "../dealCards.js";
 import type * as functions from "../functions.js";
 import type * as games from "../games.js";
+import type * as http from "../http.js";
 import type * as lib_functions from "../lib/functions.js";
 import type * as lib_middlewareUtils from "../lib/middlewareUtils.js";
 import type * as lib_validators from "../lib/validators.js";
@@ -44,10 +50,16 @@ import type * as users from "../users.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "analyze/group0": typeof analyze_group0;
+  "analyze/group1": typeof analyze_group1;
+  "analyze/group2": typeof analyze_group2;
+  "analyze/group3": typeof analyze_group3;
+  "analyze/helpers": typeof analyze_helpers;
   cards: typeof cards;
   dealCards: typeof dealCards;
   functions: typeof functions;
   games: typeof games;
+  http: typeof http;
   "lib/functions": typeof lib_functions;
   "lib/middlewareUtils": typeof lib_middlewareUtils;
   "lib/validators": typeof lib_validators;
