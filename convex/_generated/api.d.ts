@@ -20,6 +20,7 @@ import type * as functions from "../functions.js";
 import type * as games from "../games.js";
 import type * as lib_functions from "../lib/functions.js";
 import type * as lib_middlewareUtils from "../lib/middlewareUtils.js";
+import type * as lib_validators from "../lib/validators.js";
 import type * as message from "../message.js";
 import type * as model_cards from "../model/cards.js";
 import type * as model_game from "../model/game.js";
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   games: typeof games;
   "lib/functions": typeof lib_functions;
   "lib/middlewareUtils": typeof lib_middlewareUtils;
+  "lib/validators": typeof lib_validators;
   message: typeof message;
   "model/cards": typeof model_cards;
   "model/game": typeof model_game;
