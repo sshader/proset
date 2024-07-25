@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
-import * as User from './model/user'
 import { mutationWithEnt, queryWithEnt } from './lib/functions'
+import * as User from './model/user'
 
 export const getOrCreate = mutationWithEnt({
   args: { sessionId: v.string() },
@@ -24,6 +24,7 @@ export const getOrNull = queryWithEnt({
 export const completeOnboarding = mutationWithEnt({
   args: { sessionId: v.string() },
   handler: async (ctx, { sessionId }) => {
+    console.log('Completing onboarding!')
     const user = await User.get(ctx, { sessionId })
     await User.completeOnboarding(ctx, user)
   },
