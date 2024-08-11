@@ -6,6 +6,7 @@ import {
 } from 'unique-names-generator'
 import { Id } from '../_generated/dataModel'
 import { BaseMutationCtx, BaseQueryCtx, Ent } from '../lib/functions'
+import { LOG_TOPICS } from '../lib/logger'
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -38,6 +39,7 @@ export const getOrCreate = async (
       identifier: identity.tokenIdentifier,
       isGuest: false,
     })
+    ctx.logger.log(LOG_TOPICS.User, { userId }, "New user created")
     return { userId }
   }
   const userId = await db.insert('Users', {
@@ -80,6 +82,7 @@ export const completeOnboarding = async (
   ctx: BaseMutationCtx,
   user: Ent<"Users">
 ) => {
+  ctx.logger.log(LOG_TOPICS.User, { userId: user._id }, "Onboarding completed")
   await ctx.table("Users").getX(user._id).patch({
     showOnboarding: false,
   })
