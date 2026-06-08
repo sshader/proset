@@ -280,3 +280,17 @@ input:not([type]) {
   width: 100vw;
   overflow: auto;
 }
+
+@media (max-width: 640px) {
+  .Card--regular {
+    width: 4em;
+    height: 6em;
+    border-radius: 0.75em;
+  }
+
+  .CardContainer {
+    padding: 1em;
+    gap: 1em;
+    max-width: 100vw;
+  }
+}
