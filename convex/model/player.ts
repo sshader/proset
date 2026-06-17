@@ -8,16 +8,16 @@ export const joinGame = async (
   ctx: BaseMutationCtx,
   { gameId, user }: { gameId: Id<'Games'>; user: Ent<'Users'> }
 ) => {
-  console.time("joinGame")
-  console.time("getPlayer")
+  ctx.logger.time("joinGame")
+  ctx.logger.timeVerbose("getPlayer")
   const allPlayers = await ctx.table("Games").getX(gameId).edgeX("Players")
   const player = allPlayers.find(p => p.UserId === user._id) ?? null
-  console.timeEnd("getPlayer")
+  ctx.logger.timeEndVerbose("getPlayer")
   if (player !== null) {
-    console.timeEnd("joinGame")
+    ctx.logger.timeEndVerbose("joinGame")
     return { playerId: player._id, gameId: player.GameId }
   }
-  console.time("createPlayer")
+  ctx.logger.timeVerbose("createPlayer")
   const playerId = await ctx.table("Players").insert({
     UserId: user._id,
     GameId: gameId,
@@ -26,8 +26,8 @@ export const joinGame = async (
     color: PLAYER_COLORS[Math.floor(Math.random() * PLAYER_COLORS.length)],
     isSystemPlayer: false,
   })
-  console.timeEnd("createPlayer")
-  console.timeEnd("joinGame")
+  ctx.logger.timeEndVerbose("createPlayer")
+  ctx.logger.timeEnd("joinGame")
   return { playerId, gameId }
 }
 
