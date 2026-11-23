@@ -1,16 +1,17 @@
 .Card--mini {
-  width: 3em;
-  height: 4.5em;
-  border-radius: 0.5em;
+  width: 2.5em;
+  border-radius: 0.4em;
 }
 
+/* Shrinks on narrow screens so four cards fit in a row on a phone */
 .Card--regular {
-  width: 6em;
-  height: 9em;
-  border-radius: 1em;
+  width: clamp(3.5em, 19vw, 6em);
+  border-radius: 0.75em;
 }
 
 .Card {
+  position: relative;
+  aspect-ratio: 2 / 3;
   transition: transform 1s;
   transform-style: preserve-3d;
 }
@@ -18,42 +19,40 @@
 .Card-front,
 .Card-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  border-radius: inherit;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border: 2px solid black;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .Card-back {
-  background: #03446a;
-  color: white;
+  background: linear-gradient(135deg, #0b5d8f, #03446a);
   transform: rotateY(180deg);
 }
 
+/* Six dots laid out in a 2 x 3 grid */
 .Card-front {
   background-color: white;
-  display: flex;
-  flex-direction: column;
-}
-
-.Card-row {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 1px;
-}
-
-.Card-dotContainer {
-  border-radius: 50%;
-  padding: 7%;
-  display: flex;
-  flex: 1 1 auto;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+  column-gap: 8%;
+  padding: 10%;
+  transition: box-shadow 0.2s;
 }
 
 .Card-dot {
+  width: 100%;
+  aspect-ratio: 1;
   border-radius: 50%;
-  min-height: 0.5em;
-  flex: 1 1 auto;
+}
+
+/* Selected cards get a ring in the selecting player's color */
+.Card-front.is-selected {
+  box-shadow: 0 0 0 4px var(--player), 0 0 16px 2px var(--player);
 }
 
 @keyframes item-enter {

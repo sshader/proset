@@ -10,7 +10,7 @@ const MessageViewer = () => {
       <div
         style={{
           maxHeight: 200,
-          overflowY: 'scroll',
+          overflowY: 'auto',
           gap: 5,
           display: 'flex',
           flexDirection: 'column',

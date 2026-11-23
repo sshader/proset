@@ -23,7 +23,7 @@ const GameBoundary = () => {
       })
       .catch((_e) => {
         void router.push({
-          pathname: "/"
+          pathname: '/',
         })
       })
   })
@@ -56,15 +56,17 @@ const InnerGameBoundary = ({ gameId }: { gameId: Id<'Games'> }) => {
     return <div>Loading</div>
   } else if (results.length === 0 && status === 'Exhausted') {
     return (
-      <div className="Container flex flex-col items-center gap-5">
-        <div>Game complete! 👏 Summary</div>
-        <GameDetails showProsets={true} />
+      <div className="Container flex-col items-center gap-5 p-4 pt-16">
+        <h1>Game complete! 👏</h1>
+        <div className="w-full max-w-md">
+          <GameDetails showProsets={true} />
+        </div>
         <EndGameButton />
       </div>
     )
   } else {
     return (
-      <div className="Container flex">
+      <div className="Container">
         <Sidebar />
         <Game cards={{ results, status }} />
       </div>

@@ -25,7 +25,8 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col items-center m-20 gap-5">
+    <main className="flex flex-col items-center gap-6 pt-16">
+      <h1 className="text-4xl">Proset</h1>
       <GamePicker />
       {userOrNull?.isGuest ? null : (
         <button className="btn btn-primary" onClick={handleStartGame}>
@@ -33,7 +34,8 @@ export default function App() {
         </button>
       )}
 
+      <div className="divider" />
       <Instructions />
-    </div>
+    </main>
   )
 }

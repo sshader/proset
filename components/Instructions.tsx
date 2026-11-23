@@ -2,24 +2,18 @@ import Card from './Card'
 
 const Instructions = () => {
   return (
-    <div>
+    <div className="flex flex-col gap-3">
       <h2 className="text-lg font-bold">
         How to play{' '}
-        <a href="https://en.wikipedia.org/wiki/Projective_Set_(game)">
-          Proset:
+        <a
+          className="link link-primary"
+          href="https://en.wikipedia.org/wiki/Projective_Set_(game)"
+        >
+          Proset
         </a>
       </h2>
       <p>The goal of the game is to find a "Proset" amongst the cards shown.</p>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: 15,
-          margin: 15,
-        }}
-      >
+      <div className="flex flex-wrap justify-center gap-4 my-3">
         <Card
           card={{
             red: true,

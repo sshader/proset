@@ -16,7 +16,7 @@ export const PlayerInfo = ({
   const [showProsets, setShowProsets] = useState(initialShowProsets)
   const prosetViews =
     prosets.length == 0 ? (
-      <div>No prosets yet!</div>
+      <div className="text-sm opacity-70">No prosets yet!</div>
     ) : (
       prosets.map((cards) => {
         return <Proset key={cards[0]._id} cards={cards}></Proset>
@@ -25,20 +25,24 @@ export const PlayerInfo = ({
 
   return (
     <div
-      className={`PlayerInfo ${isCurrentPlayer ? 'PlayerInfo--current' : ''}`}
+      className={`flex flex-col player-${player.color} ${
+        isCurrentPlayer ? 'font-bold' : ''
+      }`}
     >
-      <span
-        className={`PlayerInfo-section Fill--${player.color} Border--${player.color}`}
+      <button
+        className="PlayerInfo-section PlayerInfo-header"
         onClick={() => {
           setShowProsets(!showProsets)
         }}
       >
-        {isCurrentPlayer ? '(You)' : ''} {player.name}, Score {player.score}
-      </span>
+        <span className="truncate">
+          {player.name}
+          {isCurrentPlayer ? ' (you)' : ''}
+        </span>
+        <span className="badge">{player.score}</span>
+      </button>
       {showProsets ? (
-        <div
-          className={`PlayerInfo-section PlayerInfo-prosets Border--${player.color}`}
-        >
+        <div className="PlayerInfo-section PlayerInfo-prosets">
           {prosetViews}
         </div>
       ) : null}

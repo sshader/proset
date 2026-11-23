@@ -23,14 +23,7 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
 export function Login() {
   return (
     <main>
-      <div
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          padding: 5,
-        }}
-      >
+      <div className="fixed top-3 right-3 z-50">
         <SignInButton mode="modal">
           <button className="btn btn-primary">Sign in</button>
         </SignInButton>
@@ -47,6 +40,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     <StrictMode>
       <Head>
         <title>Proset</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
       </Head>
       <ClerkProvider
         publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string}
@@ -54,14 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
           <Unauthenticated>
             <SessionProvider>
-              <div
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  padding: 5,
-                }}
-              >
+              <div className="fixed top-3 right-3 z-50">
                 <SignInButton mode="modal">
                   <button className="btn btn-primary">Sign in</button>
                 </SignInButton>
@@ -72,13 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Authenticated>
             <SessionProvider>
               <div>
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    padding: 5,
-                  }}
-                >
+                <div className="fixed top-3 right-3 z-50">
                   <UserButton afterSignOutUrl="/"></UserButton>
                 </div>
                 <Component {...pageProps} />

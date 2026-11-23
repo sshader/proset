@@ -1,82 +1,41 @@
+const DOT_COLORS = [
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'blue',
+  'purple',
+] as const
+
 const Card = ({
   card,
   selectionColor = null,
   size = 'regular',
 }: {
-  card: {
-    red: boolean
-    orange: boolean
-    yellow: boolean
-    green: boolean
-    blue: boolean
-    purple: boolean
-  }
+  card: Record<(typeof DOT_COLORS)[number], boolean>
   selectionColor?: string | null
   size: 'regular' | 'mini'
 }) => {
-  const dropShadowClass = selectionColor ? `Dropshadow--${selectionColor}` : ''
+  const selectionClass = selectionColor
+    ? `is-selected player-${selectionColor}`
+    : ''
   return (
     <div
       className={`Card Card--${size}`}
       style={{ animation: 'item-enter 1s' }}
     >
-      <div className={`Card-front Card--${size} ${dropShadowClass}`}>
-        <div className="Card-row">
-          <div className="Card-dotContainer">
-            <div
-              className="Card-dot"
-              style={{
-                backgroundColor: card.red ? 'red' : 'inherit',
-              }}
-            ></div>
-          </div>
-          <div className="Card-dotContainer">
-            <div
-              className="Card-dot"
-              style={{
-                backgroundColor: card.orange ? 'orange' : 'inherit',
-              }}
-            ></div>
-          </div>
-        </div>
-        <div className="Card-row">
-          <div className="Card-dotContainer">
-            <div
-              className="Card-dot"
-              style={{
-                backgroundColor: card.yellow ? '#f5e653' : 'inherit',
-              }}
-            ></div>
-          </div>
-          <div className="Card-dotContainer">
-            <div
-              className="Card-dot"
-              style={{
-                backgroundColor: card.green ? 'green' : 'inherit',
-              }}
-            ></div>
-          </div>
-        </div>
-        <div className="Card-row">
-          <div className="Card-dotContainer">
-            <div
-              className="Card-dot"
-              style={{
-                backgroundColor: card.blue ? 'blue' : 'inherit',
-              }}
-            ></div>
-          </div>
-          <div className="Card-dotContainer">
-            <div
-              className="Card-dot"
-              style={{
-                backgroundColor: card.purple ? 'purple' : 'inherit',
-              }}
-            ></div>
-          </div>
-        </div>
+      <div className={`Card-front ${selectionClass}`}>
+        {DOT_COLORS.map((color) => (
+          <div
+            key={color}
+            className="Card-dot"
+            style={{
+              backgroundColor: card[color] ? `var(--${color})` : undefined,
+            }}
+          />
+        ))}
       </div>
-      <div className={`Card-back Card--${size}`} />
+      <div className="Card-back" />
     </div>
   )
 }

@@ -10,7 +10,7 @@ const Timer = ({ totalSeconds }: { totalSeconds: number }) => {
   }, [])
 
   return (
-    <button className="btn btn-primary" style={{ backgroundColor: 'grey' }}>
+    <button className="btn btn-neutral">
       ⏰ {seconds < 10 ? `:0${seconds}` : `:${seconds}`}
     </button>
   )

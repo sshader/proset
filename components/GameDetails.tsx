@@ -14,15 +14,11 @@ export default function GameDetails({
     gameInfo.otherPlayers.length === 0 ? (
       ''
     ) : (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      <div className="flex flex-col">
         {gameInfo.otherPlayers.map((otherPlayer) => {
           return (
             <PlayerInfo
+              key={otherPlayer._id}
               isCurrentPlayer={false}
               player={otherPlayer}
               prosets={gameInfo.playerToProsets[otherPlayer._id] ?? []}
@@ -36,7 +32,7 @@ export default function GameDetails({
   const sendMessage = useSendMessage()
 
   return (
-    <div className="GameDetails">
+    <div className="w-full">
       <PlayerInfo
         isCurrentPlayer={true}
         player={gameInfo.currentPlayer}
@@ -44,15 +40,7 @@ export default function GameDetails({
         initialShowProsets={showProsets}
       />
       {otherPlayers}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 10,
-        }}
-      >
+      <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
         <CopyLinkButton
           onCopy={() =>
             sendMessage({

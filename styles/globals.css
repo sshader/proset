@@ -3,23 +3,14 @@
 @tailwind utilities;
 @import './card.css';
 
-/* reset */
-* {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  line-height: 1.5;
-}
-
 body {
   font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', helvetica,
     sans-serif;
 }
 
 main {
-  padding-top: 1em;
-  padding-bottom: 1em;
-  width: min(800px, 95vw);
+  padding: 1em;
+  width: min(800px, 100%);
   margin: 0 auto;
 }
 
@@ -27,82 +18,51 @@ h1 {
   text-align: center;
   margin-bottom: 8px;
   font-size: 1.8em;
-  font-weight: 500;
-}
-
-.badge {
-  text-align: center;
-  margin-bottom: 16px;
-}
-.badge span {
-  background-color: #212529;
-  color: #ffffff;
-  border-radius: 6px;
-  font-weight: bold;
-  padding: 4px 8px 4px 8px;
-  font-size: 0.75em;
-}
-
-ul {
-  margin: 8px;
-  border-radius: 8px;
-  border: solid 1px lightgray;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
-
-ul:empty {
-  display: none;
-}
-
-li {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 8px 16px 8px 16px;
-  border-bottom: solid 1px lightgray;
-  font-size: 16px;
-}
-
-li:last-child {
-  border: 0;
-}
-
-form {
-  display: flex;
-  justify-content: center;
-}
-
-input:not([type]) {
-  padding: 6px 12px 6px 12px;
-  color: rgb(33, 37, 41);
-  border: solid 1px rgb(206, 212, 218);
-  border-radius: 8px;
-  font-size: 16px;
+  font-weight: 600;
 }
 
 :root {
-  --red: red;
-  --light-red: lightpink;
-  --orange: orange;
-  --light-orange: #ffd580;
-  --yellow: #f5e653;
-  --light-yellow: lightyellow;
-  --green: green;
-  --light-green: lightgreen;
-  --blue: blue;
-  --light-blue: lightblue;
-  --purple: purple;
-  --light-purple: plum;
+  --red: #e53935;
+  --orange: #fb8c00;
+  --yellow: #fdd835;
+  --green: #43a047;
+  --blue: #1e88e5;
+  --purple: #8e24aa;
+}
+
+/*
+ * `player-<color>` sets --player to that color, so other styles
+ * (borders, selection rings) can just use var(--player).
+ */
+.player-red {
+  --player: var(--red);
+}
+.player-orange {
+  --player: var(--orange);
+}
+.player-yellow {
+  --player: var(--yellow);
+}
+.player-green {
+  --player: var(--green);
+}
+.player-blue {
+  --player: var(--blue);
+}
+.player-purple {
+  --player: var(--purple);
+}
+.player-grey {
+  --player: grey;
 }
 
 .CardContainer {
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   max-width: 700px;
-  padding: 2em;
-  gap: 2em;
+  padding: clamp(0.5em, 4vw, 2em);
+  gap: clamp(0.75em, 4vw, 2em);
 }
 
 .CardContainer--available,
@@ -110,187 +70,65 @@ input:not([type]) {
   cursor: not-allowed;
 }
 
+.CardContainer--selecting button {
+  transition: transform 0.15s;
+}
+
+.CardContainer--selecting button:hover {
+  transform: translateY(-4px);
+}
+
 .Placeholder {
   animation: skeleton-loading 1s linear infinite alternate;
-  padding: 8px 16px 8px 16px;
-  margin: 8px;
   border-radius: 8px;
 }
 
 .Placeholder-row {
-  height: 2em;
+  height: 3em;
 }
 
 @keyframes skeleton-loading {
   0% {
-    background-color: #eeeeee;
+    opacity: 0.4;
   }
   100% {
-    background-color: #cccccc;
+    opacity: 0.8;
   }
-}
-
-.PlayerInfo {
-  color: light-dark(#333b3c, #efefec);
-  flex: 1 1 auto;
-  min-width: 1px;
-  display: flex;
-  flex-direction: column;
-}
-
-.PlayerInfo--current {
-  font-weight: 700;
 }
 
 .PlayerInfo-section {
-  border-radius: 5px;
-  border: 2px solid;
-  margin: 5px;
-  padding: 5px;
+  border-radius: 8px;
+  border: 2px solid var(--player);
+  margin: 4px;
+  padding: 6px 10px;
+}
+
+.PlayerInfo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.PlayerInfo-header:hover {
+  /* A light tint of the player's color */
+  background-color: color-mix(in srgb, var(--player) 20%, transparent);
 }
 
 .PlayerInfo-prosets {
   max-height: 200px;
   overflow: auto;
-  flex: 1 0 auto;
-  min-width: 1px;
-  gap: 10px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-:hover.Fill--red {
-  background-color: var(--light-red);
-  color: #333b3c;
-}
-
-.Border--red {
-  border-color: var(--red);
-}
-
-.Dropshadow--red {
-  box-shadow: 0px 0px 10px 10px var(--red);
-}
-
-:hover.Fill--orange {
-  background-color: var(--light-orange);
-  color: #333b3c;
-}
-
-.Border--orange {
-  border-color: var(--orange);
-}
-
-.Dropshadow--orange {
-  box-shadow: 0px 0px 10px 10px var(--orange);
-}
-
-:hover.Fill--yellow {
-  background-color: var(--light-yellow);
-  color: #333b3c;
-}
-
-.Border--yellow {
-  border-color: var(--yellow);
-}
-
-.Dropshadow--yellow {
-  box-shadow: 0px 0px 10px 10px var(--yellow);
-}
-
-:hover.Fill--green {
-  background-color: var(--light-green);
-  color: #333b3c;
-}
-
-.Border--green {
-  border-color: var(--green);
-}
-
-.Dropshadow--green {
-  box-shadow: 0px 0px 10px 10px var(--green);
-}
-
-:hover.Fill--blue {
-  background-color: var(--light-blue);
-  color: #333b3c;
-}
-
-.Border--blue {
-  border-color: var(--blue);
-}
-
-.Dropshadow--blue {
-  box-shadow: 0px 0px 10px 10px var(--blue);
-}
-
-:hover.Fill--purple {
-  background-color: var(--light-purple);
-  color: #333b3c;
-}
-
-.Border--purple {
-  border-color: var(--purple);
-}
-
-.Dropshadow--purple {
-  box-shadow: 0px 0px 10px 10px var(--purple);
-}
-
-@media (prefers-color-scheme: dark) {
-  .Dropshadow--grey {
-    box-shadow: 0px 0px 10px 10px white;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .Dropshadow--grey {
-    box-shadow: 0px 0px 10px 10px black;
-  }
-}
-
-
-.Sidebar {
-  max-width: 25%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  background-color: lightgrey;
-  border-right: 2px solid black;
-}
-
-.Sidebar-content {
-  width: 100%;
-  height: 100%;
-  min-height: 1px;
-  overflow-x: auto;
-  padding: 10;
-  display: 'flex';
-  flex-direction: 'column';
-  background-color: lightgrey;
-}
-
-.GameDetails {
-  width: 100%;
-}
-
+/* Full screen, without the horizontal scrollbar that 100vw can cause */
 .Container {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: auto;
-}
-
-@media (max-width: 640px) {
-  .Card--regular {
-    width: 4em;
-    height: 6em;
-    border-radius: 0.75em;
-  }
-
-  .CardContainer {
-    padding: 1em;
-    gap: 1em;
-    max-width: 100vw;
-  }
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
 }

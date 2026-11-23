@@ -1,7 +1,7 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import LeaderboardIcon from '@mui/icons-material/Leaderboard'
 import { Drawer, useMediaQuery } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -10,6 +10,8 @@ import { useGameInfo } from '../hooks/GameInfoProvider'
 import { useSessionMutation } from '../hooks/SessionProvider'
 import GameDetails from './GameDetails'
 import MessageViewer from './MessageViewer'
+
+const SIDEBAR_WIDTH = 256
 
 export default function Sidebar() {
   const gameInfo = useGameInfo()
@@ -23,23 +25,28 @@ export default function Sidebar() {
   }, [isMobile])
 
   return (
-    <div>
-      {!isMobile && (
-        <div style={{ padding: 5 }}>
+    <div
+      // On desktop, reserve space for the open drawer so it doesn't cover the cards
+      className="shrink-0 transition-all"
+      style={{ width: !isMobile && !collapsed ? SIDEBAR_WIDTH : undefined }}
+    >
+      {!isMobile && collapsed && (
+        <div className="p-2">
           <button
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={() => setCollapsed(false)}
             className="btn btn-circle btn-sm btn-primary"
           >
-            {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            <ChevronRightIcon />
           </button>
         </div>
       )}
       {isMobile && collapsed && (
         <button
           onClick={() => setCollapsed(false)}
-          className="btn btn-circle btn-sm btn-primary fixed bottom-4 left-4 z-50"
+          className="btn btn-sm btn-primary fixed top-3 left-3 z-50"
         >
-          <ExpandLessIcon />
+          <LeaderboardIcon fontSize="small" />
+          Score: {gameInfo.currentPlayer.score}
         </button>
       )}
       <Drawer
@@ -48,39 +55,35 @@ export default function Sidebar() {
         onClose={() => setCollapsed(true)}
         variant={isMobile ? 'temporary' : 'persistent'}
         PaperProps={{
-          style: { border: 'none' },
+          style: {
+            border: 'none',
+            background: 'transparent',
+            boxShadow: 'none',
+          },
         }}
       >
         <div
-          className={`bg-slate-200 ${
+          className={`bg-base-200 text-base-content ${
             isMobile
-              ? 'w-full rounded-t-lg max-h-64 overflow-y-auto'
-              : 'w-64 rounded-r-lg h-full'
-          } flex flex-col justify-between p-1 gap-2`}
+              ? 'w-full rounded-t-2xl max-h-[70vh] overflow-y-auto'
+              : 'h-full overflow-y-auto'
+          } flex flex-col justify-between p-3 gap-3`}
+          style={{ width: isMobile ? undefined : SIDEBAR_WIDTH }}
         >
           <div>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
+            <div className="flex items-center justify-between mb-2">
               <button
-                className="btn btn-primary btn-sm"
+                className="btn btn-ghost btn-sm text-lg font-bold normal-case"
                 onClick={() => router.push('/all')}
               >
                 Proset
               </button>
-              <div style={{ padding: 5 }}>
-                <button
-                  onClick={() => setCollapsed(true)}
-                  className="btn btn-circle btn-sm btn-primary"
-                >
-                  {isMobile ? <ExpandMoreIcon /> : <ChevronLeftIcon />}
-                </button>
-              </div>
+              <button
+                onClick={() => setCollapsed(true)}
+                className="btn btn-circle btn-sm btn-ghost"
+              >
+                {isMobile ? <ExpandMoreIcon /> : <ChevronLeftIcon />}
+              </button>
             </div>
 
             <GameDetails />
@@ -99,9 +102,7 @@ export default function Sidebar() {
               </span>
               How to play
             </button>
-          ) : (
-            ''
-          )}
+          ) : null}
         </div>
       </Drawer>
       <MessageViewer></MessageViewer>

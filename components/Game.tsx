@@ -49,7 +49,13 @@ const Game = (props: {
       })
     }, 20 * 1000)
     setSelectionTimeout(timeout)
-  }, [sendMessage, startSelectSet, setSelectionTimeout, currentPlayer._id, game.selectingPlayer])
+  }, [
+    sendMessage,
+    startSelectSet,
+    setSelectionTimeout,
+    currentPlayer._id,
+    game.selectingPlayer,
+  ])
 
   const handleSelectCard = useCallback(
     async (card: Doc<'PlayingCards'> | null) => {
@@ -160,8 +166,8 @@ const Game = (props: {
   }
 
   return (
-    <div className="flex grow shrink min-w-fit justify-center">
-      <div className="flex flex-col gap-4 justify-center">
+    <div className="flex grow min-w-0 justify-center p-2 pt-16 sm:pt-2">
+      <div className="flex flex-col gap-4 justify-center items-center">
         {cards.results.length === 0 && cards.status === 'Exhausted' ? (
           <EndGameButton />
         ) : (
@@ -170,10 +176,10 @@ const Game = (props: {
               cards={cards.results}
               onCardClicked={handleSelectCard}
             />
-            <div className="flex shrink min-w-0 justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {selectSetButton}
               <button
-                className="btn btn-primary"
+                className="btn btn-outline"
                 onClick={handleRevealProset}
                 disabled={game.selectingPlayer !== null}
               >
@@ -189,9 +195,9 @@ const Game = (props: {
 
 export const Proset = ({ cards }: { cards: Array<Doc<'PlayingCards'>> }) => {
   return (
-    <div className="flex gap-2 flex-shrink-0 flex-grow min-w-fit">
+    <div className="flex flex-wrap gap-2">
       {cards.map((card) => {
-        return <Card card={card} size="mini"></Card>
+        return <Card key={card._id} card={card} size="mini"></Card>
       })}
     </div>
   )
