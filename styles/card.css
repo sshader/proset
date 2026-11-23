@@ -39,13 +39,13 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: repeat(3, 1fr);
   align-items: center;
-  column-gap: 8%;
-  padding: 9%;
+  column-gap: 5%;
+  padding: 6%;
   transition: box-shadow 0.2s;
 }
 
 .Card-dot {
-  width: 85%;
+  width: 95%;
   justify-self: center;
   aspect-ratio: 1;
   border-radius: 50%;
