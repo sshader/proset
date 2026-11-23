@@ -45,7 +45,8 @@
 }
 
 .Card-dot {
-  width: 100%;
+  width: 75%;
+  justify-self: center;
   aspect-ratio: 1;
   border-radius: 50%;
 }

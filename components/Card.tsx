@@ -7,6 +7,16 @@ const DOT_COLORS = [
   'purple',
 ] as const
 
+// The classic card palette (separate from the player highlight colors)
+const DOT_FILLS: Record<(typeof DOT_COLORS)[number], string> = {
+  red: 'red',
+  orange: 'orange',
+  yellow: '#f5e653',
+  green: 'green',
+  blue: 'blue',
+  purple: 'purple',
+}
+
 const Card = ({
   card,
   selectionColor = null,
@@ -30,7 +40,7 @@ const Card = ({
             key={color}
             className="Card-dot"
             style={{
-              backgroundColor: card[color] ? `var(--${color})` : undefined,
+              backgroundColor: card[color] ? DOT_FILLS[color] : undefined,
             }}
           />
         ))}
